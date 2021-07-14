@@ -36,10 +36,10 @@
     <img src='https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080' alt='background'>
 </div>
 <div class='pbp'>
-    <iframe allowtransparency="true" src="https://obs.ninja/?view=kfbdg3r&scene&room=rlpc&password=rlpc?autoplay=1" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+    <iframe allowtransparency="true" src="" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
 </div>
 <div class='color'>
-    <iframe allowtransparency="true" src="https://obs.ninja/?view=kfbdg3r&scene&room=rlpc&password=rlpc?autoplay=1" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+    <iframe allowtransparency="true" src="" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
 </div>
 <style>
 
