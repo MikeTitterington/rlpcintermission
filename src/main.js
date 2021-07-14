@@ -7,6 +7,4 @@ const app = new App({
 	}
 });
 
-app.use('/build', express.static('public/build'))
-
 export default app;
