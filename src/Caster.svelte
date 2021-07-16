@@ -21,6 +21,14 @@
                         if(jQuery(".color iframe").attr('src') != obj['feed']['entry'][i]['content']['$t']){
                             jQuery(".color iframe").attr('src', (obj['feed']['entry'][i]['content']['$t']));
                         }
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "I23") {
+                        jQuery(".pbp2 .pName").text(obj['feed']['entry'][i]['content']['$t']);
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "J23") {
+                        jQuery(".pbp2 img").attr('src', (obj['feed']['entry'][i]['content']['$t']));
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "I24") {
+                        jQuery(".color2 .pName").text(obj['feed']['entry'][i]['content']['$t']);
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "J24") {
+                        jQuery(".color2 img").attr('src', (obj['feed']['entry'][i]['content']['$t']));
                     }
                 }
             }
@@ -41,6 +49,14 @@
 <div class='color'>
     <iframe allowtransparency="true" src="" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
 </div>
+<div class='pbp2'>
+    <img src=''>
+    <div class='pName'>Loading...</div>
+</div>
+<div class='color2'>
+    <img src=''>
+    <div class='pName'>Loading...</div>
+</div>
 <style>
 
     .pbp {
@@ -49,6 +65,19 @@
         left: 0px;
         width: 50%;
         height: 60%;
+        z-index: 2;
+    }
+
+    .pName {
+        position: absolute;
+        font-size: 40px;
+        color: white;
+        top: 385px;
+        width: 380px;
+        height: 68px;
+        left: 152px;
+        line-height: 68px;
+        text-align: center;
     }
 
     .pbp iframe {
@@ -63,6 +92,7 @@
         left: 50%;
         width: 50%;
         height: 60%;
+        z-index: 2;
     }
 
     .color iframe {
@@ -70,6 +100,36 @@
         height: 100%;
         width: 100%;
         background-color: transparent;
+    }
+
+    .pbp2 {
+        position: absolute;
+        top: 350px;
+        left: 170px;
+        background-color: black;
+        width: 682px;
+        height: 380px;
+    }
+
+    .pbp2 img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+    }
+
+    .color2 {
+        position: absolute;
+        top: 350px;
+        left: 1072px;
+        background-color: black;
+        width: 682px;
+        height: 380px;
+    }
+
+    .color2 img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
     }
 
     .background {
