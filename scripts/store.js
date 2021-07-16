@@ -1,0 +1,52 @@
+import { writable } from 'svelte/store';
+import jQuery from 'jquery';
+export const pbpVideo = writable('');
+export const colorVideo = writable('');
+export const pbpName = writable('');
+export const colorName = writable('');
+export const pbpImage = writable('');
+export const colorImage = writable('');
+export const currentScene = writable('caster');
+
+
+function updateCasters() {
+    var url = "https://spreadsheets.google.com/feeds/cells/1mDV2D9MRoYX-7f4eBDlllvBq-kewCFQ6kRbCf3ML6uk/od6/public/basic?alt=json";
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var obj = JSON.parse(this.response);
+            var i;
+            var entry = obj['feed']['entry']
+            for (i = 0; i < entry.length; i++) {
+                let test = obj['feed']['entry'][i]['title']['$t'].slice(-2);
+                if (obj['feed']['entry'][i]['title']['$t'] == "H12") {
+                    pbpVideo.set(obj['feed']['entry'][i]['content']['$t']);
+                } else if (obj['feed']['entry'][i]['title']['$t'] == "H13") {
+                    colorVideo.set(obj['feed']['entry'][i]['content']['$t']);
+                } else if (obj['feed']['entry'][i]['title']['$t'] == "I23") {
+                    pbpName.set(obj['feed']['entry'][i]['content']['$t']);
+                } else if (obj['feed']['entry'][i]['title']['$t'] == "J23") {
+                    pbpImage.set(obj['feed']['entry'][i]['content']['$t']);
+                } else if (obj['feed']['entry'][i]['title']['$t'] == "I24") {
+                    colorName.set(obj['feed']['entry'][i]['content']['$t']);
+                } else if (obj['feed']['entry'][i]['title']['$t'] == "J24") {
+                    colorImage.set(obj['feed']['entry'][i]['content']['$t']);
+                }
+            }
+        }
+    };
+    xhttp.open("GET", url, true);
+    xhttp.send();
+}
+var myVar = setInterval(updateCasters, 5000);
+updateCasters();
+
+export default {
+	pbpVideo: pbpVideo.subscribe,
+	colorVideo: colorVideo.subscribe,
+	pbpName: pbpName.subscribe,
+	colorName: colorName.subscribe,
+	pbpImage: pbpImage.subscribe,
+	colorImage: colorImage.subscribe,
+	currentScene: currentScene.subscribe
+}

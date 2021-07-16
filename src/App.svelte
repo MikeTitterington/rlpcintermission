@@ -1,6 +1,14 @@
 <script>
+	import { onMount } from 'svelte';
+	import store from '../scripts/store.js';
 	export let currentScene;
-	import Caster from "./Caster.svelte"
+	import Caster from "./Caster.svelte";
+
+	onMount(() => {
+		store.currentScene(currentMessage => {
+			currentScene = currentMessage;
+		})
+    });
 </script>
 
 <main>
