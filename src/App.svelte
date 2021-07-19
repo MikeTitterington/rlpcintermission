@@ -3,6 +3,7 @@
 	import store from '../scripts/store.js';
 	export let currentScene;
 	import Caster from "./Caster.svelte";
+	import Desk from "./Desk.svelte";
 
 	onMount(() => {
 		store.currentScene(currentMessage => {
@@ -15,7 +16,7 @@
 	{#if currentScene == 'caster'}
 		<Caster />
 	{:else if currentScene == 'desk'}
-		<p>{currentScene}</p>
+		<Desk />
 	{:else}
 		<p>IDK</p>
 	{/if}

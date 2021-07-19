@@ -19,10 +19,10 @@
             console.log(colorVideo)
 		})
 		store.pbpName(currentMessage => {
-			pbpName = currentMessage;
+			pbpName = currentMessage.toUpperCase();
 		})
 		store.colorName(currentMessage => {
-			colorName = currentMessage;
+			colorName = currentMessage.toUpperCase();
 		})
 		store.pbpImage(currentMessage => {
 			pbpImage = currentMessage;
@@ -32,32 +32,50 @@
 		})
     });
 </script>
-<div class='background'>
-    <img src='https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080' alt='background'>
-</div>
-
-{#if pbpVideo != 'null'}
-    <div class='pbp' transition:fade="{{ delay: 1500 }}">
-        <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+<div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ' }}">
+    <div class='background'>
+        <img src='https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080' alt='background'>
     </div>
-{/if}
-
-{#if colorVideo != 'null'}
-    <div class='color' transition:fade="{{ delay: 1500 }}">
-        <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+    
+    {#if pbpVideo != 'null'}
+        <div class='pbp' transition:fade="{{ delay: 1500, duration:1000 }}">
+            <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+        </div>
+    {/if}
+    
+    {#if colorVideo != 'null'}
+        <div class='color' transition:fade="{{ delay: 1500, duration:1000 }}">
+            <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+        </div>
+    {/if}
+    
+    <div class='pbp2'>
+        <img src='{pbpImage}' alt='pbp'>
+        <div class='pName'>{pbpName}</div>
     </div>
-{/if}
-
-<div class='pbp2'>
-    <img src='{pbpImage}' alt='pbp'>
-    <div class='pName'>{pbpName}</div>
-</div>
-<div class='color2'>
-    <img src='{colorImage}' alt='color'>
-    <div class='pName'>{colorName}</div>
+    <div class='color2'>
+        <img src='{colorImage}' alt='color'>
+        <div class='pName'>{colorName}</div>
+    </div>
 </div>
 <style>
 
+    @font-face {
+        font-family: 'Evogria';
+        src:
+            url('./Evogria.otf');
+    }
+
+
+    .container {
+        position: absolute;
+        height: 1080px;
+        width: 1920px;
+        overflow: hidden;
+        top: 0%;
+        left: 0%;
+        font-family: 'Evogria';
+    }
     .pbp {
         position: absolute;
         top: 25%;

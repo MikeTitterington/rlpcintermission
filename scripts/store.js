@@ -6,6 +6,7 @@ export const pbpName = writable('');
 export const colorName = writable('');
 export const pbpImage = writable('');
 export const colorImage = writable('');
+export const tickerInfo = writable('');
 export const currentScene = writable('caster');
 let stop = false;
 import WsSubscribers from '../scripts/ws_subscriber.js';
@@ -39,6 +40,7 @@ function updateCasters() {
             if (this.readyState == 4 && this.status == 200) {
                 var obj = JSON.parse(this.response);
                 var i;
+                var tickerInfoLocal = '';
                 var entry = obj['feed']['entry']
                 for (i = 0; i < entry.length; i++) {
                     let test = obj['feed']['entry'][i]['title']['$t'].slice(-2);
@@ -54,8 +56,30 @@ function updateCasters() {
                         colorName.set(obj['feed']['entry'][i]['content']['$t']);
                     } else if (obj['feed']['entry'][i]['title']['$t'] == "J24") {
                         colorImage.set(obj['feed']['entry'][i]['content']['$t']);
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B5") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B5") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B6") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B7") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B8") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B9") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+                    } else if (obj['feed']['entry'][i]['title']['$t'] == "B10") {
+                        var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
+                        tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
                     }
                 }
+                tickerInfo.set(tickerInfoLocal);
             }
         };
         xhttp.open("GET", url, true);
@@ -73,5 +97,7 @@ export default {
 	colorName: colorName.subscribe,
 	pbpImage: pbpImage.subscribe,
 	colorImage: colorImage.subscribe,
-	currentScene: currentScene.subscribe
+	currentScene: currentScene.subscribe,
+	tickerInfo: tickerInfo.subscribe
+    
 }
