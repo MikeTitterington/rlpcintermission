@@ -51,7 +51,7 @@
     @font-face {
         font-family: 'Evogria';
         src:
-            url('../Evogria.otf');
+            url('../Evogria.otf') format("opentype");
     }
 
     h1 {
