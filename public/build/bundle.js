@@ -12810,8 +12810,102 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file$5 = "src\\Caster.svelte";
 
-    // (40:4) {#if pbpVideo != 'null'}
+    // (47:4) {#if pbpVideo != 'null'}
     function create_if_block_1$1(ctx) {
+    	let await_block_anchor;
+    	let promise;
+    	let current;
+
+    	let info = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		hasCatch: false,
+    		pending: create_pending_block_1,
+    		then: create_then_block_1,
+    		catch: create_catch_block_1,
+    		value: 6,
+    		blocks: [,,,]
+    	};
+
+    	handle_promise(promise = preload$1(/*pbpVideo*/ ctx[0]), info);
+
+    	const block = {
+    		c: function create() {
+    			await_block_anchor = empty();
+    			info.block.c();
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, await_block_anchor, anchor);
+    			info.block.m(target, info.anchor = anchor);
+    			info.mount = () => await_block_anchor.parentNode;
+    			info.anchor = await_block_anchor;
+    			current = true;
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			info.ctx = ctx;
+
+    			if (dirty & /*pbpVideo*/ 1 && promise !== (promise = preload$1(/*pbpVideo*/ ctx[0])) && handle_promise(promise, info)) ; else {
+    				update_await_block_branch(info, ctx, dirty);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(info.block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			for (let i = 0; i < 3; i += 1) {
+    				const block = info.blocks[i];
+    				transition_out(block);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(await_block_anchor);
+    			info.block.d(detaching);
+    			info.token = null;
+    			info = null;
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(47:4) {#if pbpVideo != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0)   <script>   import { fade }
+    function create_catch_block_1(ctx) {
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block_1.name,
+    		type: "catch",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (48:41)               <div class='pbp' transition:fade="{{ delay: 1500, duration:1000 }}
+    function create_then_block_1(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -12828,9 +12922,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$5, 41, 12, 1267);
+    			add_location(iframe, file$5, 49, 16, 1510);
     			attr_dev(div, "class", "pbp svelte-1owfbto");
-    			add_location(div, file$5, 40, 8, 1185);
+    			add_location(div, file$5, 48, 12, 1424);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12865,17 +12959,133 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$1.name,
-    		type: "if",
-    		source: "(40:4) {#if pbpVideo != 'null'}",
+    		id: create_then_block_1.name,
+    		type: "then",
+    		source: "(48:41)               <div class='pbp' transition:fade=\\\"{{ delay: 1500, duration:1000 }}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (46:4) {#if colorVideo != 'null'}
+    // (1:0)   <script>   import { fade }
+    function create_pending_block_1(ctx) {
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block_1.name,
+    		type: "pending",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (55:4) {#if colorVideo != 'null'}
     function create_if_block$2(ctx) {
+    	let await_block_anchor;
+    	let promise;
+    	let current;
+
+    	let info = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		hasCatch: false,
+    		pending: create_pending_block$1,
+    		then: create_then_block$1,
+    		catch: create_catch_block$1,
+    		value: 6,
+    		blocks: [,,,]
+    	};
+
+    	handle_promise(promise = preload$1(/*colorVideo*/ ctx[1]), info);
+
+    	const block = {
+    		c: function create() {
+    			await_block_anchor = empty();
+    			info.block.c();
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, await_block_anchor, anchor);
+    			info.block.m(target, info.anchor = anchor);
+    			info.mount = () => await_block_anchor.parentNode;
+    			info.anchor = await_block_anchor;
+    			current = true;
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			info.ctx = ctx;
+
+    			if (dirty & /*colorVideo*/ 2 && promise !== (promise = preload$1(/*colorVideo*/ ctx[1])) && handle_promise(promise, info)) ; else {
+    				update_await_block_branch(info, ctx, dirty);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(info.block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			for (let i = 0; i < 3; i += 1) {
+    				const block = info.blocks[i];
+    				transition_out(block);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(await_block_anchor);
+    			info.block.d(detaching);
+    			info.token = null;
+    			info = null;
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$2.name,
+    		type: "if",
+    		source: "(55:4) {#if colorVideo != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0)   <script>   import { fade }
+    function create_catch_block$1(ctx) {
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block$1.name,
+    		type: "catch",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (56:43)               <div class='color' transition:fade="{{ delay: 1500, duration:1000 }}
+    function create_then_block$1(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -12892,9 +13102,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$5, 47, 12, 1555);
+    			add_location(iframe, file$5, 57, 16, 1873);
     			attr_dev(div, "class", "color svelte-1owfbto");
-    			add_location(div, file$5, 46, 8, 1471);
+    			add_location(div, file$5, 56, 12, 1785);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12929,9 +13139,31 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$2.name,
-    		type: "if",
-    		source: "(46:4) {#if colorVideo != 'null'}",
+    		id: create_then_block$1.name,
+    		type: "then",
+    		source: "(56:43)               <div class='color' transition:fade=\\\"{{ delay: 1500, duration:1000 }}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0)   <script>   import { fade }
+    function create_pending_block$1(ctx) {
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block$1.name,
+    		type: "pending",
+    		source: "(1:0)   <script>   import { fade }",
     		ctx
     	});
 
@@ -12987,27 +13219,27 @@ var app = (function () {
     			t7 = text(/*colorName*/ ctx[3]);
     			if (img0.src !== (img0_src_value = "https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "background");
-    			add_location(img0, file$5, 36, 8, 979);
+    			add_location(img0, file$5, 43, 8, 1171);
     			attr_dev(div0, "class", "background svelte-1owfbto");
-    			add_location(div0, file$5, 35, 4, 945);
+    			add_location(div0, file$5, 42, 4, 1137);
     			if (img1.src !== (img1_src_value = /*pbpImage*/ ctx[4])) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "pbp");
     			attr_dev(img1, "class", "svelte-1owfbto");
-    			add_location(img1, file$5, 52, 8, 1753);
+    			add_location(img1, file$5, 63, 8, 2093);
     			attr_dev(div1, "class", "pName svelte-1owfbto");
-    			add_location(div1, file$5, 53, 8, 1795);
+    			add_location(div1, file$5, 64, 8, 2135);
     			attr_dev(div2, "class", "pbp2 svelte-1owfbto");
-    			add_location(div2, file$5, 51, 4, 1725);
+    			add_location(div2, file$5, 62, 4, 2065);
     			if (img2.src !== (img2_src_value = /*colorImage*/ ctx[5])) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "color");
     			attr_dev(img2, "class", "svelte-1owfbto");
-    			add_location(img2, file$5, 56, 8, 1877);
+    			add_location(img2, file$5, 67, 8, 2217);
     			attr_dev(div3, "class", "pName svelte-1owfbto");
-    			add_location(div3, file$5, 57, 8, 1923);
+    			add_location(div3, file$5, 68, 8, 2263);
     			attr_dev(div4, "class", "color2 svelte-1owfbto");
-    			add_location(div4, file$5, 55, 4, 1847);
+    			add_location(div4, file$5, 66, 4, 2187);
     			attr_dev(div5, "class", "container svelte-1owfbto");
-    			add_location(div5, file$5, 34, 0, 852);
+    			add_location(div5, file$5, 41, 0, 1044);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -13152,6 +13384,14 @@ var app = (function () {
     	return block;
     }
 
+    function preload$1(src) {
+    	return new Promise(function (resolve) {
+    			let img = new Image();
+    			img.onload = resolve;
+    			img.src = src;
+    		});
+    }
+
     function instance$5($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Caster", slots, []);
@@ -13205,7 +13445,8 @@ var app = (function () {
     		colorName,
     		pbpImage,
     		colorImage,
-    		store
+    		store,
+    		preload: preload$1
     	});
 
     	$$self.$inject_state = $$props => {

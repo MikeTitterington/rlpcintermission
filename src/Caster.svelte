@@ -31,6 +31,13 @@
 			colorImage = currentMessage;
 		})
     });
+    function preload(src) {
+        return new Promise(function(resolve) {
+            let img = new Image()
+            img.onload = resolve
+            img.src = src
+        })
+    }
 </script>
 <div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ' }}">
     <div class='background'>
@@ -38,15 +45,19 @@
     </div>
     
     {#if pbpVideo != 'null'}
-        <div class='pbp' transition:fade="{{ delay: 1500, duration:1000 }}">
-            <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
-        </div>
+        {#await preload(pbpVideo) then _}
+            <div class='pbp' transition:fade="{{ delay: 1500, duration:1000 }}">
+                <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
+        {/await}
     {/if}
     
     {#if colorVideo != 'null'}
-        <div class='color' transition:fade="{{ delay: 1500, duration:1000 }}">
-            <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
-        </div>
+        {#await preload(colorVideo) then _}
+            <div class='color' transition:fade="{{ delay: 1500, duration:1000 }}">
+                <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
+        {/await}
     {/if}
     
     <div class='pbp2'>
