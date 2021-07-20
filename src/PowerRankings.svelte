@@ -36,7 +36,7 @@
     }
 
 </script>
-<div class='back'>
+<div class='back'  transition:fade="{{ duration:1000, ease:'circ' }}">
     <div class='contain' id='image'>
         <h1 transition:fade={{duration: 3000}}>{league} Power Rankings</h1>
         {#each powerRankings as team (team.id)}
@@ -59,13 +59,12 @@
         color: #ffc15e;
         position: absolute;
         width: 900px;
-        height: 886px;
-        left: 30px;
+        height: 900px;
         text-align: center;
         background-color: #1c1c1c;
         font-size: 50px;
-        line-height: 80px;
-        top:-20px;
+        line-height: 92px;
+        top:-34px;
         font-family: Evogria;
         border: #f4faff 1px solid;
     }
@@ -80,10 +79,10 @@
     .contain {
         position: absolute;
         top: 80px;
-        left: 480px;
+        left: 510px;
         height: 900px;
-        width: 960px;
-        background-color: #1c1c1c;
+        width: 900px;
+        box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
     }
 
     .back {

@@ -21,7 +21,7 @@
     }
 </script>
 {#await preload(logo) then _}
-    <div class='team' style="top:{top}px; background-color: {color}; left: {left+30}px" transition:fade={{duration: 3000}}>
+    <div class='team' style="top:{top}px; background-color: {color}; left: {left}px"  transition:fade="{{ duration:3000, ease:'circ' }}">
         <p class='name'>{team}</p>
         <img src={logo} alt='team'>
         <p class='place'>{standing}</p>

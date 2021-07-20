@@ -14289,17 +14289,17 @@ var app = (function () {
     			p1 = element("p");
     			t3 = text(/*standing*/ ctx[2]);
     			attr_dev(p0, "class", "name svelte-1g28eke");
-    			add_location(p0, file$3, 24, 8, 689);
+    			add_location(p0, file$3, 24, 8, 703);
     			if (img.src !== (img_src_value = /*logo*/ ctx[1])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "team");
     			attr_dev(img, "class", "svelte-1g28eke");
-    			add_location(img, file$3, 25, 8, 725);
+    			add_location(img, file$3, 25, 8, 739);
     			attr_dev(p1, "class", "place svelte-1g28eke");
-    			add_location(p1, file$3, 26, 8, 762);
+    			add_location(p1, file$3, 26, 8, 776);
     			attr_dev(div, "class", "team svelte-1g28eke");
     			set_style(div, "top", /*top*/ ctx[3] + "px");
     			set_style(div, "background-color", /*color*/ ctx[5]);
-    			set_style(div, "left", /*left*/ ctx[4] + 30 + "px");
+    			set_style(div, "left", /*left*/ ctx[4] + "px");
     			add_location(div, file$3, 23, 4, 560);
     		},
     		m: function mount(target, anchor) {
@@ -14331,21 +14331,21 @@ var app = (function () {
     			}
 
     			if (!current || dirty & /*left*/ 16) {
-    				set_style(div, "left", /*left*/ ctx[4] + 30 + "px");
+    				set_style(div, "left", /*left*/ ctx[4] + "px");
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, true);
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000, ease: "circ" }, true);
     				div_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, false);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000, ease: "circ" }, false);
     			div_transition.run(0);
     			current = false;
     		},
@@ -22043,6 +22043,7 @@ var app = (function () {
     	let each_1_lookup = new Map();
     	let t3;
     	let button;
+    	let div1_transition;
     	let current;
     	let mounted;
     	let dispose;
@@ -22073,14 +22074,14 @@ var app = (function () {
     			t3 = space();
     			button = element("button");
     			button.textContent = "Download Image";
-    			attr_dev(h1, "class", "svelte-1f156x9");
-    			add_location(h1, file$2, 40, 8, 1075);
-    			attr_dev(div0, "class", "contain svelte-1f156x9");
+    			attr_dev(h1, "class", "svelte-1yhm143");
+    			add_location(h1, file$2, 40, 8, 1127);
+    			attr_dev(div0, "class", "contain svelte-1yhm143");
     			attr_dev(div0, "id", "image");
-    			add_location(div0, file$2, 39, 4, 1033);
-    			attr_dev(button, "class", "svelte-1f156x9");
-    			add_location(button, file$2, 45, 4, 1334);
-    			attr_dev(div1, "class", "back svelte-1f156x9");
+    			add_location(div0, file$2, 39, 4, 1085);
+    			attr_dev(button, "class", "svelte-1yhm143");
+    			add_location(button, file$2, 45, 4, 1386);
+    			attr_dev(div1, "class", "back svelte-1yhm143");
     			add_location(div1, file$2, 38, 0, 1009);
     		},
     		l: function claim(nodes) {
@@ -22131,6 +22132,11 @@ var app = (function () {
     				transition_in(each_blocks[i]);
     			}
 
+    			add_render_callback(() => {
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, true);
+    				div1_transition.run(1);
+    			});
+
     			current = true;
     		},
     		o: function outro(local) {
@@ -22141,6 +22147,8 @@ var app = (function () {
     				transition_out(each_blocks[i]);
     			}
 
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, false);
+    			div1_transition.run(0);
     			current = false;
     		},
     		d: function destroy(detaching) {
@@ -22151,6 +22159,7 @@ var app = (function () {
     				each_blocks[i].d();
     			}
 
+    			if (detaching && div1_transition) div1_transition.end();
     			mounted = false;
     			dispose();
     		}
@@ -22582,6 +22591,7 @@ var app = (function () {
     			document.title = "RLPC Media Team Site";
     			attr_dev(html, "lang", "en");
     			add_location(html, file, 18, 1, 459);
+    			attr_dev(main, "class", "svelte-kciyl1");
     			add_location(main, file, 21, 0, 494);
     		},
     		l: function claim(nodes) {

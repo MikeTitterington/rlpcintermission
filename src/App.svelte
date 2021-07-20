@@ -34,5 +34,12 @@
 </main>
 
 <style>
-	
+	main {
+		position: absolute;
+		height: 1080px;
+		width: 1920px;
+		overflow: hidden;
+		top: 0;
+		left: 0%;
+	}
 </style>
