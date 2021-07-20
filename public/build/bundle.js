@@ -12765,6 +12765,8 @@ var app = (function () {
                             powerRankingsLocal.push(powerRankingsLocalTemp);
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "F6") {
                             league.set(obj['feed']['entry'][i]['content']['$t']);
+                        }else if (obj['feed']['entry'][i]['title']['$t'] == "F7") {
+                            currentScene.set(obj['feed']['entry'][i]['content']['$t']);
                         }
                     }
                     tickerInfo.set(tickerInfoLocal);
@@ -12825,9 +12827,9 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-156wtxa");
+    			attr_dev(iframe, "class", "svelte-1owfbto");
     			add_location(iframe, file$5, 41, 12, 1267);
-    			attr_dev(div, "class", "pbp svelte-156wtxa");
+    			attr_dev(div, "class", "pbp svelte-1owfbto");
     			add_location(div, file$5, 40, 8, 1185);
     		},
     		m: function mount(target, anchor) {
@@ -12889,9 +12891,9 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-156wtxa");
+    			attr_dev(iframe, "class", "svelte-1owfbto");
     			add_location(iframe, file$5, 47, 12, 1555);
-    			attr_dev(div, "class", "color svelte-156wtxa");
+    			attr_dev(div, "class", "color svelte-1owfbto");
     			add_location(div, file$5, 46, 8, 1471);
     		},
     		m: function mount(target, anchor) {
@@ -12986,25 +12988,25 @@ var app = (function () {
     			if (img0.src !== (img0_src_value = "https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "background");
     			add_location(img0, file$5, 36, 8, 979);
-    			attr_dev(div0, "class", "background svelte-156wtxa");
+    			attr_dev(div0, "class", "background svelte-1owfbto");
     			add_location(div0, file$5, 35, 4, 945);
     			if (img1.src !== (img1_src_value = /*pbpImage*/ ctx[4])) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "pbp");
-    			attr_dev(img1, "class", "svelte-156wtxa");
+    			attr_dev(img1, "class", "svelte-1owfbto");
     			add_location(img1, file$5, 52, 8, 1753);
-    			attr_dev(div1, "class", "pName svelte-156wtxa");
+    			attr_dev(div1, "class", "pName svelte-1owfbto");
     			add_location(div1, file$5, 53, 8, 1795);
-    			attr_dev(div2, "class", "pbp2 svelte-156wtxa");
+    			attr_dev(div2, "class", "pbp2 svelte-1owfbto");
     			add_location(div2, file$5, 51, 4, 1725);
     			if (img2.src !== (img2_src_value = /*colorImage*/ ctx[5])) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "color");
-    			attr_dev(img2, "class", "svelte-156wtxa");
+    			attr_dev(img2, "class", "svelte-1owfbto");
     			add_location(img2, file$5, 56, 8, 1877);
-    			attr_dev(div3, "class", "pName svelte-156wtxa");
+    			attr_dev(div3, "class", "pName svelte-1owfbto");
     			add_location(div3, file$5, 57, 8, 1923);
-    			attr_dev(div4, "class", "color2 svelte-156wtxa");
+    			attr_dev(div4, "class", "color2 svelte-1owfbto");
     			add_location(div4, file$5, 55, 4, 1847);
-    			attr_dev(div5, "class", "container svelte-156wtxa");
+    			attr_dev(div5, "class", "container svelte-1owfbto");
     			add_location(div5, file$5, 34, 0, 852);
     		},
     		l: function claim(nodes) {
@@ -13834,9 +13836,9 @@ var app = (function () {
     			div1 = element("div");
     			div0 = element("div");
     			if (if_block) if_block.c();
-    			attr_dev(div0, "class", "ticker svelte-1l4fabt");
+    			attr_dev(div0, "class", "ticker svelte-1ah20to");
     			add_location(div0, file$3, 26, 4, 652);
-    			attr_dev(div1, "class", "container svelte-1l4fabt");
+    			attr_dev(div1, "class", "container svelte-1ah20to");
     			add_location(div1, file$3, 25, 0, 560);
     		},
     		l: function claim(nodes) {
@@ -21728,7 +21730,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (41:8) {#each powerRankings as team (team.id)}
+    // (42:8) {#each powerRankings as team (team.id)}
     function create_each_block(key_1, ctx) {
     	let first;
     	let teampr;
@@ -21787,7 +21789,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(41:8) {#each powerRankings as team (team.id)}",
+    		source: "(42:8) {#each powerRankings as team (team.id)}",
     		ctx
     	});
 
@@ -21800,6 +21802,7 @@ var app = (function () {
     	let h1;
     	let t0;
     	let t1;
+    	let h1_transition;
     	let t2;
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -21836,14 +21839,14 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Download Image";
     			attr_dev(h1, "class", "svelte-1f156x9");
-    			add_location(h1, file$1, 39, 8, 1029);
+    			add_location(h1, file$1, 40, 8, 1075);
     			attr_dev(div0, "class", "contain svelte-1f156x9");
     			attr_dev(div0, "id", "image");
-    			add_location(div0, file$1, 38, 4, 987);
+    			add_location(div0, file$1, 39, 4, 1033);
     			attr_dev(button, "class", "svelte-1f156x9");
-    			add_location(button, file$1, 44, 4, 1253);
+    			add_location(button, file$1, 45, 4, 1334);
     			attr_dev(div1, "class", "back svelte-1f156x9");
-    			add_location(div1, file$1, 37, 0, 963);
+    			add_location(div1, file$1, 38, 0, 1009);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -21884,6 +21887,11 @@ var app = (function () {
     		i: function intro(local) {
     			if (current) return;
 
+    			add_render_callback(() => {
+    				if (!h1_transition) h1_transition = create_bidirectional_transition(h1, fade, { duration: 3000 }, true);
+    				h1_transition.run(1);
+    			});
+
     			for (let i = 0; i < each_value.length; i += 1) {
     				transition_in(each_blocks[i]);
     			}
@@ -21891,6 +21899,9 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
+    			if (!h1_transition) h1_transition = create_bidirectional_transition(h1, fade, { duration: 3000 }, false);
+    			h1_transition.run(0);
+
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
     			}
@@ -21899,6 +21910,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
+    			if (detaching && h1_transition) h1_transition.end();
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].d();
@@ -21966,6 +21978,7 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
+    		fade,
     		onMount,
     		store,
     		TeamPR,

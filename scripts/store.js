@@ -750,6 +750,8 @@ function updateCasters() {
                         powerRankingsLocal.push(powerRankingsLocalTemp);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "F6") {
                         league.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "F7") {
+                        currentScene.set(obj['feed']['entry'][i]['content']['$t']);
                     }
                 }
                 tickerInfo.set(tickerInfoLocal);

@@ -1,4 +1,5 @@
 <script>
+    import { fade } from 'svelte/transition'
 	import { onMount } from 'svelte';
 	import store from '../scripts/store.js';
 	import TeamPR from "./TeamPR.svelte";
@@ -37,7 +38,7 @@
 </script>
 <div class='back'>
     <div class='contain' id='image'>
-        <h1>{league} Power Rankings</h1>
+        <h1 transition:fade={{duration: 3000}}>{league} Power Rankings</h1>
         {#each powerRankings as team (team.id)}
             <TeamPR team={team.team} logo={team.logo} standing={team.id} top={team.top} left={team.left}/>
         {/each}

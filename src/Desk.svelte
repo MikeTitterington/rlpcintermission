@@ -38,13 +38,13 @@
     @font-face {
         font-family: 'Evogria';
         src:
-            url('./Evogria.otf');
+            local('Evogria'), url('Evogria.otf') format("opentype");
     }
 
     @font-face {
         font-family: 'Chosence';
         src:
-            url('./Chosence Regular.otf');
+            local('Chosence Regular'), url('Chosence Regular.otf') format("opentype");
     }
 
     .container {

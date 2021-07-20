@@ -63,7 +63,7 @@
     @font-face {
         font-family: 'Evogria';
         src:
-            url('./Evogria.otf');
+            local('Evogria'), url('Evogria.otf') format("opentype");
     }
 
 
