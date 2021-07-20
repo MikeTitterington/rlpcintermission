@@ -12940,7 +12940,14 @@ var app = (function () {
 
     // (1:0)   <script>   import { fade }
     function create_catch_block_1(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
@@ -12953,7 +12960,7 @@ var app = (function () {
     	return block;
     }
 
-    // (58:37)           <div class='pbp2'>              <img src='{pbpImage}
+    // (58:37)           <div class='pbp2' transition:fade="{{ duration:3000 }}
     function create_then_block_1(ctx) {
     	let div1;
     	let img;
@@ -12961,6 +12968,8 @@ var app = (function () {
     	let t0;
     	let div0;
     	let t1;
+    	let div1_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -12972,9 +12981,9 @@ var app = (function () {
     			if (img.src !== (img_src_value = /*pbpImage*/ ctx[4])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "pbp");
     			attr_dev(img, "class", "svelte-1owfbto");
-    			add_location(img, file$5, 59, 12, 1947);
+    			add_location(img, file$5, 59, 12, 1985);
     			attr_dev(div0, "class", "pName svelte-1owfbto");
-    			add_location(div0, file$5, 60, 12, 1993);
+    			add_location(div0, file$5, 60, 12, 2031);
     			attr_dev(div1, "class", "pbp2 svelte-1owfbto");
     			add_location(div1, file$5, 58, 8, 1915);
     		},
@@ -12984,16 +12993,33 @@ var app = (function () {
     			append_dev(div1, t0);
     			append_dev(div1, div0);
     			append_dev(div0, t1);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*pbpImage*/ 16 && img.src !== (img_src_value = /*pbpImage*/ ctx[4])) {
+    			if (!current || dirty & /*pbpImage*/ 16 && img.src !== (img_src_value = /*pbpImage*/ ctx[4])) {
     				attr_dev(img, "src", img_src_value);
     			}
 
-    			if (dirty & /*pbpName*/ 4) set_data_dev(t1, /*pbpName*/ ctx[2]);
+    			if (!current || dirty & /*pbpName*/ 4) set_data_dev(t1, /*pbpName*/ ctx[2]);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, true);
+    				div1_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, false);
+    			div1_transition.run(0);
+    			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
+    			if (detaching && div1_transition) div1_transition.end();
     		}
     	};
 
@@ -13001,7 +13027,7 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(58:37)           <div class='pbp2'>              <img src='{pbpImage}",
+    		source: "(58:37)           <div class='pbp2' transition:fade=\\\"{{ duration:3000 }}",
     		ctx
     	});
 
@@ -13010,7 +13036,14 @@ var app = (function () {
 
     // (1:0)   <script>   import { fade }
     function create_pending_block_1(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
@@ -13025,7 +13058,14 @@ var app = (function () {
 
     // (1:0)   <script>   import { fade }
     function create_catch_block$1(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
@@ -13038,7 +13078,7 @@ var app = (function () {
     	return block;
     }
 
-    // (64:39)           <div class='color2'>              <img src='{colorImage}
+    // (64:39)           <div class='color2' transition:fade="{{ duration:3000 }}
     function create_then_block$1(ctx) {
     	let div1;
     	let img;
@@ -13046,6 +13086,8 @@ var app = (function () {
     	let t0;
     	let div0;
     	let t1;
+    	let div1_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -13057,11 +13099,11 @@ var app = (function () {
     			if (img.src !== (img_src_value = /*colorImage*/ ctx[5])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "color");
     			attr_dev(img, "class", "svelte-1owfbto");
-    			add_location(img, file$5, 65, 12, 2142);
+    			add_location(img, file$5, 65, 12, 2218);
     			attr_dev(div0, "class", "pName svelte-1owfbto");
-    			add_location(div0, file$5, 66, 12, 2192);
+    			add_location(div0, file$5, 66, 12, 2268);
     			attr_dev(div1, "class", "color2 svelte-1owfbto");
-    			add_location(div1, file$5, 64, 8, 2108);
+    			add_location(div1, file$5, 64, 8, 2146);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -13069,16 +13111,33 @@ var app = (function () {
     			append_dev(div1, t0);
     			append_dev(div1, div0);
     			append_dev(div0, t1);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*colorImage*/ 32 && img.src !== (img_src_value = /*colorImage*/ ctx[5])) {
+    			if (!current || dirty & /*colorImage*/ 32 && img.src !== (img_src_value = /*colorImage*/ ctx[5])) {
     				attr_dev(img, "src", img_src_value);
     			}
 
-    			if (dirty & /*colorName*/ 8) set_data_dev(t1, /*colorName*/ ctx[3]);
+    			if (!current || dirty & /*colorName*/ 8) set_data_dev(t1, /*colorName*/ ctx[3]);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, true);
+    				div1_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, false);
+    			div1_transition.run(0);
+    			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
+    			if (detaching && div1_transition) div1_transition.end();
     		}
     	};
 
@@ -13086,7 +13145,7 @@ var app = (function () {
     		block,
     		id: create_then_block$1.name,
     		type: "then",
-    		source: "(64:39)           <div class='color2'>              <img src='{colorImage}",
+    		source: "(64:39)           <div class='color2' transition:fade=\\\"{{ duration:3000 }}",
     		ctx
     	});
 
@@ -13095,7 +13154,14 @@ var app = (function () {
 
     // (1:0)   <script>   import { fade }
     function create_pending_block$1(ctx) {
-    	const block = { c: noop, m: noop, p: noop, d: noop };
+    	const block = {
+    		c: noop,
+    		m: noop,
+    		p: noop,
+    		i: noop,
+    		o: noop,
+    		d: noop
+    	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
@@ -13132,7 +13198,8 @@ var app = (function () {
     		pending: create_pending_block_1,
     		then: create_then_block_1,
     		catch: create_catch_block_1,
-    		value: 6
+    		value: 6,
+    		blocks: [,,,]
     	};
 
     	handle_promise(promise = preload$1(/*pbpImage*/ ctx[4]), info);
@@ -13145,7 +13212,8 @@ var app = (function () {
     		pending: create_pending_block$1,
     		then: create_then_block$1,
     		catch: create_catch_block$1,
-    		value: 6
+    		value: 6,
+    		blocks: [,,,]
     	};
 
     	handle_promise(promise_1 = preload$1(/*colorImage*/ ctx[5]), info_1);
@@ -13257,6 +13325,8 @@ var app = (function () {
     			if (current) return;
     			transition_in(if_block0);
     			transition_in(if_block1);
+    			transition_in(info.block);
+    			transition_in(info_1.block);
 
     			add_render_callback(() => {
     				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, true);
@@ -13268,6 +13338,17 @@ var app = (function () {
     		o: function outro(local) {
     			transition_out(if_block0);
     			transition_out(if_block1);
+
+    			for (let i = 0; i < 3; i += 1) {
+    				const block = info.blocks[i];
+    				transition_out(block);
+    			}
+
+    			for (let i = 0; i < 3; i += 1) {
+    				const block = info_1.blocks[i];
+    				transition_out(block);
+    			}
+
     			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, false);
     			div1_transition.run(0);
     			current = false;

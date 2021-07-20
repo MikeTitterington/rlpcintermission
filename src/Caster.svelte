@@ -56,13 +56,13 @@
         </div>
     {/if}
     {#await preload(pbpImage) then _}
-        <div class='pbp2'>
+        <div class='pbp2' transition:fade="{{ duration:3000 }}">
             <img src='{pbpImage}' alt='pbp'>
             <div class='pName'>{pbpName}</div>
         </div>
     {/await}
     {#await preload(colorImage) then _}
-        <div class='color2'>
+        <div class='color2' transition:fade="{{ duration:3000 }}">
             <img src='{colorImage}' alt='color'>
             <div class='pName'>{colorName}</div>
         </div>
