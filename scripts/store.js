@@ -9,6 +9,7 @@ export const colorImage = writable('');
 export const tickerInfo = writable('');
 export const currentScene = writable('desk');
 export const powerRankings = writable([]);
+export const tonightGames = writable([]);
 export const league = writable('');
 let stop = false;
 import WsSubscribers from '../scripts/ws_subscriber.js';
@@ -552,7 +553,12 @@ function updateCasters() {
                 var i;
                 var tickerInfoLocal = '';
                 var powerRankingsLocal = [];
-                var entry = obj['feed']['entry']
+                var entry = obj['feed']['entry'];
+                var games1 = {top:100};
+                var games2 = {top:350};
+                var games3 = {top:600};
+                var games4 = {top:850};
+                var games = [];
                 for (i = 0; i < entry.length; i++) {
                     let test = obj['feed']['entry'][i]['title']['$t'].slice(-2);
                     if (obj['feed']['entry'][i]['title']['$t'] == "H12") {
@@ -752,10 +758,47 @@ function updateCasters() {
                         league.set(obj['feed']['entry'][i]['content']['$t']);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "F7") {
                         currentScene.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N8") {
+                        games1['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O8") {
+                        games1['league']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O9") {
+                        games1['team1']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O10") {
+                        games1['team2']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N11") {
+                        games2['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O11") {
+                        games2['league']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O12") {
+                        games2['team1']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O13") {
+                        games2['team2']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N14") {
+                        games3['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O14") {
+                        games3['league']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O15") {
+                        games3['team1']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O16") {
+                        games3['team2']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N17") {
+                        games4['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O17") {
+                        games4['league']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O18") {
+                        games4['team1']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O19") {
+                        games4['team2']=[obj['feed']['entry'][i]['content']['$t']];
                     }
                 }
+                games.push(games1);
+                games.push(games2);
+                games.push(games3);
+                games.push(games4);
                 tickerInfo.set(tickerInfoLocal);
                 powerRankings.set(powerRankingsLocal);
+                tonightGames.set(games);
             }
         };
         xhttp.open("GET", url, true);
@@ -776,6 +819,7 @@ export default {
 	currentScene: currentScene.subscribe,
 	tickerInfo: tickerInfo.subscribe,
 	powerRankings: powerRankings.subscribe,
-	league: league.subscribe
+	league: league.subscribe,
+	tonightGames: tonightGames.subscribe
     
 }

@@ -1,14 +1,19 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import Ticker from './Ticker.svelte';
+	import GameDesk from './GameDesk.svelte';
 	import store from '../scripts/store.js';
 	import { onMount } from 'svelte';
 
     export let tickerInfo = '';
+    export let tonightGames = [];
     
     onMount(() => {
 		store.tickerInfo(currentMessage => {
 			tickerInfo = currentMessage;
+		})
+		store.tonightGames(currentMessage => {
+			tonightGames = currentMessage;
 		})
     });
     
@@ -24,6 +29,9 @@
 	};
 </script>
 <div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ'}}">
+    {#each tonightGames as game (game.time)}
+        <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
+    {/each}
     <div class='ticker'>
         {#if tickerInfo != ''}
             <Ticker behavior='always' duration=120>
