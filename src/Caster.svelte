@@ -39,31 +39,34 @@
         })
     }
 </script>
-<div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ' }}">
+<div class='container' transition:fade="{{ duration:1000, ease:'circ' }}">
     <div class='background'>
         <img src='https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080' alt='background'>
     </div>
     
     {#if pbpVideo != 'null'}
-        <div class='pbp' transition:fade="{{ delay: 1500, duration:1000 }}">
+        <div class='pbp' transition:fade="{{ duration:3000 }}">
             <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
         </div>
     {/if}
     
     {#if colorVideo != 'null'}
-        <div class='color' transition:fade="{{ delay: 1500, duration:1000 }}">
+        <div class='color' transition:fade="{{ duration:3000 }}">
             <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
         </div>
     {/if}
-    
-    <div class='pbp2'>
-        <img src='{pbpImage}' alt='pbp'>
-        <div class='pName'>{pbpName}</div>
-    </div>
-    <div class='color2'>
-        <img src='{colorImage}' alt='color'>
-        <div class='pName'>{colorName}</div>
-    </div>
+    {#await preload(pbpImage) then _}
+        <div class='pbp2'>
+            <img src='{pbpImage}' alt='pbp'>
+            <div class='pName'>{pbpName}</div>
+        </div>
+    {/await}
+    {#await preload(colorImage) then _}
+        <div class='color2'>
+            <img src='{colorImage}' alt='color'>
+            <div class='pName'>{colorName}</div>
+        </div>
+    {/await}
 </div>
 <style>
 

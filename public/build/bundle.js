@@ -12828,9 +12828,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$5, 48, 12, 1459);
+    			add_location(iframe, file$5, 48, 12, 1433);
     			attr_dev(div, "class", "pbp svelte-1owfbto");
-    			add_location(div, file$5, 47, 8, 1377);
+    			add_location(div, file$5, 47, 8, 1364);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12846,14 +12846,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { delay: 1500, duration: 1000 }, true);
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, true);
     				div_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { delay: 1500, duration: 1000 }, false);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, false);
     			div_transition.run(0);
     			current = false;
     		},
@@ -12892,9 +12892,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$5, 54, 12, 1747);
+    			add_location(iframe, file$5, 54, 12, 1708);
     			attr_dev(div, "class", "color svelte-1owfbto");
-    			add_location(div, file$5, 53, 8, 1663);
+    			add_location(div, file$5, 53, 8, 1637);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12910,14 +12910,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { delay: 1500, duration: 1000 }, true);
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, true);
     				div_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { delay: 1500, duration: 1000 }, false);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, false);
     			div_transition.run(0);
     			current = false;
     		},
@@ -12938,103 +12938,263 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$5(ctx) {
-    	let div5;
+    // (1:0)   <script>   import { fade }
+    function create_catch_block_1(ctx) {
+    	const block = { c: noop, m: noop, p: noop, d: noop };
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block_1.name,
+    		type: "catch",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (58:37)           <div class='pbp2'>              <img src='{pbpImage}
+    function create_then_block_1(ctx) {
+    	let div1;
+    	let img;
+    	let img_src_value;
+    	let t0;
     	let div0;
-    	let img0;
-    	let img0_src_value;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			img = element("img");
+    			t0 = space();
+    			div0 = element("div");
+    			t1 = text(/*pbpName*/ ctx[2]);
+    			if (img.src !== (img_src_value = /*pbpImage*/ ctx[4])) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "pbp");
+    			attr_dev(img, "class", "svelte-1owfbto");
+    			add_location(img, file$5, 59, 12, 1947);
+    			attr_dev(div0, "class", "pName svelte-1owfbto");
+    			add_location(div0, file$5, 60, 12, 1993);
+    			attr_dev(div1, "class", "pbp2 svelte-1owfbto");
+    			add_location(div1, file$5, 58, 8, 1915);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, img);
+    			append_dev(div1, t0);
+    			append_dev(div1, div0);
+    			append_dev(div0, t1);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*pbpImage*/ 16 && img.src !== (img_src_value = /*pbpImage*/ ctx[4])) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (dirty & /*pbpName*/ 4) set_data_dev(t1, /*pbpName*/ ctx[2]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_then_block_1.name,
+    		type: "then",
+    		source: "(58:37)           <div class='pbp2'>              <img src='{pbpImage}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0)   <script>   import { fade }
+    function create_pending_block_1(ctx) {
+    	const block = { c: noop, m: noop, p: noop, d: noop };
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block_1.name,
+    		type: "pending",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0)   <script>   import { fade }
+    function create_catch_block$1(ctx) {
+    	const block = { c: noop, m: noop, p: noop, d: noop };
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block$1.name,
+    		type: "catch",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (64:39)           <div class='color2'>              <img src='{colorImage}
+    function create_then_block$1(ctx) {
+    	let div1;
+    	let img;
+    	let img_src_value;
+    	let t0;
+    	let div0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			img = element("img");
+    			t0 = space();
+    			div0 = element("div");
+    			t1 = text(/*colorName*/ ctx[3]);
+    			if (img.src !== (img_src_value = /*colorImage*/ ctx[5])) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "color");
+    			attr_dev(img, "class", "svelte-1owfbto");
+    			add_location(img, file$5, 65, 12, 2142);
+    			attr_dev(div0, "class", "pName svelte-1owfbto");
+    			add_location(div0, file$5, 66, 12, 2192);
+    			attr_dev(div1, "class", "color2 svelte-1owfbto");
+    			add_location(div1, file$5, 64, 8, 2108);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, img);
+    			append_dev(div1, t0);
+    			append_dev(div1, div0);
+    			append_dev(div0, t1);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*colorImage*/ 32 && img.src !== (img_src_value = /*colorImage*/ ctx[5])) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (dirty & /*colorName*/ 8) set_data_dev(t1, /*colorName*/ ctx[3]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_then_block$1.name,
+    		type: "then",
+    		source: "(64:39)           <div class='color2'>              <img src='{colorImage}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0)   <script>   import { fade }
+    function create_pending_block$1(ctx) {
+    	const block = { c: noop, m: noop, p: noop, d: noop };
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block$1.name,
+    		type: "pending",
+    		source: "(1:0)   <script>   import { fade }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$5(ctx) {
+    	let div1;
+    	let div0;
+    	let img;
+    	let img_src_value;
     	let t0;
     	let t1;
     	let t2;
-    	let div2;
-    	let img1;
-    	let img1_src_value;
+    	let promise;
     	let t3;
-    	let div1;
-    	let t4;
-    	let t5;
-    	let div4;
-    	let img2;
-    	let img2_src_value;
-    	let t6;
-    	let div3;
-    	let t7;
-    	let div5_transition;
+    	let promise_1;
+    	let div1_transition;
     	let current;
     	let if_block0 = /*pbpVideo*/ ctx[0] != "null" && create_if_block_1$1(ctx);
     	let if_block1 = /*colorVideo*/ ctx[1] != "null" && create_if_block$2(ctx);
 
+    	let info = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		hasCatch: false,
+    		pending: create_pending_block_1,
+    		then: create_then_block_1,
+    		catch: create_catch_block_1,
+    		value: 6
+    	};
+
+    	handle_promise(promise = preload$1(/*pbpImage*/ ctx[4]), info);
+
+    	let info_1 = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		hasCatch: false,
+    		pending: create_pending_block$1,
+    		then: create_then_block$1,
+    		catch: create_catch_block$1,
+    		value: 6
+    	};
+
+    	handle_promise(promise_1 = preload$1(/*colorImage*/ ctx[5]), info_1);
+
     	const block = {
     		c: function create() {
-    			div5 = element("div");
+    			div1 = element("div");
     			div0 = element("div");
-    			img0 = element("img");
+    			img = element("img");
     			t0 = space();
     			if (if_block0) if_block0.c();
     			t1 = space();
     			if (if_block1) if_block1.c();
     			t2 = space();
-    			div2 = element("div");
-    			img1 = element("img");
+    			info.block.c();
     			t3 = space();
-    			div1 = element("div");
-    			t4 = text(/*pbpName*/ ctx[2]);
-    			t5 = space();
-    			div4 = element("div");
-    			img2 = element("img");
-    			t6 = space();
-    			div3 = element("div");
-    			t7 = text(/*colorName*/ ctx[3]);
-    			if (img0.src !== (img0_src_value = "https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080")) attr_dev(img0, "src", img0_src_value);
-    			attr_dev(img0, "alt", "background");
-    			add_location(img0, file$5, 43, 8, 1171);
+    			info_1.block.c();
+    			if (img.src !== (img_src_value = "https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "background");
+    			add_location(img, file$5, 43, 8, 1158);
     			attr_dev(div0, "class", "background svelte-1owfbto");
-    			add_location(div0, file$5, 42, 4, 1137);
-    			if (img1.src !== (img1_src_value = /*pbpImage*/ ctx[4])) attr_dev(img1, "src", img1_src_value);
-    			attr_dev(img1, "alt", "pbp");
-    			attr_dev(img1, "class", "svelte-1owfbto");
-    			add_location(img1, file$5, 59, 8, 1945);
-    			attr_dev(div1, "class", "pName svelte-1owfbto");
-    			add_location(div1, file$5, 60, 8, 1987);
-    			attr_dev(div2, "class", "pbp2 svelte-1owfbto");
-    			add_location(div2, file$5, 58, 4, 1917);
-    			if (img2.src !== (img2_src_value = /*colorImage*/ ctx[5])) attr_dev(img2, "src", img2_src_value);
-    			attr_dev(img2, "alt", "color");
-    			attr_dev(img2, "class", "svelte-1owfbto");
-    			add_location(img2, file$5, 63, 8, 2069);
-    			attr_dev(div3, "class", "pName svelte-1owfbto");
-    			add_location(div3, file$5, 64, 8, 2115);
-    			attr_dev(div4, "class", "color2 svelte-1owfbto");
-    			add_location(div4, file$5, 62, 4, 2039);
-    			attr_dev(div5, "class", "container svelte-1owfbto");
-    			add_location(div5, file$5, 41, 0, 1044);
+    			add_location(div0, file$5, 42, 4, 1124);
+    			attr_dev(div1, "class", "container svelte-1owfbto");
+    			add_location(div1, file$5, 41, 0, 1044);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, div0);
-    			append_dev(div0, img0);
-    			append_dev(div5, t0);
-    			if (if_block0) if_block0.m(div5, null);
-    			append_dev(div5, t1);
-    			if (if_block1) if_block1.m(div5, null);
-    			append_dev(div5, t2);
-    			append_dev(div5, div2);
-    			append_dev(div2, img1);
-    			append_dev(div2, t3);
-    			append_dev(div2, div1);
-    			append_dev(div1, t4);
-    			append_dev(div5, t5);
-    			append_dev(div5, div4);
-    			append_dev(div4, img2);
-    			append_dev(div4, t6);
-    			append_dev(div4, div3);
-    			append_dev(div3, t7);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+    			append_dev(div0, img);
+    			append_dev(div1, t0);
+    			if (if_block0) if_block0.m(div1, null);
+    			append_dev(div1, t1);
+    			if (if_block1) if_block1.m(div1, null);
+    			append_dev(div1, t2);
+    			info.block.m(div1, info.anchor = null);
+    			info.mount = () => div1;
+    			info.anchor = t3;
+    			append_dev(div1, t3);
+    			info_1.block.m(div1, info_1.anchor = null);
+    			info_1.mount = () => div1;
+    			info_1.anchor = null;
     			current = true;
     		},
-    		p: function update(ctx, [dirty]) {
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+
     			if (/*pbpVideo*/ ctx[0] != "null") {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
@@ -13046,7 +13206,7 @@ var app = (function () {
     					if_block0 = create_if_block_1$1(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
-    					if_block0.m(div5, t1);
+    					if_block0.m(div1, t1);
     				}
     			} else if (if_block0) {
     				group_outros();
@@ -13069,7 +13229,7 @@ var app = (function () {
     					if_block1 = create_if_block$2(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
-    					if_block1.m(div5, t2);
+    					if_block1.m(div1, t2);
     				}
     			} else if (if_block1) {
     				group_outros();
@@ -13081,17 +13241,17 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty & /*pbpImage*/ 16 && img1.src !== (img1_src_value = /*pbpImage*/ ctx[4])) {
-    				attr_dev(img1, "src", img1_src_value);
+    			info.ctx = ctx;
+
+    			if (dirty & /*pbpImage*/ 16 && promise !== (promise = preload$1(/*pbpImage*/ ctx[4])) && handle_promise(promise, info)) ; else {
+    				update_await_block_branch(info, ctx, dirty);
     			}
 
-    			if (!current || dirty & /*pbpName*/ 4) set_data_dev(t4, /*pbpName*/ ctx[2]);
+    			info_1.ctx = ctx;
 
-    			if (!current || dirty & /*colorImage*/ 32 && img2.src !== (img2_src_value = /*colorImage*/ ctx[5])) {
-    				attr_dev(img2, "src", img2_src_value);
+    			if (dirty & /*colorImage*/ 32 && promise_1 !== (promise_1 = preload$1(/*colorImage*/ ctx[5])) && handle_promise(promise_1, info_1)) ; else {
+    				update_await_block_branch(info_1, ctx, dirty);
     			}
-
-    			if (!current || dirty & /*colorName*/ 8) set_data_dev(t7, /*colorName*/ ctx[3]);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -13099,18 +13259,8 @@ var app = (function () {
     			transition_in(if_block1);
 
     			add_render_callback(() => {
-    				if (!div5_transition) div5_transition = create_bidirectional_transition(
-    					div5,
-    					fade,
-    					{
-    						delay: 1500,
-    						duration: 1000,
-    						ease: "circ"
-    					},
-    					true
-    				);
-
-    				div5_transition.run(1);
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, true);
+    				div1_transition.run(1);
     			});
 
     			current = true;
@@ -13118,26 +13268,21 @@ var app = (function () {
     		o: function outro(local) {
     			transition_out(if_block0);
     			transition_out(if_block1);
-
-    			if (!div5_transition) div5_transition = create_bidirectional_transition(
-    				div5,
-    				fade,
-    				{
-    					delay: 1500,
-    					duration: 1000,
-    					ease: "circ"
-    				},
-    				false
-    			);
-
-    			div5_transition.run(0);
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, false);
+    			div1_transition.run(0);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div5);
+    			if (detaching) detach_dev(div1);
     			if (if_block0) if_block0.d();
     			if (if_block1) if_block1.d();
-    			if (detaching && div5_transition) div5_transition.end();
+    			info.block.d();
+    			info.token = null;
+    			info = null;
+    			info_1.block.d();
+    			info_1.token = null;
+    			info_1 = null;
+    			if (detaching && div1_transition) div1_transition.end();
     		}
     	};
 
