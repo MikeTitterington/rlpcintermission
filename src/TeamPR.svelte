@@ -32,7 +32,7 @@
     @font-face {
         font-family: 'Evogria';
         src:
-            url('./Evogria.otf');
+            url('../assets/Evogria.otf');
     }
 
     img {

@@ -47,6 +47,13 @@
     </button>
 </div>
 <style>
+
+    @font-face {
+        font-family: 'Evogria';
+        src:
+            url('../assets/Evogria.otf');
+    }
+
     h1 {
         color: #ffc15e;
         position: absolute;
@@ -58,6 +65,7 @@
         font-size: 50px;
         line-height: 60px;
         top:-20px;
+        font-family: Evogria;
     }
 
     button {
