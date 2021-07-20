@@ -12795,7 +12795,7 @@ var app = (function () {
         
     };
 
-    function fade$1(node, { delay = 0, duration = 400, easing = identity } = {}) {
+    function fade(node, { delay = 0, duration = 400, easing = identity } = {}) {
         const o = +getComputedStyle(node).opacity;
         return {
             delay,
@@ -12846,14 +12846,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade$1, { duration: 3000 }, true);
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, true);
     				div_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade$1, { duration: 3000 }, false);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, false);
     			div_transition.run(0);
     			current = false;
     		},
@@ -12910,14 +12910,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade$1, { duration: 3000 }, true);
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, true);
     				div_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade$1, { duration: 3000 }, false);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, false);
     			div_transition.run(0);
     			current = false;
     		},
@@ -13006,14 +13006,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade$1, { duration: 3000 }, true);
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, true);
     				div1_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade$1, { duration: 3000 }, false);
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, false);
     			div1_transition.run(0);
     			current = false;
     		},
@@ -13124,14 +13124,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade$1, { duration: 3000 }, true);
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, true);
     				div1_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade$1, { duration: 3000 }, false);
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 3000 }, false);
     			div1_transition.run(0);
     			current = false;
     		},
@@ -13329,7 +13329,7 @@ var app = (function () {
     			transition_in(info_1.block);
 
     			add_render_callback(() => {
-    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade$1, { duration: 1000, ease: "circ" }, true);
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, true);
     				div1_transition.run(1);
     			});
 
@@ -13349,7 +13349,7 @@ var app = (function () {
     				transition_out(block);
     			}
 
-    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade$1, { duration: 1000, ease: "circ" }, false);
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, fade, { duration: 1000, ease: "circ" }, false);
     			div1_transition.run(0);
     			current = false;
     		},
@@ -13431,7 +13431,7 @@ var app = (function () {
     	});
 
     	$$self.$capture_state = () => ({
-    		fade: fade$1,
+    		fade,
     		onMount,
     		pbpVideo,
     		colorVideo,
@@ -14116,7 +14116,7 @@ var app = (function () {
     			add_render_callback(() => {
     				if (!div1_transition) div1_transition = create_bidirectional_transition(
     					div1,
-    					fade$1,
+    					fade,
     					{
     						delay: 1500,
     						duration: 1000,
@@ -14135,7 +14135,7 @@ var app = (function () {
 
     			if (!div1_transition) div1_transition = create_bidirectional_transition(
     				div1,
-    				fade$1,
+    				fade,
     				{
     					delay: 1500,
     					duration: 1000,
@@ -14197,7 +14197,7 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
-    		fade: fade$1,
+    		fade,
     		Ticker,
     		store,
     		onMount,
@@ -14338,14 +14338,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade$1, { duration: 3000 }, true);
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, true);
     				div_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade$1, { duration: 3000 }, false);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 3000 }, false);
     			div_transition.run(0);
     			current = false;
     		},
@@ -14501,7 +14501,7 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
-    		fade: fade$1,
+    		fade,
     		team,
     		logo,
     		standing,
@@ -22123,7 +22123,7 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!h1_transition) h1_transition = create_bidirectional_transition(h1, fade$1, { duration: 3000 }, true);
+    				if (!h1_transition) h1_transition = create_bidirectional_transition(h1, fade, { duration: 3000 }, true);
     				h1_transition.run(1);
     			});
 
@@ -22134,7 +22134,7 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!h1_transition) h1_transition = create_bidirectional_transition(h1, fade$1, { duration: 3000 }, false);
+    			if (!h1_transition) h1_transition = create_bidirectional_transition(h1, fade, { duration: 3000 }, false);
     			h1_transition.run(0);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -22213,7 +22213,7 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
-    		fade: fade$1,
+    		fade,
     		onMount,
     		store,
     		TeamPR,
@@ -22267,7 +22267,6 @@ var app = (function () {
     }
 
     /* src\DefaultScene.svelte generated by Svelte v3.38.3 */
-
     const file$1 = "src\\DefaultScene.svelte";
 
     function create_fragment$1(ctx) {
@@ -22283,9 +22282,9 @@ var app = (function () {
     			img = element("img");
     			if (img.src !== (img_src_value = "https://media.discordapp.net/attachments/854484965080039444/866892026549501992/rlpcbackgroundfinal.png?width=1920&height=1080")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "class", "svelte-1b4nkp6");
-    			add_location(img, file$1, 1, 4, 79);
+    			add_location(img, file$1, 5, 4, 148);
     			attr_dev(div, "class", "contain svelte-1b4nkp6");
-    			add_location(div, file$1, 0, 0, 0);
+    			add_location(div, file$1, 4, 0, 69);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -22328,7 +22327,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$1($$self, $$props) {
+    function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("DefaultScene", slots, []);
     	const writable_props = [];
@@ -22337,6 +22336,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<DefaultScene> was created with unknown prop '${key}'`);
     	});
 
+    	$$self.$capture_state = () => ({ fade });
     	return [];
     }
 

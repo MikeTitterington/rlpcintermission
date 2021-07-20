@@ -1,3 +1,7 @@
+<script>
+    import { fade } from 'svelte/transition'
+</script>
+
 <div class='contain'  transition:fade="{{ duration:1000, ease:'circ' }}">
     <img src='https://media.discordapp.net/attachments/854484965080039444/866892026549501992/rlpcbackgroundfinal.png?width=1920&height=1080'>
 </div>
