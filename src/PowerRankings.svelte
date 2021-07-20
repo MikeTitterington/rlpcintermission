@@ -51,33 +51,35 @@
     @font-face {
         font-family: 'Evogria';
         src:
-            url('../assets/Evogria.otf');
+            url('../Evogria.otf');
     }
 
     h1 {
         color: #ffc15e;
         position: absolute;
         width: 900px;
-        height: 866px;
+        height: 886px;
         left: 30px;
         text-align: center;
         background-color: #1c1c1c;
         font-size: 50px;
-        line-height: 60px;
+        line-height: 80px;
         top:-20px;
         font-family: Evogria;
+        border: #f4faff 1px solid;
     }
 
     button {
         position: absolute;
         z-index: 2;
         left: 980px;
+        display: none;
     }
 
     .contain {
         position: absolute;
-        top: 0%;
-        left: 0%;
+        top: 80px;
+        left: 480px;
         height: 900px;
         width: 960px;
         background-color: #1c1c1c;

@@ -32,12 +32,12 @@
     @font-face {
         font-family: 'Evogria';
         src:
-            url('../assets/Evogria.otf');
+            url('../Evogria.otf');
     }
 
     img {
         position: absolute;
-        right: 0;
+        right: 1px;
         height: 100px;
         width: 100px;
         object-fit: contain;
@@ -57,6 +57,7 @@
         font-size: 35px;
         font-family: Evogria;
         color: #ffc15e;
+        border: #f4faff 1px solid;
     }
 
     .place {
