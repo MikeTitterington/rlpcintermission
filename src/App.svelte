@@ -5,6 +5,7 @@
 	import Caster from "./Caster.svelte";
 	import Desk from "./Desk.svelte";
 	import PowerRankings from "./PowerRankings.svelte";
+	import DefaultScene from "./DefaultScene.svelte";
 
 	onMount(() => {
 		store.currentScene(currentMessage => {
@@ -25,6 +26,8 @@
 		<Desk />
 	{:else if currentScene == 'power'}
 		<PowerRankings />
+	{:else if currentScene == 'default'}
+		<DefaultScene />
 	{:else}
 		<p>IDK</p>
 	{/if}
