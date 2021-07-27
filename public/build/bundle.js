@@ -22488,7 +22488,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (42:8) {#each powerRankings as team (team.id)}
+    // (41:8) {#each powerRankings as team (team.id)}
     function create_each_block$1(key_1, ctx) {
     	let first;
     	let teampr;
@@ -22547,7 +22547,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(42:8) {#each powerRankings as team (team.id)}",
+    		source: "(41:8) {#each powerRankings as team (team.id)}",
     		ctx
     	});
 
@@ -22598,14 +22598,14 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Download Image";
     			attr_dev(h1, "class", "svelte-1si54f");
-    			add_location(h1, file$4, 40, 8, 1127);
+    			add_location(h1, file$4, 39, 8, 1183);
     			attr_dev(div0, "class", "contain svelte-1si54f");
     			attr_dev(div0, "id", "image");
-    			add_location(div0, file$4, 39, 4, 1085);
+    			add_location(div0, file$4, 38, 4, 1141);
     			attr_dev(button, "class", "svelte-1si54f");
-    			add_location(button, file$4, 45, 4, 1386);
+    			add_location(button, file$4, 44, 4, 1442);
     			attr_dev(div1, "class", "back svelte-1si54f");
-    			add_location(div1, file$4, 38, 0, 1009);
+    			add_location(div1, file$4, 37, 0, 1065);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -22703,9 +22703,8 @@ var app = (function () {
     	var link = document.createElement("a");
     	link.download = name;
     	link.href = uri;
-    	document.body.appendChild(link);
+    	document.getElementById("image").appendChild(link);
     	link.click();
-    	clearDynamicLink(link);
     }
 
     function instance$4($$self, $$props, $$invalidate) {
@@ -22727,8 +22726,12 @@ var app = (function () {
     	function DownloadAsImage() {
     		var element = document.getElementById("image");
 
-    		html2canvas(element).then(function (canvas) {
-    			var myImage = canvas.toDataURL();
+    		html2canvas(element, {
+    			logging: true,
+    			letterRendering: 1,
+    			allowTaint: false
+    		}).then(function (canvas) {
+    			var myImage = canvas.toDataURL("image/png");
     			downloadURI(myImage, league + ".png");
     		});
     	}

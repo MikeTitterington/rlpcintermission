@@ -22,17 +22,16 @@
 
         link.download = name;
         link.href = uri;
-        document.body.appendChild(link);
+        document.getElementById("image").appendChild(link);
         link.click();
-        clearDynamicLink(link); 
     }
 
     function DownloadAsImage() {
         var element = document.getElementById("image");
-        html2canvas(element).then(function (canvas) {
-            var myImage = canvas.toDataURL();
+        html2canvas( element, { logging: true, letterRendering: 1,  allowTaint: false } ).then(function (canvas) {
+            var myImage = canvas.toDataURL('image/png');
             downloadURI(myImage, league + ".png");
-        });
+        })
     }
 
 </script>
@@ -73,7 +72,7 @@
         position: absolute;
         z-index: 2;
         left: 980px;
-        /* display: none; */
+        display: none;
     }
 
     .contain {
