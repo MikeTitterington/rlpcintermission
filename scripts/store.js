@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import jQuery from 'jquery';
+import { tweened } from 'svelte/motion';
 export const pbpVideo = writable('');
 export const colorVideo = writable('');
 export const pbpName = writable('');
@@ -8,9 +9,14 @@ export const pbpImage = writable('');
 export const colorImage = writable('');
 export const tickerInfo = writable('');
 export const currentScene = writable('desk');
+export const casterDisplay = tweened(0, {
+  duration: 1000
+});;
 export const powerRankings = writable([]);
 export const tonightGames = writable([]);
 export const league = writable('');
+export const teamPlayers1 = writable([]);
+
 let stop = false;
 import WsSubscribers from '../scripts/ws_subscriber.js';
 
@@ -541,6 +547,7 @@ WsSubscribers.subscribe("sos", "casters_update", (d) => {
     colorVideo.set(d['casters']['right']['obs']);
     stop = true;
     currentScene.set('caster');
+    casterDisplay.set(1);
   });
 
 function updateCasters() {
@@ -559,6 +566,9 @@ function updateCasters() {
                 var games3 = {top:600};
                 var games4 = {top:850};
                 var games = [];
+                var player1 = {};
+                var team1 = [];
+                var team2 = [];
                 for (i = 0; i < entry.length; i++) {
                     let test = obj['feed']['entry'][i]['title']['$t'].slice(-2);
                     if (obj['feed']['entry'][i]['title']['$t'] == "H12") {
@@ -758,6 +768,12 @@ function updateCasters() {
                         league.set(obj['feed']['entry'][i]['content']['$t']);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "F7") {
                         currentScene.set(obj['feed']['entry'][i]['content']['$t']);
+                        if (obj['feed']['entry'][i]['content']['$t'] == 'caster') {
+                          casterDisplay.set(1);
+                        } else {
+                          casterDisplay.set(0);
+
+                        }
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "N8") {
                         games1['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "O8") {
@@ -790,12 +806,39 @@ function updateCasters() {
                         games4['team1']=[obj['feed']['entry'][i]['content']['$t']];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "O19") {
                         games4['team2']=[obj['feed']['entry'][i]['content']['$t']];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M30") {
+                      player1['name']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N30") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player1['goals']=0.00;
+                      } else {
+                        player1['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O30") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player1['assists']=0.00;
+                      } else {
+                        player1['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P30") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player1['saves']=0.00;
+                      } else {
+                        player1['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q30") {
+                      player1['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R30") {
+                      player1['mmr']=obj['feed']['entry'][i]['content']['$t'];
                     }
                 }
                 games.push(games1);
                 games.push(games2);
                 games.push(games3);
                 games.push(games4);
+                team1.push(player1);
+                console.log(team1)
+                teamPlayers1.set(team1);
                 tickerInfo.set(tickerInfoLocal);
                 powerRankings.set(powerRankingsLocal);
                 tonightGames.set(games);
@@ -820,6 +863,8 @@ export default {
 	tickerInfo: tickerInfo.subscribe,
 	powerRankings: powerRankings.subscribe,
 	league: league.subscribe,
-	tonightGames: tonightGames.subscribe
+	tonightGames: tonightGames.subscribe,
+	teamPlayers1: teamPlayers1.subscribe,
+	casterDisplay: casterDisplay.subscribe
     
 }

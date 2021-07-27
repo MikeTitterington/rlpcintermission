@@ -1,4 +1,5 @@
 <script>
+	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import store from '../scripts/store.js';
 	export let currentScene;
@@ -6,31 +7,37 @@
 	import Desk from "./Desk.svelte";
 	import PowerRankings from "./PowerRankings.svelte";
 	import DefaultScene from "./DefaultScene.svelte";
-
+	import PlayerCard from "./PlayerCard.svelte";
+	let casterDisplay = 0;
 	onMount(() => {
 		store.currentScene(currentMessage => {
 			currentScene = currentMessage;
 		})
+		store.casterDisplay(currentMessage => {
+			casterDisplay = currentMessage;
+		})
     });
 </script>
-
 <svelte:head>
 	<title>RLPC Media Team Site</title>
 	<html lang="en" />
 </svelte:head>
 
 <main>
-	{#if currentScene == 'caster'}
-		<Caster />
-	{:else if currentScene == 'desk'}
+		
+	{#if currentScene == 'desk'}
 		<Desk />
 	{:else if currentScene == 'power'}
 		<PowerRankings />
 	{:else if currentScene == 'default'}
 		<DefaultScene />
-	{:else}
-		<p>IDK</p>
+	{:else if currentScene == 'player'}
+		<PlayerCard />
 	{/if}
+	
+	<div style='opacity:{casterDisplay}' transition:fade="{{ duration:3000, ease:'circ' }}">
+		<Caster />
+	</div>
 </main>
 
 <style>

@@ -73,7 +73,7 @@
         position: absolute;
         z-index: 2;
         left: 980px;
-        display: none;
+        /* display: none; */
     }
 
     .contain {
