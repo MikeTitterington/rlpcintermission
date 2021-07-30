@@ -9,12 +9,16 @@
 	import DefaultScene from "./DefaultScene.svelte";
 	import PlayerCard from "./PlayerCard.svelte";
 	let casterDisplay = 0;
+	let deskDisplay = 0;
 	onMount(() => {
 		store.currentScene(currentMessage => {
 			currentScene = currentMessage;
 		})
 		store.casterDisplay(currentMessage => {
 			casterDisplay = currentMessage;
+		})
+		store.deskDisplay(currentMessage => {
+			deskDisplay = currentMessage;
 		})
     });
 </script>
@@ -34,7 +38,9 @@
 	{:else if currentScene == 'player'}
 		<PlayerCard />
 	{/if}
-	
+	<div style='opacity:{deskDisplay}' transition:fade="{{ duration:3000, ease:'circ' }}">
+		<Desk />
+	</div>
 	<div style='opacity:{casterDisplay}' transition:fade="{{ duration:3000, ease:'circ' }}">
 		<Caster />
 	</div>

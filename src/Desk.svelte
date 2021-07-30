@@ -4,9 +4,15 @@
 	import GameDesk from './GameDesk.svelte';
 	import store from '../scripts/store.js';
 	import { onMount } from 'svelte';
+	import DefaultScene from "./DefaultScene.svelte";
+	import DeskTicker from "./DeskTicker.svelte";
 
     export let tickerInfo = '';
     export let tonightGames = [];
+    let deskVideo = '';
+    let anal1Video = '';
+    let anal2Video = '';
+    let numb = '';
     
     onMount(() => {
 		store.tickerInfo(currentMessage => {
@@ -15,30 +21,69 @@
 		store.tonightGames(currentMessage => {
 			tonightGames = currentMessage;
 		})
+		store.deskVideo(currentMessage => {
+			deskVideo = currentMessage;
+		})
+		store.anal1Video(currentMessage => {
+			anal1Video = currentMessage;
+		})
+		store.anal2Video(currentMessage => {
+			anal2Video = currentMessage;
+		})
+		store.numb(currentMessage => {
+			numb = currentMessage;
+		})
     });
-    
-    
-    let props = {
-		direction: ['left', [ 'left', 'right', 'top', 'bottom' ]],
-		duration: 30,
-		delay: 0,
-		loop: true,
-		pausing: true,
-		alternate: false,
-		behavior: ['auto', [ 'auto', 'always' ]]
-	};
 </script>
 <div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ'}}">
+    <img src='assets\Background.png' alt='left bar'/>
+    <img src='assets\Left_Red_Bar.png' alt='left bar'/>
+    <img src='assets\Bottom_Ticker_Tape.png' alt='ticker'/>
+    <div class='topLeft'>
+        <img src='assets\RLPC_Desk_Bar.png' alt='RLPC bar'/>
+        <img src='assets\Left_Red_Bar.png' alt='left bar'/>
+        <p class='rlpcDesk'>RLPC DESK</p>
+        <p class='tonightDesk'>TODAY'S MATCHES</p>
+    </div>
+    <img src='assets\Todays_Matches_Bar.png' alt='left bar'/>
     {#each tonightGames as game (game.time)}
         <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
     {/each}
-    <div class='ticker'>
-        {#if tickerInfo != ''}
-            <Ticker behavior='always' duration=120>
-                {@html tickerInfo}
-            </Ticker>
+    <DeskTicker />
+    
+    {#if numb == '3'}
+        <img src='assets\3_Boxes.png' alt='left bar'/>
+        {#if deskVideo != 'null'}
+            <div class='desk'>
+                <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
         {/if}
-    </div>
+        
+        {#if anal1Video != 'null'}
+            <div class='anal1'>
+                <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
+        {/if}
+
+        {#if anal2Video != 'null'}
+            <div class='anal2'>
+                <iframe allowtransparency="true" src="{anal2Video}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
+        {/if}
+    {:else}
+        <img src='assets\2_Boxes.png' alt='left bar'/>
+        {#if deskVideo != 'null'}
+            <div class='desk2'>
+                <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
+        {/if}
+        
+        {#if anal1Video != 'null'}
+            <div class='anal12'>
+                <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
+        {/if}
+    {/if}
 </div>
 
 <style>
@@ -55,6 +100,87 @@
             local('Chosence Regular'), url('Chosence Regular.otf') format("opentype");
     }
 
+    
+    .desk {
+        position: absolute;
+        top: 159px;
+        left: 446px;
+        width: 642px;
+        height: 356px;
+        z-index: 2;
+    }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+    }
+
+    .anal1 {
+        position: absolute;
+        top: 159px;
+        left: 1159px;
+        width: 642px;
+        height: 356px;
+        z-index: 2;
+    }
+
+    .desk2 {
+        position: absolute;
+        top: 315px;
+        left: 390px;
+        width: 688px;
+        height: 384px;
+        z-index: 2;
+    }
+
+    .anal12 {
+        position: absolute;
+        top: 315px;
+        left: 1155px;
+        width: 688px;
+        height: 384px;
+        z-index: 2;
+    }
+
+    .anal2 {
+        position: absolute;
+        top: 578px;
+        left: 802px;
+        width: 642px;
+        height: 356px;
+        z-index: 2;
+    }
+    
+
+    .topLeft {
+        color: white;
+        font-style: italic;
+        letter-spacing: 3px;
+    }
+
+    .rlpcDesk {
+        top: -5.5%;
+        width: 434px;
+        text-align: center;
+        position: absolute;
+        z-index: 1;
+        height: 95px;
+        line-height: 95px;
+        font-size: 60px;
+    }
+
+    .tonightDesk {
+        top: 5%;
+        width: 400px;
+        left: -1%;
+        text-align: center;
+        position: absolute;
+        z-index: 1;
+        height: 95px;
+        line-height: 95px;
+        font-size: 35px;
+    }
+
     .container {
         position: absolute;
         height: 1080px;
@@ -62,18 +188,11 @@
         overflow: hidden;
         top: 0%;
         left: 0%;
+        font-family: 'Evogria';
     }
 
-    .ticker {
-        background: #1c1c1c;
+    img {
         position: absolute;
-        bottom: 0%;
-        left: 0%;
-        width: 100%;
-        overflow: hidden;
-        color: #C1EDCC;
-        font-size: 30px;
-        font-family: 'Chosence';
     }
 
 </style>

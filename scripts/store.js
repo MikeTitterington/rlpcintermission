@@ -3,13 +3,20 @@ import jQuery from 'jquery';
 import { tweened } from 'svelte/motion';
 export const pbpVideo = writable('');
 export const colorVideo = writable('');
+export const deskVideo = writable('');
+export const anal1Video = writable('');
+export const anal2Video = writable('');
 export const pbpName = writable('');
 export const colorName = writable('');
 export const pbpImage = writable('');
 export const colorImage = writable('');
 export const tickerInfo = writable('');
+export const numb = writable('3');
 export const currentScene = writable('desk');
 export const casterDisplay = tweened(0, {
+  duration: 1000
+});;
+export const deskDisplay = tweened(0, {
   duration: 1000
 });;
 export const powerRankings = writable([]);
@@ -561,10 +568,10 @@ function updateCasters() {
                 var tickerInfoLocal = '';
                 var powerRankingsLocal = [];
                 var entry = obj['feed']['entry'];
-                var games1 = {top:100};
-                var games2 = {top:350};
-                var games3 = {top:600};
-                var games4 = {top:850};
+                var games1 = {top:185};
+                var games2 = {top:395};
+                var games3 = {top:610};
+                var games4 = {top:815};
                 var games = [];
                 var player1 = {};
                 var team1 = [];
@@ -774,6 +781,12 @@ function updateCasters() {
                           casterDisplay.set(0);
 
                         }
+                        if (obj['feed']['entry'][i]['content']['$t'] == 'desk') {
+                          deskDisplay.set(1);
+                        } else {
+                          deskDisplay.set(0);
+
+                        }
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "N8") {
                         games1['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "O8") {
@@ -830,6 +843,14 @@ function updateCasters() {
                       player1['games']=obj['feed']['entry'][i]['content']['$t'];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "R30") {
                       player1['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N3") {
+                      numb.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "H14") {
+                      deskVideo.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "H15") {
+                      anal1Video.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "H16") {
+                      anal2Video.set(obj['feed']['entry'][i]['content']['$t']);
                     }
                 }
                 games.push(games1);
@@ -865,6 +886,11 @@ export default {
 	league: league.subscribe,
 	tonightGames: tonightGames.subscribe,
 	teamPlayers1: teamPlayers1.subscribe,
-	casterDisplay: casterDisplay.subscribe
+	casterDisplay: casterDisplay.subscribe,
+	deskDisplay: deskDisplay.subscribe,
+	deskVideo: deskVideo.subscribe,
+	anal1Video: anal1Video.subscribe,
+	anal2Video: anal2Video.subscribe,
+	numb: numb.subscribe
     
 }
