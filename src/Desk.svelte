@@ -37,11 +37,10 @@
 </script>
 <div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ'}}">
     <img src='assets\Background.png' alt='left bar'/>
-    <img src='assets\Left_Red_Bar.png' alt='left bar'/>
     <img src='assets\Bottom_Ticker_Tape.png' alt='ticker'/>
+    <img src='assets\RLPC_Desk_Bar.png' alt='RLPC bar'/>
+    <img src='assets\Left_Red_Bar.png' alt='left bar'/>
     <div class='topLeft'>
-        <img src='assets\RLPC_Desk_Bar.png' alt='RLPC bar'/>
-        <img src='assets\Left_Red_Bar.png' alt='left bar'/>
         <p class='rlpcDesk'>RLPC DESK</p>
         <p class='tonightDesk'>TODAY'S MATCHES</p>
     </div>
