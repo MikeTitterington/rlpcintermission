@@ -43,13 +43,13 @@
     {#if currentScene == 'desk'}
         <img src='assets\Background.png' alt='left bar'/>
         <div transition:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}">
-            <img src='assets\RLPC_Desk_Bar.png' alt='RLPC bar'/>
-            <img src='assets\Left_Red_Bar.png' alt='left bar'/>
+            <img src='assets/RLPC_Desk_Bar.png' alt='RLPC bar'/>
+            <img src='assets/Left_Red_Bar.png' alt='left bar'/>
             <div class='topLeft'>
                 <p class='rlpcDesk'>RLPC DESK</p>
                 <p class='tonightDesk'>TODAY'S MATCHES</p>
             </div>
-            <img src='assets\Todays_Matches_Bar.png' alt='left bar'/>
+            <img src='assets/Todays_Matches_Bar.png' alt='left bar'/>
         </div>
         <div transition:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}">
             {#each tonightGames as game (game.time)}
@@ -57,7 +57,7 @@
             {/each}
         </div>
         <div transition:fly="{{ duration:2000, delay: 500, ease:'circ', y:1000}}">
-            <img src='assets\Bottom_Ticker_Tape.png' alt='ticker'/>
+            <img src='assets/Bottom_Ticker_Tape.png' alt='ticker'/>
             <DeskTicker />
         </div>
 	{/if}
