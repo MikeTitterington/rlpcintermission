@@ -13076,6 +13076,8 @@ var app = (function () {
     	let div;
     	let iframe;
     	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -13094,14 +13096,51 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, iframe);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*pbpVideo*/ 1 && iframe.src !== (iframe_src_value = /*pbpVideo*/ ctx[0])) {
+    			if (!current || dirty & /*pbpVideo*/ 1 && iframe.src !== (iframe_src_value = /*pbpVideo*/ ctx[0])) {
     				attr_dev(iframe, "src", iframe_src_value);
     			}
     		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
     		}
     	};
 
@@ -13121,6 +13160,8 @@ var app = (function () {
     	let div;
     	let iframe;
     	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -13132,21 +13173,58 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$a, 54, 12, 1581);
+    			add_location(iframe, file$a, 54, 12, 1644);
     			attr_dev(div, "class", "color svelte-1owfbto");
-    			add_location(div, file$a, 53, 8, 1548);
+    			add_location(div, file$a, 53, 8, 1611);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, iframe);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*colorVideo*/ 2 && iframe.src !== (iframe_src_value = /*colorVideo*/ ctx[1])) {
+    			if (!current || dirty & /*colorVideo*/ 2 && iframe.src !== (iframe_src_value = /*colorVideo*/ ctx[1])) {
     				attr_dev(iframe, "src", iframe_src_value);
     			}
     		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
     		}
     	};
 
@@ -13204,11 +13282,11 @@ var app = (function () {
     			if (img.src !== (img_src_value = /*pbpImage*/ ctx[4])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "pbp");
     			attr_dev(img, "class", "svelte-1owfbto");
-    			add_location(img, file$a, 59, 12, 1858);
+    			add_location(img, file$a, 59, 12, 1984);
     			attr_dev(div0, "class", "pName svelte-1owfbto");
-    			add_location(div0, file$a, 60, 12, 1904);
+    			add_location(div0, file$a, 60, 12, 2030);
     			attr_dev(div1, "class", "pbp2 svelte-1owfbto");
-    			add_location(div1, file$a, 58, 8, 1788);
+    			add_location(div1, file$a, 58, 8, 1914);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -13322,11 +13400,11 @@ var app = (function () {
     			if (img.src !== (img_src_value = /*colorImage*/ ctx[5])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "color");
     			attr_dev(img, "class", "svelte-1owfbto");
-    			add_location(img, file$a, 65, 12, 2091);
+    			add_location(img, file$a, 65, 12, 2217);
     			attr_dev(div0, "class", "pName svelte-1owfbto");
-    			add_location(div0, file$a, 66, 12, 2141);
+    			add_location(div0, file$a, 66, 12, 2267);
     			attr_dev(div1, "class", "color2 svelte-1owfbto");
-    			add_location(div1, file$a, 64, 8, 2019);
+    			add_location(div1, file$a, 64, 8, 2145);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -13488,27 +13566,47 @@ var app = (function () {
     			if (/*pbpVideo*/ ctx[0] != "null") {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
+
+    					if (dirty & /*pbpVideo*/ 1) {
+    						transition_in(if_block0, 1);
+    					}
     				} else {
     					if_block0 = create_if_block_1$2(ctx);
     					if_block0.c();
+    					transition_in(if_block0, 1);
     					if_block0.m(div1, t1);
     				}
     			} else if (if_block0) {
-    				if_block0.d(1);
-    				if_block0 = null;
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
     			}
 
     			if (/*colorVideo*/ ctx[1] != "null") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
+
+    					if (dirty & /*colorVideo*/ 2) {
+    						transition_in(if_block1, 1);
+    					}
     				} else {
     					if_block1 = create_if_block$4(ctx);
     					if_block1.c();
+    					transition_in(if_block1, 1);
     					if_block1.m(div1, t2);
     				}
     			} else if (if_block1) {
-    				if_block1.d(1);
-    				if_block1 = null;
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
     			}
 
     			info.ctx = ctx;
@@ -13525,11 +13623,16 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
+    			transition_in(if_block0);
+    			transition_in(if_block1);
     			transition_in(info.block);
     			transition_in(info_1.block);
     			current = true;
     		},
     		o: function outro(local) {
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+
     			for (let i = 0; i < 3; i += 1) {
     				const block = info.blocks[i];
     				transition_out(block);
@@ -15164,7 +15267,7 @@ var app = (function () {
     }
 
     // (43:4) {#if currentScene == 'desk'}
-    function create_if_block_6(ctx) {
+    function create_if_block$1(ctx) {
     	let img0;
     	let img0_src_value;
     	let t0;
@@ -15195,6 +15298,10 @@ var app = (function () {
     	let t9;
     	let deskticker;
     	let div3_transition;
+    	let t10;
+    	let current_block_type_index;
+    	let if_block;
+    	let if_block_anchor;
     	let current;
     	let each_value = /*tonightGames*/ ctx[0];
     	validate_each_argument(each_value);
@@ -15208,6 +15315,16 @@ var app = (function () {
     	}
 
     	deskticker = new DeskTicker({ $$inline: true });
+    	const if_block_creators = [create_if_block_1$1, create_else_block];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*numb*/ ctx[4] == "3") return 0;
+    		return 1;
+    	}
+
+    	current_block_type_index = select_block_type(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	const block = {
     		c: function create() {
@@ -15238,35 +15355,38 @@ var app = (function () {
     			img4 = element("img");
     			t9 = space();
     			create_component(deskticker.$$.fragment);
+    			t10 = space();
+    			if_block.c();
+    			if_block_anchor = empty();
     			if (img0.src !== (img0_src_value = "assets\\Background.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "left bar");
     			attr_dev(img0, "class", "svelte-1yobklh");
-    			add_location(img0, file$5, 43, 8, 1178);
+    			add_location(img0, file$5, 43, 8, 1229);
     			if (img1.src !== (img1_src_value = "assets/RLPC_Desk_Bar.png")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "RLPC bar");
     			attr_dev(img1, "class", "svelte-1yobklh");
-    			add_location(img1, file$5, 45, 12, 1327);
+    			add_location(img1, file$5, 45, 12, 1378);
     			if (img2.src !== (img2_src_value = "assets/Left_Red_Bar.png")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "left bar");
     			attr_dev(img2, "class", "svelte-1yobklh");
-    			add_location(img2, file$5, 46, 12, 1393);
+    			add_location(img2, file$5, 46, 12, 1444);
     			attr_dev(p0, "class", "rlpcDesk svelte-1yobklh");
-    			add_location(p0, file$5, 48, 16, 1497);
+    			add_location(p0, file$5, 48, 16, 1548);
     			attr_dev(p1, "class", "tonightDesk svelte-1yobklh");
-    			add_location(p1, file$5, 49, 16, 1548);
+    			add_location(p1, file$5, 49, 16, 1599);
     			attr_dev(div0, "class", "topLeft svelte-1yobklh");
-    			add_location(div0, file$5, 47, 12, 1458);
+    			add_location(div0, file$5, 47, 12, 1509);
     			if (img3.src !== (img3_src_value = "assets/Todays_Matches_Bar.png")) attr_dev(img3, "src", img3_src_value);
     			attr_dev(img3, "alt", "left bar");
     			attr_dev(img3, "class", "svelte-1yobklh");
-    			add_location(img3, file$5, 51, 12, 1624);
-    			add_location(div1, file$5, 44, 8, 1237);
-    			add_location(div2, file$5, 53, 8, 1707);
+    			add_location(img3, file$5, 51, 12, 1675);
+    			add_location(div1, file$5, 44, 8, 1288);
+    			add_location(div2, file$5, 53, 8, 1758);
     			if (img4.src !== (img4_src_value = "assets/Bottom_Ticker_Tape.png")) attr_dev(img4, "src", img4_src_value);
     			attr_dev(img4, "alt", "ticker");
     			attr_dev(img4, "class", "svelte-1yobklh");
-    			add_location(img4, file$5, 59, 12, 2096);
-    			add_location(div3, file$5, 58, 8, 2008);
+    			add_location(img4, file$5, 59, 12, 2147);
+    			add_location(div3, file$5, 58, 8, 2059);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img0, anchor);
@@ -15294,6 +15414,9 @@ var app = (function () {
     			append_dev(div3, img4);
     			append_dev(div3, t9);
     			mount_component(deskticker, div3, null);
+    			insert_dev(target, t10, anchor);
+    			if_blocks[current_block_type_index].m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -15304,6 +15427,32 @@ var app = (function () {
     				validate_each_keys(ctx, each_value, get_each_context$2, get_key);
     				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div2, outro_and_destroy_block, create_each_block$2, null, get_each_context$2);
     				check_outros();
+    			}
+
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				} else {
+    					if_block.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(if_block_anchor.parentNode, if_block_anchor);
     			}
     		},
     		i: function intro(local) {
@@ -15363,6 +15512,7 @@ var app = (function () {
     				div3_transition.run(1);
     			});
 
+    			transition_in(if_block);
     			current = true;
     		},
     		o: function outro(local) {
@@ -15412,6 +15562,7 @@ var app = (function () {
     			);
 
     			div3_transition.run(0);
+    			transition_out(if_block);
     			current = false;
     		},
     		d: function destroy(detaching) {
@@ -15431,12 +15582,15 @@ var app = (function () {
     			if (detaching) detach_dev(div3);
     			destroy_component(deskticker);
     			if (detaching && div3_transition) div3_transition.end();
+    			if (detaching) detach_dev(t10);
+    			if_blocks[current_block_type_index].d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_6.name,
+    		id: create_if_block$1.name,
     		type: "if",
     		source: "(43:4) {#if currentScene == 'desk'}",
     		ctx
@@ -15511,15 +15665,17 @@ var app = (function () {
     	return block;
     }
 
-    // (87:4) {:else}
+    // (82:8) {:else}
     function create_else_block(ctx) {
     	let img;
     	let img_src_value;
+    	let img_transition;
     	let t0;
     	let t1;
     	let if_block1_anchor;
-    	let if_block0 = /*deskVideo*/ ctx[1] != "null" && create_if_block_5(ctx);
-    	let if_block1 = /*anal1Video*/ ctx[2] != "null" && create_if_block_4(ctx);
+    	let current;
+    	let if_block0 = /*deskVideo*/ ctx[1] != "null" && create_if_block_6(ctx);
+    	let if_block1 = /*anal1Video*/ ctx[2] != "null" && create_if_block_5(ctx);
 
     	const block = {
     		c: function create() {
@@ -15532,7 +15688,7 @@ var app = (function () {
     			if (img.src !== (img_src_value = "assets\\2_Boxes.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
     			attr_dev(img, "class", "svelte-1yobklh");
-    			add_location(img, file$5, 87, 8, 3148);
+    			add_location(img, file$5, 82, 12, 3448);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -15541,38 +15697,97 @@ var app = (function () {
     			insert_dev(target, t1, anchor);
     			if (if_block1) if_block1.m(target, anchor);
     			insert_dev(target, if_block1_anchor, anchor);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
     			if (/*deskVideo*/ ctx[1] != "null") {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
+
+    					if (dirty & /*deskVideo*/ 2) {
+    						transition_in(if_block0, 1);
+    					}
     				} else {
-    					if_block0 = create_if_block_5(ctx);
+    					if_block0 = create_if_block_6(ctx);
     					if_block0.c();
+    					transition_in(if_block0, 1);
     					if_block0.m(t1.parentNode, t1);
     				}
     			} else if (if_block0) {
-    				if_block0.d(1);
-    				if_block0 = null;
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
     			}
 
     			if (/*anal1Video*/ ctx[2] != "null") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
+
+    					if (dirty & /*anal1Video*/ 4) {
+    						transition_in(if_block1, 1);
+    					}
     				} else {
-    					if_block1 = create_if_block_4(ctx);
+    					if_block1 = create_if_block_5(ctx);
     					if_block1.c();
+    					transition_in(if_block1, 1);
     					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
     				}
     			} else if (if_block1) {
-    				if_block1.d(1);
-    				if_block1 = null;
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
     			}
     		},
-    		i: noop$2,
-    		o: noop$2,
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!img_transition) img_transition = create_bidirectional_transition(
+    					img,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				img_transition.run(1);
+    			});
+
+    			transition_in(if_block0);
+    			transition_in(if_block1);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!img_transition) img_transition = create_bidirectional_transition(
+    				img,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			img_transition.run(0);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(img);
+    			if (detaching && img_transition) img_transition.end();
     			if (detaching) detach_dev(t0);
     			if (if_block0) if_block0.d(detaching);
     			if (detaching) detach_dev(t1);
@@ -15585,15 +15800,15 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(87:4) {:else}",
+    		source: "(82:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:4) {#if numb == '3'}
-    function create_if_block$1(ctx) {
+    // (63:8) {#if numb == '3'}
+    function create_if_block_1$1(ctx) {
     	let img;
     	let img_src_value;
     	let img_transition;
@@ -15602,9 +15817,9 @@ var app = (function () {
     	let t2;
     	let if_block2_anchor;
     	let current;
-    	let if_block0 = /*deskVideo*/ ctx[1] != "null" && create_if_block_3$1(ctx);
-    	let if_block1 = /*anal1Video*/ ctx[2] != "null" && create_if_block_2$1(ctx);
-    	let if_block2 = /*anal2Video*/ ctx[3] != "null" && create_if_block_1$1(ctx);
+    	let if_block0 = /*deskVideo*/ ctx[1] != "null" && create_if_block_4$1(ctx);
+    	let if_block1 = /*anal1Video*/ ctx[2] != "null" && create_if_block_3$1(ctx);
+    	let if_block2 = /*anal2Video*/ ctx[3] != "null" && create_if_block_2$1(ctx);
 
     	const block = {
     		c: function create() {
@@ -15619,7 +15834,7 @@ var app = (function () {
     			if (img.src !== (img_src_value = "assets\\3_Boxes.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
     			attr_dev(img, "class", "svelte-1yobklh");
-    			add_location(img, file$5, 68, 8, 2260);
+    			add_location(img, file$5, 63, 12, 2287);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -15636,55 +15851,111 @@ var app = (function () {
     			if (/*deskVideo*/ ctx[1] != "null") {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
+
+    					if (dirty & /*deskVideo*/ 2) {
+    						transition_in(if_block0, 1);
+    					}
     				} else {
-    					if_block0 = create_if_block_3$1(ctx);
+    					if_block0 = create_if_block_4$1(ctx);
     					if_block0.c();
+    					transition_in(if_block0, 1);
     					if_block0.m(t1.parentNode, t1);
     				}
     			} else if (if_block0) {
-    				if_block0.d(1);
-    				if_block0 = null;
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
     			}
 
     			if (/*anal1Video*/ ctx[2] != "null") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
+
+    					if (dirty & /*anal1Video*/ 4) {
+    						transition_in(if_block1, 1);
+    					}
     				} else {
-    					if_block1 = create_if_block_2$1(ctx);
+    					if_block1 = create_if_block_3$1(ctx);
     					if_block1.c();
+    					transition_in(if_block1, 1);
     					if_block1.m(t2.parentNode, t2);
     				}
     			} else if (if_block1) {
-    				if_block1.d(1);
-    				if_block1 = null;
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
     			}
 
     			if (/*anal2Video*/ ctx[3] != "null") {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
+
+    					if (dirty & /*anal2Video*/ 8) {
+    						transition_in(if_block2, 1);
+    					}
     				} else {
-    					if_block2 = create_if_block_1$1(ctx);
+    					if_block2 = create_if_block_2$1(ctx);
     					if_block2.c();
+    					transition_in(if_block2, 1);
     					if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
     				}
     			} else if (if_block2) {
-    				if_block2.d(1);
-    				if_block2 = null;
+    				group_outros();
+
+    				transition_out(if_block2, 1, 1, () => {
+    					if_block2 = null;
+    				});
+
+    				check_outros();
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!img_transition) img_transition = create_bidirectional_transition(img, fade, { duration: 1000, ease: "circ" }, true);
+    				if (!img_transition) img_transition = create_bidirectional_transition(
+    					img,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
     				img_transition.run(1);
     			});
 
+    			transition_in(if_block0);
+    			transition_in(if_block1);
+    			transition_in(if_block2);
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!img_transition) img_transition = create_bidirectional_transition(img, fade, { duration: 1000, ease: "circ" }, false);
+    			if (!img_transition) img_transition = create_bidirectional_transition(
+    				img,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
     			img_transition.run(0);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+    			transition_out(if_block2);
     			current = false;
     		},
     		d: function destroy(detaching) {
@@ -15702,20 +15973,22 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(68:4) {#if numb == '3'}",
+    		source: "(63:8) {#if numb == '3'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (89:8) {#if deskVideo != 'null'}
-    function create_if_block_5(ctx) {
+    // (84:12) {#if deskVideo != 'null'}
+    function create_if_block_6(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -15727,21 +16000,142 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 90, 16, 3280);
+    			add_location(iframe, file$5, 85, 20, 3655);
     			attr_dev(div, "class", "desk2 svelte-1yobklh");
-    			add_location(div, file$5, 89, 12, 3243);
+    			add_location(div, file$5, 84, 16, 3614);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, iframe);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*deskVideo*/ 2 && iframe.src !== (iframe_src_value = /*deskVideo*/ ctx[1])) {
+    			if (!current || dirty & /*deskVideo*/ 2 && iframe.src !== (iframe_src_value = /*deskVideo*/ ctx[1])) {
     				attr_dev(iframe, "src", iframe_src_value);
     			}
     		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_6.name,
+    		type: "if",
+    		source: "(84:12) {#if deskVideo != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (90:12) {#if anal1Video != 'null'}
+    function create_if_block_5(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "allowtransparency", "true");
+    			if (iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[2])) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "description");
+    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "class", "svelte-1yobklh");
+    			add_location(iframe, file$5, 91, 20, 4005);
+    			attr_dev(div, "class", "anal12 svelte-1yobklh");
+    			add_location(div, file$5, 90, 16, 3963);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*anal1Video*/ 4 && iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[2])) {
+    				attr_dev(iframe, "src", iframe_src_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
     		}
     	};
 
@@ -15749,63 +16143,20 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(89:8) {#if deskVideo != 'null'}",
+    		source: "(90:12) {#if anal1Video != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (95:8) {#if anal1Video != 'null'}
-    function create_if_block_4(ctx) {
+    // (65:12) {#if deskVideo != 'null'}
+    function create_if_block_4$1(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			iframe = element("iframe");
-    			attr_dev(iframe, "allowtransparency", "true");
-    			if (iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[2])) attr_dev(iframe, "src", iframe_src_value);
-    			attr_dev(iframe, "title", "description");
-    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
-    			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 96, 16, 3543);
-    			attr_dev(div, "class", "anal12 svelte-1yobklh");
-    			add_location(div, file$5, 95, 12, 3505);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, iframe);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*anal1Video*/ 4 && iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[2])) {
-    				attr_dev(iframe, "src", iframe_src_value);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_4.name,
-    		type: "if",
-    		source: "(95:8) {#if anal1Video != 'null'}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (70:8) {#if deskVideo != 'null'}
-    function create_if_block_3$1(ctx) {
-    	let div;
-    	let iframe;
-    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -15817,40 +16168,79 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 71, 16, 2442);
+    			add_location(iframe, file$5, 66, 20, 2493);
     			attr_dev(div, "class", "desk svelte-1yobklh");
-    			add_location(div, file$5, 70, 12, 2406);
+    			add_location(div, file$5, 65, 16, 2453);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, iframe);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*deskVideo*/ 2 && iframe.src !== (iframe_src_value = /*deskVideo*/ ctx[1])) {
+    			if (!current || dirty & /*deskVideo*/ 2 && iframe.src !== (iframe_src_value = /*deskVideo*/ ctx[1])) {
     				attr_dev(iframe, "src", iframe_src_value);
     			}
     		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$1.name,
+    		id: create_if_block_4$1.name,
     		type: "if",
-    		source: "(70:8) {#if deskVideo != 'null'}",
+    		source: "(65:12) {#if deskVideo != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:8) {#if anal1Video != 'null'}
-    function create_if_block_2$1(ctx) {
+    // (71:12) {#if anal1Video != 'null'}
+    function create_if_block_3$1(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -15862,40 +16252,79 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 77, 16, 2704);
+    			add_location(iframe, file$5, 72, 20, 2842);
     			attr_dev(div, "class", "anal1 svelte-1yobklh");
-    			add_location(div, file$5, 76, 12, 2667);
+    			add_location(div, file$5, 71, 16, 2801);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, iframe);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*anal1Video*/ 4 && iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[2])) {
+    			if (!current || dirty & /*anal1Video*/ 4 && iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[2])) {
     				attr_dev(iframe, "src", iframe_src_value);
     			}
     		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$1.name,
+    		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(76:8) {#if anal1Video != 'null'}",
+    		source: "(71:12) {#if anal1Video != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (82:8) {#if anal2Video != 'null'}
-    function create_if_block_1$1(ctx) {
+    // (77:12) {#if anal2Video != 'null'}
+    function create_if_block_2$1(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
 
     	const block = {
     		c: function create() {
@@ -15907,29 +16336,66 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 83, 16, 2959);
+    			add_location(iframe, file$5, 78, 20, 3180);
     			attr_dev(div, "class", "anal2 svelte-1yobklh");
-    			add_location(div, file$5, 82, 12, 2922);
+    			add_location(div, file$5, 77, 16, 3139);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, iframe);
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*anal2Video*/ 8 && iframe.src !== (iframe_src_value = /*anal2Video*/ ctx[3])) {
+    			if (!current || dirty & /*anal2Video*/ 8 && iframe.src !== (iframe_src_value = /*anal2Video*/ ctx[3])) {
     				attr_dev(iframe, "src", iframe_src_value);
     			}
     		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$1.name,
+    		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(82:8) {#if anal2Video != 'null'}",
+    		source: "(77:12) {#if anal2Video != 'null'}",
     		ctx
     	});
 
@@ -15938,28 +16404,14 @@ var app = (function () {
 
     function create_fragment$5(ctx) {
     	let div;
-    	let t;
-    	let current_block_type_index;
-    	let if_block1;
+    	let div_transition;
     	let current;
-    	let if_block0 = /*currentScene*/ ctx[5] == "desk" && create_if_block_6(ctx);
-    	const if_block_creators = [create_if_block$1, create_else_block];
-    	const if_blocks = [];
-
-    	function select_block_type(ctx, dirty) {
-    		if (/*numb*/ ctx[4] == "3") return 0;
-    		return 1;
-    	}
-
-    	current_block_type_index = select_block_type(ctx);
-    	if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    	let if_block = /*currentScene*/ ctx[5] == "desk" && create_if_block$1(ctx);
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			if (if_block0) if_block0.c();
-    			t = space();
-    			if_block1.c();
+    			if (if_block) if_block.c();
     			attr_dev(div, "class", "container svelte-1yobklh");
     			add_location(div, file$5, 41, 0, 1111);
     		},
@@ -15968,76 +16420,54 @@ var app = (function () {
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
-    			if (if_block0) if_block0.m(div, null);
-    			append_dev(div, t);
-    			if_blocks[current_block_type_index].m(div, null);
+    			if (if_block) if_block.m(div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			if (/*currentScene*/ ctx[5] == "desk") {
-    				if (if_block0) {
-    					if_block0.p(ctx, dirty);
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
 
     					if (dirty & /*currentScene*/ 32) {
-    						transition_in(if_block0, 1);
+    						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_6(ctx);
-    					if_block0.c();
-    					transition_in(if_block0, 1);
-    					if_block0.m(div, t);
+    					if_block = create_if_block$1(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(div, null);
     				}
-    			} else if (if_block0) {
+    			} else if (if_block) {
     				group_outros();
 
-    				transition_out(if_block0, 1, 1, () => {
-    					if_block0 = null;
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
     				});
 
     				check_outros();
-    			}
-
-    			let previous_block_index = current_block_type_index;
-    			current_block_type_index = select_block_type(ctx);
-
-    			if (current_block_type_index === previous_block_index) {
-    				if_blocks[current_block_type_index].p(ctx, dirty);
-    			} else {
-    				group_outros();
-
-    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
-    					if_blocks[previous_block_index] = null;
-    				});
-
-    				check_outros();
-    				if_block1 = if_blocks[current_block_type_index];
-
-    				if (!if_block1) {
-    					if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    					if_block1.c();
-    				} else {
-    					if_block1.p(ctx, dirty);
-    				}
-
-    				transition_in(if_block1, 1);
-    				if_block1.m(div, null);
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(if_block0);
-    			transition_in(if_block1);
+    			transition_in(if_block);
+
+    			add_render_callback(() => {
+    				if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 1000, ease: "circ" }, true);
+    				div_transition.run(1);
+    			});
+
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(if_block0);
-    			transition_out(if_block1);
+    			transition_out(if_block);
+    			if (!div_transition) div_transition = create_bidirectional_transition(div, fade, { duration: 1000, ease: "circ" }, false);
+    			div_transition.run(0);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			if (if_block0) if_block0.d();
-    			if_blocks[current_block_type_index].d();
+    			if (if_block) if_block.d();
+    			if (detaching && div_transition) div_transition.end();
     		}
     	};
 
@@ -24790,8 +25220,8 @@ var app = (function () {
     /* src\App.svelte generated by Svelte v3.38.3 */
     const file = "src\\App.svelte";
 
-    // (38:36) 
-    function create_if_block_3(ctx) {
+    // (40:36) 
+    function create_if_block_4(ctx) {
     	let playercard;
     	let current;
     	playercard = new PlayerCard({ $$inline: true });
@@ -24820,17 +25250,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3.name,
+    		id: create_if_block_4.name,
     		type: "if",
-    		source: "(38:36) ",
+    		source: "(40:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (36:37) 
-    function create_if_block_2(ctx) {
+    // (38:37) 
+    function create_if_block_3(ctx) {
     	let defaultscene;
     	let current;
     	defaultscene = new DefaultScene({ $$inline: true });
@@ -24859,17 +25289,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2.name,
+    		id: create_if_block_3.name,
     		type: "if",
-    		source: "(36:37) ",
+    		source: "(38:37) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:35) 
-    function create_if_block_1(ctx) {
+    // (36:35) 
+    function create_if_block_2(ctx) {
     	let powerrankings;
     	let current;
     	powerrankings = new PowerRankings({ $$inline: true });
@@ -24898,9 +25328,48 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(36:35) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (34:36) 
+    function create_if_block_1(ctx) {
+    	let caster;
+    	let current;
+    	caster = new Caster({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			create_component(caster.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(caster, target, anchor);
+    			current = true;
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(caster.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(caster.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(caster, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(34:35) ",
+    		source: "(34:36) ",
     		ctx
     	});
 
@@ -24948,25 +25417,28 @@ var app = (function () {
 
     function create_fragment(ctx) {
     	let html;
-    	let t0;
+    	let t;
     	let main;
     	let current_block_type_index;
     	let if_block;
-    	let t1;
-    	let div0;
-    	let desk;
-    	let t2;
-    	let div1;
-    	let caster;
     	let current;
-    	const if_block_creators = [create_if_block, create_if_block_1, create_if_block_2, create_if_block_3];
+
+    	const if_block_creators = [
+    		create_if_block,
+    		create_if_block_1,
+    		create_if_block_2,
+    		create_if_block_3,
+    		create_if_block_4
+    	];
+
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
     		if (/*currentScene*/ ctx[0] == "desk") return 0;
-    		if (/*currentScene*/ ctx[0] == "power") return 1;
-    		if (/*currentScene*/ ctx[0] == "default") return 2;
-    		if (/*currentScene*/ ctx[0] == "player") return 3;
+    		if (/*currentScene*/ ctx[0] == "caster") return 1;
+    		if (/*currentScene*/ ctx[0] == "power") return 2;
+    		if (/*currentScene*/ ctx[0] == "default") return 3;
+    		if (/*currentScene*/ ctx[0] == "player") return 4;
     		return -1;
     	}
 
@@ -24974,28 +25446,15 @@ var app = (function () {
     		if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     	}
 
-    	desk = new Desk({ $$inline: true });
-    	caster = new Caster({ $$inline: true });
-
     	const block = {
     		c: function create() {
     			html = element("html");
-    			t0 = space();
+    			t = space();
     			main = element("main");
     			if (if_block) if_block.c();
-    			t1 = space();
-    			div0 = element("div");
-    			create_component(desk.$$.fragment);
-    			t2 = space();
-    			div1 = element("div");
-    			create_component(caster.$$.fragment);
     			document.title = "RLPC Media Team Site";
     			attr_dev(html, "lang", "en");
     			add_location(html, file, 26, 1, 779);
-    			set_style(div0, "opacity", /*deskDisplay*/ ctx[2]);
-    			add_location(div0, file, 40, 1, 1054);
-    			set_style(div1, "opacity", /*casterDisplay*/ ctx[1]);
-    			add_location(div1, file, 43, 1, 1113);
     			attr_dev(main, "class", "svelte-kciyl1");
     			add_location(main, file, 29, 0, 817);
     		},
@@ -25004,19 +25463,13 @@ var app = (function () {
     		},
     		m: function mount(target, anchor) {
     			append_dev(document.head, html);
-    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t, anchor);
     			insert_dev(target, main, anchor);
 
     			if (~current_block_type_index) {
     				if_blocks[current_block_type_index].m(main, null);
     			}
 
-    			append_dev(main, t1);
-    			append_dev(main, div0);
-    			mount_component(desk, div0, null);
-    			append_dev(main, t2);
-    			append_dev(main, div1);
-    			mount_component(caster, div1, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -25043,44 +25496,29 @@ var app = (function () {
     					}
 
     					transition_in(if_block, 1);
-    					if_block.m(main, t1);
+    					if_block.m(main, null);
     				} else {
     					if_block = null;
     				}
-    			}
-
-    			if (!current || dirty & /*deskDisplay*/ 4) {
-    				set_style(div0, "opacity", /*deskDisplay*/ ctx[2]);
-    			}
-
-    			if (!current || dirty & /*casterDisplay*/ 2) {
-    				set_style(div1, "opacity", /*casterDisplay*/ ctx[1]);
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(if_block);
-    			transition_in(desk.$$.fragment, local);
-    			transition_in(caster.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(if_block);
-    			transition_out(desk.$$.fragment, local);
-    			transition_out(caster.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			detach_dev(html);
-    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t);
     			if (detaching) detach_dev(main);
 
     			if (~current_block_type_index) {
     				if_blocks[current_block_type_index].d();
     			}
-
-    			destroy_component(desk);
-    			destroy_component(caster);
     		}
     	};
 
@@ -25108,11 +25546,11 @@ var app = (function () {
     		});
 
     		store.casterDisplay(currentMessage => {
-    			$$invalidate(1, casterDisplay = currentMessage);
+    			casterDisplay = currentMessage;
     		});
 
     		store.deskDisplay(currentMessage => {
-    			$$invalidate(2, deskDisplay = currentMessage);
+    			deskDisplay = currentMessage;
     		});
     	});
 
@@ -25142,15 +25580,15 @@ var app = (function () {
 
     	$$self.$inject_state = $$props => {
     		if ("currentScene" in $$props) $$invalidate(0, currentScene = $$props.currentScene);
-    		if ("casterDisplay" in $$props) $$invalidate(1, casterDisplay = $$props.casterDisplay);
-    		if ("deskDisplay" in $$props) $$invalidate(2, deskDisplay = $$props.deskDisplay);
+    		if ("casterDisplay" in $$props) casterDisplay = $$props.casterDisplay;
+    		if ("deskDisplay" in $$props) deskDisplay = $$props.deskDisplay;
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [currentScene, casterDisplay, deskDisplay];
+    	return [currentScene];
     }
 
     class App extends SvelteComponentDev {

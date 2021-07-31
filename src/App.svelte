@@ -31,6 +31,8 @@
 		
 	{#if currentScene == 'desk'}
 		<Desk />
+	{:else if currentScene == 'caster'}
+		<Caster />
 	{:else if currentScene == 'power'}
 		<PowerRankings />
 	{:else if currentScene == 'default'}
@@ -38,12 +40,6 @@
 	{:else if currentScene == 'player'}
 		<PlayerCard />
 	{/if}
-	<div style='opacity:{deskDisplay}'>
-		<Desk />
-	</div>
-	<div style='opacity:{casterDisplay}'>
-		<Caster />
-	</div>
 </main>
 
 <style>

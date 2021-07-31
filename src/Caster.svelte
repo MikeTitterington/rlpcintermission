@@ -46,13 +46,13 @@
     
     {#if pbpVideo != 'null'}
         <div class='pbp'>
-            <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
         </div>
     {/if}
     
     {#if colorVideo != 'null'}
         <div class='color'>
-            <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
         </div>
     {/if}
     {#await preload(pbpImage) then _}
