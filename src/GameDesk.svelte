@@ -1,4 +1,5 @@
 <script>
+	import { fade, fly } from 'svelte/transition';
     export let time = '';
     export let league = '';
     export let team1 = '';

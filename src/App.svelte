@@ -38,10 +38,10 @@
 	{:else if currentScene == 'player'}
 		<PlayerCard />
 	{/if}
-	<div style='opacity:{deskDisplay}' transition:fade="{{ duration:3000, ease:'circ' }}">
+	<div style='opacity:{deskDisplay}'>
 		<Desk />
 	</div>
-	<div style='opacity:{casterDisplay}' transition:fade="{{ duration:3000, ease:'circ' }}">
+	<div style='opacity:{casterDisplay}'>
 		<Caster />
 	</div>
 </main>

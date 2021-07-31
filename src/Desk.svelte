@@ -1,5 +1,5 @@
 <script>
-	import { fade } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import Ticker from './Ticker.svelte';
 	import GameDesk from './GameDesk.svelte';
 	import store from '../scripts/store.js';
@@ -13,6 +13,7 @@
     let anal1Video = '';
     let anal2Video = '';
     let numb = '';
+    let currentScene = '';
     
     onMount(() => {
 		store.tickerInfo(currentMessage => {
@@ -33,25 +34,39 @@
 		store.numb(currentMessage => {
 			numb = currentMessage;
 		})
+		store.currentScene(currentMessage => {
+			currentScene = currentMessage;
+		})
     });
 </script>
-<div class='container' transition:fade="{{ delay: 1500, duration:1000, ease:'circ'}}">
-    <img src='assets\Background.png' alt='left bar'/>
-    <img src='assets\Bottom_Ticker_Tape.png' alt='ticker'/>
-    <img src='assets\RLPC_Desk_Bar.png' alt='RLPC bar'/>
-    <img src='assets\Left_Red_Bar.png' alt='left bar'/>
-    <div class='topLeft'>
-        <p class='rlpcDesk'>RLPC DESK</p>
-        <p class='tonightDesk'>TODAY'S MATCHES</p>
-    </div>
-    <img src='assets\Todays_Matches_Bar.png' alt='left bar'/>
-    {#each tonightGames as game (game.time)}
-        <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
-    {/each}
-    <DeskTicker />
+<div class='container'>
+    {#if currentScene == 'desk'}
+        <img src='assets\Background.png' alt='left bar'/>
+        <div transition:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}">
+            <img src='assets\RLPC_Desk_Bar.png' alt='RLPC bar'/>
+            <img src='assets\Left_Red_Bar.png' alt='left bar'/>
+            <div class='topLeft'>
+                <p class='rlpcDesk'>RLPC DESK</p>
+                <p class='tonightDesk'>TODAY'S MATCHES</p>
+            </div>
+            <img src='assets\Todays_Matches_Bar.png' alt='left bar'/>
+        </div>
+        <div transition:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}">
+            {#each tonightGames as game (game.time)}
+                    <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
+            {/each}
+        </div>
+        <div transition:fly="{{ duration:2000, delay: 500, ease:'circ', y:1000}}">
+            <img src='assets\Bottom_Ticker_Tape.png' alt='ticker'/>
+            <DeskTicker />
+        </div>
+	{/if}
+    
+    
+    
     
     {#if numb == '3'}
-        <img src='assets\3_Boxes.png' alt='left bar'/>
+        <img src='assets\3_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, ease:'circ' }}"/>
         {#if deskVideo != 'null'}
             <div class='desk'>
                 <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0"></iframe>
@@ -158,7 +173,7 @@
     }
 
     .rlpcDesk {
-        top: -5.5%;
+        top: -59.4px;
         width: 434px;
         text-align: center;
         position: absolute;
@@ -169,7 +184,7 @@
     }
 
     .tonightDesk {
-        top: 5%;
+        top: 54px;
         width: 400px;
         left: -1%;
         text-align: center;
