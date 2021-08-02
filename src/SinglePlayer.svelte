@@ -1,12 +1,16 @@
 <script>
     import { fade } from 'svelte/transition'
 	import { slide } from 'svelte/transition';
+    import { textfit } from 'svelte-textfit';
     export let name;
     export let goals;
     export let assists;
     export let saves;
     export let mmr;
     export let games;
+    export let left;
+    export let top;
+    export let back;
     if (goals == ''){
         goals = 0.00
     }
@@ -18,10 +22,15 @@
     }
 </script>
 
-<div class='player' transition:fade="{{ duration:3000, ease:'circ' }}">
-    <div class='name'>{name}</div>
+<div class='player' transition:fade="{{ duration:3000, ease:'circ' }}" style='left: {left}px; top: {top}; background-color: {back}'>
+    <div class='name' use:textfit={
+        {
+          mode:"single", max:25,
+          forceSingleModeWidth:false
+        }
+      }>{name}</div>
     <div class='mmr'>{mmr}</div>
-    <div class='delayReveal' transition:slide="{{ delay:3000, duration:1000, ease:'circ' }}">
+    <div class='delayReveal' transition:slide="{{ delay:3000, duration:1000, ease:'circ' }}" style='background-color: {back}'>
         <div class='goals'>Goals: {goals}</div>
         <div class='assists'>Assists: {assists}</div>
         <div class='saves'>Saves: {saves}</div>
@@ -43,16 +52,14 @@
         font-family: Evogria;
         height: 50px;
         width: 300px;
-        background-color: #a3141b;
-        top: 40%;
-        left: 20%
     }
     .name {
         position: absolute;
         top: 0;
         left: 10px;
-        font-size: 25px;
         line-height: 50px;
+        height: 50px;
+        width: 200px;
     }
     .mmr {
         position: absolute;
@@ -66,7 +73,6 @@
         top: 50px;
         height: 100px;
         width: 100%;
-        background-color: #a3141b;
     }
     .goals {
         position: absolute;

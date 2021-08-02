@@ -24,6 +24,15 @@ export const powerRankings = writable([]);
 export const tonightGames = writable([]);
 export const league = writable('');
 export const teamPlayers1 = writable([]);
+export const teamPlayers2 = writable([]);
+export const matchupTeam1 = writable('');
+export const matchupTeam1logo = writable('');
+export const matchupTeam2 = writable('');
+export const matchupTeam2logo = writable('');
+export const matchupTeam1Record = writable('');
+export const matchupTeam2Record = writable('');
+export const matchupTeam1Color = writable('');
+export const matchupTeam2Color = writable('');
 
 let stop = false;
 import WsSubscribers from '../scripts/ws_subscriber.js';
@@ -414,100 +423,132 @@ let teamMap = {
       "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771056608150290462/Wranglers_Logo.png"
     },
     "admirals": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058776466784286/Admirals_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058776466784286/Admirals_Logo.png",
+      "1": "#00EDFF"
     },
     "dragons": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058785246511175/Dragons_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058785246511175/Dragons_Logo.png",
+      "1": "#DF0600"
     },
     "beavers": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/715361176707399741/Beavers_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/715361176707399741/Beavers_Logo.png",
+      "1": "#FFB54A"
     },
     "cyclones": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/717733534101668010/Cyclones_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/717733534101668010/Cyclones_Logo.png",
+      "1": "#6D94F1"
     },
     "grizzlies": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058779232010250/Bears_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058779232010250/Bears_Logo.png",
+      "1": "#754C24"
     },
     "centurions": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058781915578399/Centurions_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058781915578399/Centurions_Logo.png",
+      "1": "#FF7E2A"
     },
     "yellow jackets": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/730457373126426654/Yellow_Jackets_logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/730457373126426654/Yellow_Jackets_logo.png",
+      "1": "#FBFF00"
     },
     "galaxy": {
-      "logo": "https://cdn.discordapp.com/attachments/755840403080478832/767476330643193886/Galaxy_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/755840403080478832/767476330643193886/Galaxy_Logo.png",
+      "1": "#CC55FF"
     },
     "sockeyes": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058789113397268/Sockeyes_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058789113397268/Sockeyes_Logo.png",
+      "1": "#DF1900"
     },
     "wolves": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058773192212496/Wolves_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058773192212496/Wolves_Logo.png",
+      "1": "#AAFDFF"
     },
     "wildcats": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058794045767730/Wildcats_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058794045767730/Wildcats_Logo.png",
+      "1": "#2A54FF"
     },
     "rhinos": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/734490021079548005/Rhinos_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/734490021079548005/Rhinos_Logo.png",
+      "1": "#B3B3B3"
     },
     "scorpions": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/730457572397678592/Scorpions_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/730457572397678592/Scorpions_Logo.png",
+      "1": "#B40014"
     },
     "thrashers": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058791676117012/Thrashers_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058791676117012/Thrashers_Logo.png",
+      "1": "#754C24"
     },
     "toucans": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/730457120654229584/Toucans_logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/730457120654229584/Toucans_logo.png",
+      "1": "#FF9F15"
     },
     "wizards": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058797326106694/Wizards_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771058797326106694/Wizards_Logo.png",
+      "1": "#A700AA"
     },
     "captains": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060591338061874/Captains_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060591338061874/Captains_Logo.png",
+      "1": "#002FAA"
     },
     "yetis": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060585554378762/Yetis_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060585554378762/Yetis_Logo.png",
+      "1": "#36CCCC"
     },
     "otters": {
-      "logo": "https://cdn.discordapp.com/attachments/421796377303973888/755863732193591418/Otters_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/421796377303973888/755863732193591418/Otters_Logo.png",
+      "1": "#FFB54A"
     },
     "tides": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060583024820254/Tides_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060583024820254/Tides_Logo.png",
+      "1": "#2AC0FF"
     },
     "pandas": {
-      "logo": "https://cdn.discordapp.com/attachments/324268285703094273/730511590088245268/Pandas_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/324268285703094273/730511590088245268/Pandas_Logo.png",
+      "1": "#754C24"
     },
     "samurai": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060577840660490/Samurai_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060577840660490/Samurai_Logo.png",
+      "1": "#FFC494"
     },
     "hornets": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060644685545512/Hornets_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060644685545512/Hornets_Logo.png",
+      "1": "#FBFF00"
     },
     "solar": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771075279300329512/Solar_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771075279300329512/Solar_Logo.png",
+      "1": "#FFC31F"
     },
     "piranhas": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060572245983303/Piranhas_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060572245983303/Piranhas_Logo.png",
+      "1": "#FF0A11"
     },
     "terriers": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060579968090122/Terriers_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060579968090122/Terriers_Logo.png",
+      "1": "#F4000D"
     },
     "jackrabbits": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060566437396500/Jackrabbits_Logo_2.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060566437396500/Jackrabbits_Logo_2.png",
+      "1": "#3595FF"
     },
     "zebras": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060588239126528/Zebras_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060588239126528/Zebras_Logo.png",
+      "1": "#B3B3B3"
     },
     "camels": {
-      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/738138000264790106/Camels_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/394574231066640387/738138000264790106/Camels_Logo.png",
+      "1": "#666666"
     },
     "raptors": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771079922302713856/Raptors_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771079922302713856/Raptors_Logo.png",
+      "1": "#C98200"
     },
     "macaws": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060569527681064/Macaws_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771060569527681064/Macaws_Logo.png",
+      "1": "#2DB400"
     },
     "mages": {
-      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771077495772020751/Mages_Logo.png"
+      "logo": "https://cdn.discordapp.com/attachments/696962499177742476/771077495772020751/Mages_Logo.png",
+      "1": "#A700AA"
     },
     "turtles": {
       "1": "#ff2e00",
@@ -575,6 +616,13 @@ function updateCasters() {
                 var games4 = {top:815};
                 var games = [];
                 var player1 = {};
+                var player2 = {};
+                var player3 = {};
+                var player4 = {};
+                var player5 = {};
+                var player6 = {};
+                var player7 = {};
+                var player8 = {};
                 var team1 = [];
                 var team2 = [];
                 for (i = 0; i < entry.length; i++) {
@@ -822,6 +870,7 @@ function updateCasters() {
                         games4['team2']=[obj['feed']['entry'][i]['content']['$t']];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M30") {
                       player1['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player1['left']="100";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "N30") {
                       if (obj['feed']['entry'][i]['content']['$t'] == ""){
                         player1['goals']=0.00;
@@ -854,15 +903,222 @@ function updateCasters() {
                       anal2Video.set(obj['feed']['entry'][i]['content']['$t']);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "I12") {
                       cameraOption.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N31") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player2['goals']=0.00;
+                      } else {
+                        player2['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O31") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player2['assists']=0.00;
+                      } else {
+                        player2['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P31") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player2['saves']=0.00;
+                      } else {
+                        player2['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q31") {
+                      player2['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R31") {
+                      player2['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N32") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player3['goals']=0.00;
+                      } else {
+                        player3['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O32") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player3['assists']=0.00;
+                      } else {
+                        player3['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P32") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player3['saves']=0.00;
+                      } else {
+                        player3['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q32") {
+                      player3['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R32") {
+                      player3['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N33") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player4['goals']=0.00;
+                      } else {
+                        player4['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O33") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player4['assists']=0.00;
+                      } else {
+                        player4['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P33") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player4['saves']=0.00;
+                      } else {
+                        player4['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q33") {
+                      player4['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R33") {
+                      player4['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N37") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player5['goals']=0.00;
+                      } else {
+                        player5['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O37") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player5['assists']=0.00;
+                      } else {
+                        player5['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P37") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player5['saves']=0.00;
+                      } else {
+                        player5['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q37") {
+                      player5['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R37") {
+                      player5['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N38") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player6['goals']=0.00;
+                      } else {
+                        player6['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O38") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player6['assists']=0.00;
+                      } else {
+                        player6['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P38") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player6['saves']=0.00;
+                      } else {
+                        player6['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q38") {
+                      player6['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R38") {
+                      player6['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N39") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player7['goals']=0.00;
+                      } else {
+                        player7['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O39") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player7['assists']=0.00;
+                      } else {
+                        player7['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P39") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player7['saves']=0.00;
+                      } else {
+                        player7['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q39") {
+                      player7['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R39") {
+                      player7['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "N40") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player8['goals']=0.00;
+                      } else {
+                        player8['goals']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "O40") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player8['assists']=0.00;
+                      } else {
+                        player8['assists']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "P40") {
+                      if (obj['feed']['entry'][i]['content']['$t'] == ""){
+                        player8['saves']=0.00;
+                      } else {
+                        player8['saves']=obj['feed']['entry'][i]['content']['$t'];
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "Q40") {
+                      player8['games']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "R40") {
+                      player8['mmr']=obj['feed']['entry'][i]['content']['$t'];
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M31") {
+                      player2['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player2['left']="580";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M32") {
+                      player3['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player3['left']="1060";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M33") {
+                      player4['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player4['left']="1540";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M37") {
+                      player5['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player5['left']="100";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M38") {
+                      player6['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player6['left']="580";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M39") {
+                      player7['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player7['left']="1060";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "M40") {
+                      player8['name']=obj['feed']['entry'][i]['content']['$t'];
+                      player8['left']="1540";
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "H6") {
+                      matchupTeam1.set(obj['feed']['entry'][i]['content']['$t']);
+                      var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
+                      if (teamMap.hasOwnProperty(lower)) {
+                        matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
+                        console.log(teamMap[lower]['1']);
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "H7") {
+                      matchupTeam2.set(obj['feed']['entry'][i]['content']['$t']);
+                      var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
+                      console.log(lower)
+                      if (teamMap.hasOwnProperty(lower)) {
+                        matchupTeam2Color.set(teamMap[lower.toLowerCase()]['1']);
+                        console.log(teamMap[lower]['1']);
+                      }
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "I6") {
+                      matchupTeam1logo.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "I7") {
+                      matchupTeam2logo.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "J6") {
+                      matchupTeam1Record.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "J7") {
+                      matchupTeam2Record.set(obj['feed']['entry'][i]['content']['$t']);
                     }
+
                 }
                 games.push(games1);
                 games.push(games2);
                 games.push(games3);
                 games.push(games4);
                 team1.push(player1);
+                team1.push(player2);
+                team1.push(player3);
+                team1.push(player4);
+                team2.push(player5);
+                team2.push(player6);
+                team2.push(player7);
+                team2.push(player8);
                 console.log(team1)
                 teamPlayers1.set(team1);
+                teamPlayers2.set(team2);
                 tickerInfo.set(tickerInfoLocal);
                 powerRankings.set(powerRankingsLocal);
                 tonightGames.set(games);
@@ -889,12 +1145,21 @@ export default {
 	league: league.subscribe,
 	tonightGames: tonightGames.subscribe,
 	teamPlayers1: teamPlayers1.subscribe,
+	teamPlayers2: teamPlayers2.subscribe,
 	casterDisplay: casterDisplay.subscribe,
 	deskDisplay: deskDisplay.subscribe,
 	deskVideo: deskVideo.subscribe,
 	anal1Video: anal1Video.subscribe,
 	anal2Video: anal2Video.subscribe,
 	numb: numb.subscribe,
-  cameraOption: cameraOption.subscribe
+  cameraOption: cameraOption.subscribe,
+	matchupTeam1: matchupTeam1.subscribe,
+	matchupTeam1logo: matchupTeam1logo.subscribe,
+	matchupTeam2logo: matchupTeam2logo.subscribe,
+	matchupTeam2: matchupTeam2.subscribe,
+	matchupTeam1Record: matchupTeam1Record.subscribe,
+	matchupTeam2Record: matchupTeam2Record.subscribe,
+	matchupTeam1Color: matchupTeam1Color.subscribe,
+	matchupTeam2Color: matchupTeam2Color.subscribe
     
 }

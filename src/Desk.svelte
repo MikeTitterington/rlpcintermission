@@ -43,64 +43,62 @@
 		})
     });
 </script>
-<div class='container' transition:fade="{{ duration:1000, ease:'circ' }}">
-    {#if currentScene == 'desk'}
-        <img src='assets\Background.png' alt='left bar'/>
-        <div transition:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}">
-            <img src='assets/RLPC_Desk_Bar.png' alt='RLPC bar'/>
-            <img src='assets/Left_Red_Bar.png' alt='left bar'/>
-            <div class='topLeft'>
-                <p class='rlpcDesk'>RLPC DESK</p>
-                <p class='tonightDesk'>TODAY'S MATCHES</p>
-            </div>
-            <img src='assets/Todays_Matches_Bar.png' alt='left bar'/>
+<div class='container' in:fade="{{ duration:1000, ease:'circ' }}" out:fade="{{ delay: 1000, duration:1000, ease:'circ' }}">
+    <img src='assets\Background.png' alt='left bar'/>
+    <div in:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}" out:fly="{{ duration:2000, ease:'circ', x:-1000}}">
+        <img src='assets/RLPC_Desk_Bar.png' alt='RLPC bar'/>
+        <img src='assets/Left_Red_Bar.png' alt='left bar'/>
+        <div class='topLeft'>
+            <p class='rlpcDesk'>RLPC DESK</p>
+            <p class='tonightDesk'>TODAY'S MATCHES</p>
         </div>
-        <div transition:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}">
-            {#each tonightGames as game (game.time)}
-                    <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
-            {/each}
-        </div>
-        <div transition:fly="{{ duration:2000, delay: 500, ease:'circ', y:1000}}">
-            <img src='assets/Bottom_Ticker_Tape.png' alt='ticker'/>
-            <DeskTicker />
-        </div>
-        
-        {#if cameraOption == 'on'}
-            {#if numb == '3'}
-                <img src='assets\3_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
-                {#if deskVideo != 'null'}
-                    <div class='desk'>
-                        <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                    </div>
-                {/if}
-                
-                {#if anal1Video != 'null'}
-                    <div class='anal1'>
-                        <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                    </div>
-                {/if}
+        <img src='assets/Todays_Matches_Bar.png' alt='left bar'/>
+    </div>
+    <div in:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}" out:fly="{{ duration:2000, ease:'circ', x:-1000}}">
+        {#each tonightGames as game (game.time)}
+                <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
+        {/each}
+    </div>
+    <div in:fly="{{ duration:2000, delay: 500, ease:'circ', y:1000}}" out:fly="{{ duration:2000, ease:'circ', y:1000}}">
+        <img src='assets/Bottom_Ticker_Tape.png' alt='ticker'/>
+        <DeskTicker />
+    </div>
+    
+    {#if cameraOption == 'on'}
+        {#if numb == '3'}
+            <img src='assets\3_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
+            {#if deskVideo != 'null'}
+                <div class='desk'>
+                    <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                </div>
+            {/if}
+            
+            {#if anal1Video != 'null'}
+                <div class='anal1'>
+                    <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                </div>
+            {/if}
 
-                {#if anal2Video != 'null'}
-                    <div class='anal2'>
-                        <iframe allowtransparency="true" src="{anal2Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                    </div>
-                {/if}
-            {:else}
-                <img src='assets\2_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
-                {#if deskVideo != 'null'}
-                    <div class='desk2'>
-                        <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                    </div>
-                {/if}
-                
-                {#if anal1Video != 'null'}
-                    <div class='anal12'>
-                        <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                    </div>
-                {/if}
+            {#if anal2Video != 'null'}
+                <div class='anal2'>
+                    <iframe allowtransparency="true" src="{anal2Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                </div>
+            {/if}
+        {:else}
+            <img src='assets\2_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
+            {#if deskVideo != 'null'}
+                <div class='desk2'>
+                    <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                </div>
+            {/if}
+            
+            {#if anal1Video != 'null'}
+                <div class='anal12'>
+                    <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                </div>
             {/if}
         {/if}
-	{/if}
+    {/if}
     
     
     
