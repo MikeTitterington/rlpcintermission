@@ -15,6 +15,7 @@
     let numb = '';
     let currentScene = '';
     let cameraOption = 'off';
+    let vidOption = 'off';
     
     onMount(() => {
 		store.tickerInfo(currentMessage => {
@@ -40,6 +41,9 @@
 		})
 		store.cameraOption(currentMessage => {
 			cameraOption = currentMessage;
+		})
+		store.vidOption(currentMessage => {
+			vidOption = currentMessage;
 		})
     });
 </script>
@@ -99,9 +103,11 @@
             {/if}
         {/if}
     {:else}
-        <div class='vid' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}">
-            <iframe height='1015px' width='1598px' src="https://www.youtube.com/embed/rTQOqJhWoL0?controls=0&autoplay=1&rel=0&vq=hd720&enablejsapi=1&loop=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-        </div>
+        {#if vidOption == 'on'}
+            <div class='vid' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}">
+                <iframe height='1015px' width='1598px' src="https://www.youtube.com/embed/rTQOqJhWoL0?controls=0&autoplay=1&vq=hd720&showinfo=0&loop=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+            </div>
+        {/if}
     {/if}
 
     

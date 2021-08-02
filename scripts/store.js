@@ -11,7 +11,8 @@ export const colorName = writable('');
 export const pbpImage = writable('');
 export const colorImage = writable('');
 export const tickerInfo = writable('');
-export const cameraOption = writable('');
+export const cameraOption = writable('off');
+export const vidOption = writable('off');
 export const numb = writable('3');
 export const currentScene = writable('desk');
 export const casterDisplay = tweened(0, {
@@ -903,6 +904,8 @@ function updateCasters() {
                       anal2Video.set(obj['feed']['entry'][i]['content']['$t']);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "I12") {
                       cameraOption.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "I13") {
+                      vidOption.set(obj['feed']['entry'][i]['content']['$t']);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "N31") {
                       if (obj['feed']['entry'][i]['content']['$t'] == ""){
                         player2['goals']=0.00;
@@ -1153,6 +1156,7 @@ export default {
 	anal2Video: anal2Video.subscribe,
 	numb: numb.subscribe,
   cameraOption: cameraOption.subscribe,
+  vidOption: vidOption.subscribe,
 	matchupTeam1: matchupTeam1.subscribe,
 	matchupTeam1logo: matchupTeam1logo.subscribe,
 	matchupTeam2logo: matchupTeam2logo.subscribe,
