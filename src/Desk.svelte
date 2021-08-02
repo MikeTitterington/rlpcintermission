@@ -16,6 +16,8 @@
     let currentScene = '';
     let cameraOption = 'off';
     let vidOption = 'off';
+    let pbpVideo = '';
+    let colorVideo = '';
     
     onMount(() => {
 		store.tickerInfo(currentMessage => {
@@ -32,6 +34,12 @@
 		})
 		store.anal2Video(currentMessage => {
 			anal2Video = currentMessage;
+		})
+		store.pbpVideo(currentMessage => {
+			pbpVideo = currentMessage;
+		})
+		store.colorVideo(currentMessage => {
+			colorVideo = currentMessage;
 		})
 		store.numb(currentMessage => {
 			numb = currentMessage;
@@ -92,13 +100,13 @@
             <img src='assets\2_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
             {#if deskVideo != 'null'}
                 <div class='desk2'>
-                    <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
                 </div>
             {/if}
             
             {#if anal1Video != 'null'}
                 <div class='anal12'>
-                    <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
                 </div>
             {/if}
         {/if}
