@@ -28,15 +28,13 @@
 </svelte:head>
 
 <main>
-		
+	<DefaultScene />
 	{#if currentScene == 'desk'}
 		<Desk />
 	{:else if currentScene == 'caster'}
 		<Caster />
 	{:else if currentScene == 'power'}
 		<PowerRankings />
-	{:else if currentScene == 'default'}
-		<DefaultScene />
 	{:else if currentScene == 'player'}
 		<PlayerCard />
 	{/if}

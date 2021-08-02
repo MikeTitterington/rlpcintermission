@@ -14,6 +14,7 @@
     let anal2Video = '';
     let numb = '';
     let currentScene = '';
+    let cameraOption = 'off';
     
     onMount(() => {
 		store.tickerInfo(currentMessage => {
@@ -36,6 +37,9 @@
 		})
 		store.currentScene(currentMessage => {
 			currentScene = currentMessage;
+		})
+		store.cameraOption(currentMessage => {
+			cameraOption = currentMessage;
 		})
     });
 </script>
@@ -60,37 +64,40 @@
             <img src='assets/Bottom_Ticker_Tape.png' alt='ticker'/>
             <DeskTicker />
         </div>
-        {#if numb == '3'}
-            <img src='assets\3_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
-            {#if deskVideo != 'null'}
-                <div class='desk'>
-                    <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                </div>
-            {/if}
-            
-            {#if anal1Video != 'null'}
-                <div class='anal1'>
-                    <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                </div>
-            {/if}
+        
+        {#if cameraOption == 'on'}
+            {#if numb == '3'}
+                <img src='assets\3_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
+                {#if deskVideo != 'null'}
+                    <div class='desk'>
+                        <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    </div>
+                {/if}
+                
+                {#if anal1Video != 'null'}
+                    <div class='anal1'>
+                        <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    </div>
+                {/if}
 
-            {#if anal2Video != 'null'}
-                <div class='anal2'>
-                    <iframe allowtransparency="true" src="{anal2Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                </div>
-            {/if}
-        {:else}
-            <img src='assets\2_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
-            {#if deskVideo != 'null'}
-                <div class='desk2'>
-                    <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                </div>
-            {/if}
-            
-            {#if anal1Video != 'null'}
-                <div class='anal12'>
-                    <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
-                </div>
+                {#if anal2Video != 'null'}
+                    <div class='anal2'>
+                        <iframe allowtransparency="true" src="{anal2Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    </div>
+                {/if}
+            {:else}
+                <img src='assets\2_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
+                {#if deskVideo != 'null'}
+                    <div class='desk2'>
+                        <iframe allowtransparency="true" src="{deskVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    </div>
+                {/if}
+                
+                {#if anal1Video != 'null'}
+                    <div class='anal12'>
+                        <iframe allowtransparency="true" src="{anal1Video}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
+                    </div>
+                {/if}
             {/if}
         {/if}
 	{/if}

@@ -11,6 +11,7 @@ export const colorName = writable('');
 export const pbpImage = writable('');
 export const colorImage = writable('');
 export const tickerInfo = writable('');
+export const cameraOption = writable('');
 export const numb = writable('3');
 export const currentScene = writable('desk');
 export const casterDisplay = tweened(0, {
@@ -851,6 +852,8 @@ function updateCasters() {
                       anal1Video.set(obj['feed']['entry'][i]['content']['$t']);
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "H16") {
                       anal2Video.set(obj['feed']['entry'][i]['content']['$t']);
+                    }else if (obj['feed']['entry'][i]['title']['$t'] == "I12") {
+                      cameraOption.set(obj['feed']['entry'][i]['content']['$t']);
                     }
                 }
                 games.push(games1);
@@ -891,6 +894,7 @@ export default {
 	deskVideo: deskVideo.subscribe,
 	anal1Video: anal1Video.subscribe,
 	anal2Video: anal2Video.subscribe,
-	numb: numb.subscribe
+	numb: numb.subscribe,
+  cameraOption: cameraOption.subscribe
     
 }
