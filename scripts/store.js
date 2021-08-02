@@ -592,7 +592,6 @@ WsSubscribers.init(49322, false, [
 ]);
 
 WsSubscribers.subscribe("sos", "casters_update", (d) => {
-    console.log(d['casters']);
     pbpVideo.set(d['casters']['left']['obs']);
     colorVideo.set(d['casters']['right']['obs']);
     stop = true;
@@ -1086,15 +1085,12 @@ function updateCasters() {
                       var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
                       if (teamMap.hasOwnProperty(lower)) {
                         matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
-                        console.log(teamMap[lower]['1']);
                       }
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "H7") {
                       matchupTeam2.set(obj['feed']['entry'][i]['content']['$t']);
                       var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                      console.log(lower)
                       if (teamMap.hasOwnProperty(lower)) {
                         matchupTeam2Color.set(teamMap[lower.toLowerCase()]['1']);
-                        console.log(teamMap[lower]['1']);
                       }
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "I6") {
                       matchupTeam1logo.set(obj['feed']['entry'][i]['content']['$t']);
@@ -1119,7 +1115,6 @@ function updateCasters() {
                 team2.push(player6);
                 team2.push(player7);
                 team2.push(player8);
-                console.log(team1)
                 teamPlayers1.set(team1);
                 teamPlayers2.set(team2);
                 tickerInfo.set(tickerInfoLocal);
