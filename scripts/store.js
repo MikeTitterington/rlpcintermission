@@ -1132,7 +1132,7 @@ function updateCasters() {
     }
     
 }
-var myVar = setInterval(updateCasters, 5000);
+var myVar = setInterval(updateCasters, 1200);
 updateCasters();
 
 export default {

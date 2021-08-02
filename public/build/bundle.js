@@ -13422,7 +13422,7 @@ var app = (function () {
         }
         
     }
-    setInterval(updateCasters, 5000);
+    setInterval(updateCasters, 1200);
     updateCasters();
 
     var store = {
