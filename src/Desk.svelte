@@ -98,13 +98,13 @@
             {/if}
         {:else}
             <img src='assets\2_Boxes.png' alt='left bar' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"/>
-            {#if deskVideo != 'null'}
+            {#if pbpVideo != 'null'}
                 <div class='desk2'>
                     <iframe allowtransparency="true" src="{pbpVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
                 </div>
             {/if}
             
-            {#if anal1Video != 'null'}
+            {#if colorVideo != 'null'}
                 <div class='anal12'>
                     <iframe allowtransparency="true" src="{colorVideo}" title="description" allow="autoplay; encrypted-media" frameborder="0" transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}"></iframe>
                 </div>
