@@ -45,7 +45,7 @@
 </script>
 <div class='container' in:fade="{{ duration:1000, ease:'circ' }}" out:fade="{{ delay: 1000, duration:1000, ease:'circ' }}">
     <img src='assets\Background.png' alt='left bar'/>
-    <div in:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}" out:fly="{{ duration:2000, ease:'circ', x:-1000}}">
+    <div in:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}" out:fly="{{ duration:2000, ease:'circ', x:-1000}}" style='position: absolute; z-index: 2'>
         <img src='assets/RLPC_Desk_Bar.png' alt='RLPC bar'/>
         <img src='assets/Left_Red_Bar.png' alt='left bar'/>
         <div class='topLeft'>
@@ -54,7 +54,7 @@
         </div>
         <img src='assets/Todays_Matches_Bar.png' alt='left bar'/>
     </div>
-    <div in:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}" out:fly="{{ duration:2000, ease:'circ', x:-1000}}">
+    <div in:fly="{{ duration:2000, delay: 1500, ease:'circ', x:-1000}}" out:fly="{{ duration:2000, ease:'circ', x:-1000}}" style='position: absolute; z-index: 2'>
         {#each tonightGames as game (game.time)}
                 <GameDesk time={game.time} league={game.league} team1={game.team1} team2={game.team2} top={game.top}/>
         {/each}
@@ -98,7 +98,12 @@
                 </div>
             {/if}
         {/if}
+    {:else}
+        <div class='vid' transition:fade="{{ duration:1000, delay:2000, ease:'circ' }}">
+            <iframe height='1015px' width='1598px' src="https://www.youtube.com/embed/rTQOqJhWoL0?controls=0&autoplay=1&rel=0&vq=hd720&enablejsapi=1&loop=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
     {/if}
+
     
     
     
@@ -118,6 +123,14 @@
         font-family: 'Chosence';
         src:
             local('Chosence Regular'), url('Chosence Regular.otf') format("opentype");
+    }
+
+    .vid {
+        position: absolute;
+        height: 1016px;
+        width: 1598px;
+        left: 323px;
+        z-index: 1;
     }
 
     
@@ -191,7 +204,7 @@
 
     .tonightDesk {
         top: 54px;
-        width: 400px;
+        width: 360px;
         left: -1%;
         text-align: center;
         position: absolute;

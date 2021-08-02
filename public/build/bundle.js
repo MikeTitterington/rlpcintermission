@@ -15720,6 +15720,87 @@ var app = (function () {
     	return block;
     }
 
+    // (101:4) {:else}
+    function create_else_block_1(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let div_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "height", "1015px");
+    			attr_dev(iframe, "width", "1598px");
+    			if (iframe.src !== (iframe_src_value = "https://www.youtube.com/embed/rTQOqJhWoL0?controls=0&autoplay=1&rel=0&vq=hd720&enablejsapi=1&loop=1")) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "YouTube video player");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$5, 102, 12, 4569);
+    			attr_dev(div, "class", "vid svelte-177km69");
+    			add_location(div, file$5, 101, 8, 4476);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: noop$2,
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div_transition) div_transition = create_bidirectional_transition(
+    					div,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				div_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div_transition) div_transition = create_bidirectional_transition(
+    				div,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			div_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && div_transition) div_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1.name,
+    		type: "else",
+    		source: "(101:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
     // (67:4) {#if cameraOption == 'on'}
     function create_if_block$1(ctx) {
     	let current_block_type_index;
@@ -15729,12 +15810,12 @@ var app = (function () {
     	const if_block_creators = [create_if_block_1$1, create_else_block];
     	const if_blocks = [];
 
-    	function select_block_type(ctx, dirty) {
+    	function select_block_type_1(ctx, dirty) {
     		if (/*numb*/ ctx[4] == "3") return 0;
     		return 1;
     	}
 
-    	current_block_type_index = select_block_type(ctx);
+    	current_block_type_index = select_block_type_1(ctx);
     	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	const block = {
@@ -15749,7 +15830,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			let previous_block_index = current_block_type_index;
-    			current_block_type_index = select_block_type(ctx);
+    			current_block_type_index = select_block_type_1(ctx);
 
     			if (current_block_type_index === previous_block_index) {
     				if_blocks[current_block_type_index].p(ctx, dirty);
@@ -15822,8 +15903,8 @@ var app = (function () {
     			if_block1_anchor = empty();
     			if (img.src !== (img_src_value = "assets\\2_Boxes.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
-    			attr_dev(img, "class", "svelte-1yobklh");
-    			add_location(img, file$5, 87, 12, 3580);
+    			attr_dev(img, "class", "svelte-177km69");
+    			add_location(img, file$5, 87, 12, 3658);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -15968,8 +16049,8 @@ var app = (function () {
     			if_block2_anchor = empty();
     			if (img.src !== (img_src_value = "assets\\3_Boxes.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
-    			attr_dev(img, "class", "svelte-1yobklh");
-    			add_location(img, file$5, 68, 12, 2438);
+    			attr_dev(img, "class", "svelte-177km69");
+    			add_location(img, file$5, 68, 12, 2516);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -16134,10 +16215,10 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 90, 20, 3784);
-    			attr_dev(div, "class", "desk2 svelte-1yobklh");
-    			add_location(div, file$5, 89, 16, 3744);
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$5, 90, 20, 3862);
+    			attr_dev(div, "class", "desk2 svelte-177km69");
+    			add_location(div, file$5, 89, 16, 3822);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16218,10 +16299,10 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 96, 20, 4128);
-    			attr_dev(div, "class", "anal12 svelte-1yobklh");
-    			add_location(div, file$5, 95, 16, 4087);
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$5, 96, 20, 4206);
+    			attr_dev(div, "class", "anal12 svelte-177km69");
+    			add_location(div, file$5, 95, 16, 4165);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16302,10 +16383,10 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 71, 20, 2641);
-    			attr_dev(div, "class", "desk svelte-1yobklh");
-    			add_location(div, file$5, 70, 16, 2602);
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$5, 71, 20, 2719);
+    			attr_dev(div, "class", "desk svelte-177km69");
+    			add_location(div, file$5, 70, 16, 2680);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16386,10 +16467,10 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 77, 20, 2984);
-    			attr_dev(div, "class", "anal1 svelte-1yobklh");
-    			add_location(div, file$5, 76, 16, 2944);
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$5, 77, 20, 3062);
+    			attr_dev(div, "class", "anal1 svelte-177km69");
+    			add_location(div, file$5, 76, 16, 3022);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16470,10 +16551,10 @@ var app = (function () {
     			attr_dev(iframe, "title", "description");
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
-    			attr_dev(iframe, "class", "svelte-1yobklh");
-    			add_location(iframe, file$5, 83, 20, 3316);
-    			attr_dev(div, "class", "anal2 svelte-1yobklh");
-    			add_location(div, file$5, 82, 16, 3276);
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$5, 83, 20, 3394);
+    			attr_dev(div, "class", "anal2 svelte-177km69");
+    			add_location(div, file$5, 82, 16, 3354);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16573,6 +16654,8 @@ var app = (function () {
     	let div3_intro;
     	let div3_outro;
     	let t10;
+    	let current_block_type_index;
+    	let if_block;
     	let div4_intro;
     	let div4_outro;
     	let current;
@@ -16588,7 +16671,16 @@ var app = (function () {
     	}
 
     	deskticker = new DeskTicker({ $$inline: true });
-    	let if_block = /*cameraOption*/ ctx[5] == "on" && create_if_block$1(ctx);
+    	const if_block_creators = [create_if_block$1, create_else_block_1];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*cameraOption*/ ctx[5] == "on") return 0;
+    		return 1;
+    	}
+
+    	current_block_type_index = select_block_type(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	const block = {
     		c: function create() {
@@ -16621,37 +16713,41 @@ var app = (function () {
     			t9 = space();
     			create_component(deskticker.$$.fragment);
     			t10 = space();
-    			if (if_block) if_block.c();
+    			if_block.c();
     			if (img0.src !== (img0_src_value = "assets\\Background.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "left bar");
-    			attr_dev(img0, "class", "svelte-1yobklh");
+    			attr_dev(img0, "class", "svelte-177km69");
     			add_location(img0, file$5, 46, 4, 1308);
     			if (img1.src !== (img1_src_value = "assets/RLPC_Desk_Bar.png")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "RLPC bar");
-    			attr_dev(img1, "class", "svelte-1yobklh");
-    			add_location(img1, file$5, 48, 8, 1490);
+    			attr_dev(img1, "class", "svelte-177km69");
+    			add_location(img1, file$5, 48, 8, 1529);
     			if (img2.src !== (img2_src_value = "assets/Left_Red_Bar.png")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "left bar");
-    			attr_dev(img2, "class", "svelte-1yobklh");
-    			add_location(img2, file$5, 49, 8, 1551);
-    			attr_dev(p0, "class", "rlpcDesk svelte-1yobklh");
-    			add_location(p0, file$5, 51, 12, 1645);
-    			attr_dev(p1, "class", "tonightDesk svelte-1yobklh");
-    			add_location(p1, file$5, 52, 12, 1691);
-    			attr_dev(div0, "class", "topLeft svelte-1yobklh");
-    			add_location(div0, file$5, 50, 8, 1611);
+    			attr_dev(img2, "class", "svelte-177km69");
+    			add_location(img2, file$5, 49, 8, 1590);
+    			attr_dev(p0, "class", "rlpcDesk svelte-177km69");
+    			add_location(p0, file$5, 51, 12, 1684);
+    			attr_dev(p1, "class", "tonightDesk svelte-177km69");
+    			add_location(p1, file$5, 52, 12, 1730);
+    			attr_dev(div0, "class", "topLeft svelte-177km69");
+    			add_location(div0, file$5, 50, 8, 1650);
     			if (img3.src !== (img3_src_value = "assets/Todays_Matches_Bar.png")) attr_dev(img3, "src", img3_src_value);
     			attr_dev(img3, "alt", "left bar");
-    			attr_dev(img3, "class", "svelte-1yobklh");
-    			add_location(img3, file$5, 54, 8, 1757);
+    			attr_dev(img3, "class", "svelte-177km69");
+    			add_location(img3, file$5, 54, 8, 1796);
+    			set_style(div1, "position", "absolute");
+    			set_style(div1, "z-index", "2");
     			add_location(div1, file$5, 47, 4, 1362);
-    			add_location(div2, file$5, 56, 4, 1830);
+    			set_style(div2, "position", "absolute");
+    			set_style(div2, "z-index", "2");
+    			add_location(div2, file$5, 56, 4, 1869);
     			if (img4.src !== (img4_src_value = "assets/Bottom_Ticker_Tape.png")) attr_dev(img4, "src", img4_src_value);
     			attr_dev(img4, "alt", "ticker");
-    			attr_dev(img4, "class", "svelte-1yobklh");
-    			add_location(img4, file$5, 62, 8, 2274);
-    			add_location(div3, file$5, 61, 4, 2149);
-    			attr_dev(div4, "class", "container svelte-1yobklh");
+    			attr_dev(img4, "class", "svelte-177km69");
+    			add_location(img4, file$5, 62, 8, 2352);
+    			add_location(div3, file$5, 61, 4, 2227);
+    			attr_dev(div4, "class", "container svelte-177km69");
     			add_location(div4, file$5, 45, 0, 1180);
     		},
     		l: function claim(nodes) {
@@ -16685,7 +16781,7 @@ var app = (function () {
     			append_dev(div3, t9);
     			mount_component(deskticker, div3, null);
     			append_dev(div4, t10);
-    			if (if_block) if_block.m(div4, null);
+    			if_blocks[current_block_type_index].m(div4, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -16698,27 +16794,30 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (/*cameraOption*/ ctx[5] == "on") {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
 
-    					if (dirty & /*cameraOption*/ 32) {
-    						transition_in(if_block, 1);
-    					}
-    				} else {
-    					if_block = create_if_block$1(ctx);
-    					if_block.c();
-    					transition_in(if_block, 1);
-    					if_block.m(div4, null);
-    				}
-    			} else if (if_block) {
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
     				group_outros();
 
-    				transition_out(if_block, 1, 1, () => {
-    					if_block = null;
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
     				});
 
     				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				} else {
+    					if_block.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(div4, null);
     			}
     		},
     		i: function intro(local) {
@@ -16814,7 +16913,7 @@ var app = (function () {
     			if (detaching && div2_outro) div2_outro.end();
     			destroy_component(deskticker);
     			if (detaching && div3_outro) div3_outro.end();
-    			if (if_block) if_block.d();
+    			if_blocks[current_block_type_index].d();
     			if (detaching && div4_outro) div4_outro.end();
     		}
     	};
