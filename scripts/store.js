@@ -14,7 +14,7 @@ export const tickerInfo = writable('');
 export const cameraOption = writable('off');
 export const vidOption = writable('off');
 export const numb = writable('3');
-export const currentScene = writable('desk');
+export const currentScene = writable('');
 export const casterDisplay = tweened(0, {
   duration: 1000
 });;

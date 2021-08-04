@@ -21,13 +21,13 @@
         <div class='container' in:fly="{{ duration:2000, x: -1000, delay: 1500}}" style='background-color: {color};'>
             <div class='name'>{name}</div>
             <div class='record'>{rec}</div>
-            <img class='logo' src='{logo}' alt='logo' style="filter: drop-shadow(-10px 10px 10px #1c1c1c);"/>
+            <img class='logo' src='{logo}' alt='logo'/>
         </div>
     {:else if dir == 'right'}
         <div class='container2' in:fly="{{ duration:2000, x: 1000, delay: 1500}}" style='background-color: {color};'>
             <div class='name2'>{name}</div>
             <div class='record2'>{rec}</div>
-            <img class='logo2' src='{logo}' alt='logo' style="filter: drop-shadow(10px 10px 10px #1c1c1c);"/>
+            <img class='logo2' src='{logo}' alt='logo'>
         </div>
     {/if}
 {/await}
@@ -47,6 +47,7 @@
         top: 50%;
         border: 30px #E4b363;
         border-style: outset hidden outset hidden ;
+        text-shadow: 2px 2px #1c1c1c;
     }
 
     .name {
@@ -79,10 +80,74 @@
         height: 170%;
         top: -50%;
         object-fit: contain;
-        -webkit-transform: perspective(1000px) rotateY(20deg);
-        transform: perspective(1000px) rotateY(20deg);
         margin: 50px 10px;
         background-origin: border-box;
+        animation-name: spin;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-duration: 20s;
+        -webkit-animation-name: spin;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-duration: 20s;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: perspective(1000px) rotateY(20deg);
+            filter: drop-shadow(-10px 10px 10px #1c1c1c);
+        }
+        50% {
+            transform: perspective(1000px) rotateY(-20deg);
+            filter: drop-shadow(10px 10px 10px #1c1c1c);
+        }
+        100% {
+            transform: perspective(1000px) rotateY(20deg);
+            filter: drop-shadow(-10px 10px 10px #1c1c1c);
+        }
+    }
+    @-webkit-keyframes spin{
+        0% {
+            -webkit-transform: perspective(1000px) rotateY(20deg);
+            filter: drop-shadow(-10px 10px 10px #1c1c1c);
+        }
+        50% {
+            -webkit-transform: perspective(1000px) rotateY(-20deg);
+            filter: drop-shadow(10px 10px 10px #1c1c1c);
+        }
+        100% {
+            -webkit-transform: perspective(1000px) rotateY(20deg);
+            filter: drop-shadow(-10px 10px 10px #1c1c1c);
+        }
+    }
+
+    @keyframes spin2 {
+        0% {
+            transform: perspective(1000px) rotateY(-20deg);
+            filter: drop-shadow(10px 10px 10px #1c1c1c);
+        }
+        50% {
+            transform: perspective(1000px) rotateY(20deg);
+            filter: drop-shadow(-10px 10px 10px #1c1c1c);
+        }
+        100% {
+            transform: perspective(1000px) rotateY(-20deg);
+            filter: drop-shadow(10px 10px 10px #1c1c1c);
+        }
+    }
+    @-webkit-keyframes spin2{
+        0% {
+            -webkit-transform: perspective(1000px) rotateY(-20deg);
+            filter: drop-shadow(10px 10px 10px #1c1c1c);
+        }
+        50% {
+            -webkit-transform: perspective(1000px) rotateY(20deg);
+            filter: drop-shadow(-10px 10px 10px #1c1c1c);
+        }
+        100% {
+            -webkit-transform: perspective(1000px) rotateY(-20deg);
+            filter: drop-shadow(10px 10px 10px #1c1c1c);
+        }
     }
 
     .container2 {
@@ -93,6 +158,7 @@
         right: 0;
         border: 30px #E4b363;
         border-style: outset hidden outset hidden ;
+        text-shadow: 2px 2px #1c1c1c;
     }
 
     .name2 {
@@ -125,10 +191,16 @@
         height: 170%;
         top: -50%;
         object-fit: contain;
-        -webkit-transform: perspective(1000px) rotateY(-20deg);
-        transform: perspective(1000px) rotateY(-20deg);
         margin: 50px 10px;
         background-origin: border-box;
+        animation-name: spin;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-duration: 20s;
+        -webkit-animation-name: spin2;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-duration: 20s;
     }
 
 </style>

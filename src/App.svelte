@@ -8,6 +8,7 @@
 	import PowerRankings from "./PowerRankings.svelte";
 	import DefaultScene from "./DefaultScene.svelte";
 	import PlayerCard from "./PlayerCard.svelte";
+	import Matchup from "./Matchup.svelte";
 	let casterDisplay = 0;
 	let deskDisplay = 0;
 	onMount(() => {
@@ -28,7 +29,11 @@
 </svelte:head>
 
 <main>
-	<DefaultScene />
+	{#if currentScene != 'matchup'}
+		<DefaultScene />
+	{:else}
+    	<img src='assets\Background.png' alt='left bar'/>
+	{/if}
 	{#if currentScene == 'desk'}
 		<Desk />
 	{:else if currentScene == 'caster'}
@@ -37,6 +42,8 @@
 		<PowerRankings />
 	{:else if currentScene == 'player'}
 		<PlayerCard />
+	{:else if currentScene == 'matchup'}
+		<Matchup />
 	{/if}
 </main>
 

@@ -41,6 +41,10 @@
         height: 100px;
         width: 100px;
         object-fit: contain;
+        /* -webkit-transform: perspective(1000px) rotateY(-20deg);
+        transform: perspective(1000px) rotateY(-20deg);
+        background-origin: border-box;
+        filter: drop-shadow(10px 10px 10px #1c1c1c); */
     }
 
     .name {
