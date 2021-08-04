@@ -870,7 +870,7 @@ function updateCasters() {
                         games4['team2']=[obj['feed']['entry'][i]['content']['$t']];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M30") {
                       player1['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player1['left']="100";
+                      player1['left']="4";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "N30") {
                       if (obj['feed']['entry'][i]['content']['$t'] == ""){
                         player1['goals']=0.00;
@@ -1061,25 +1061,25 @@ function updateCasters() {
                       player8['mmr']=obj['feed']['entry'][i]['content']['$t'];
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M31") {
                       player2['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player2['left']="580";
+                      player2['left']="29";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M32") {
                       player3['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player3['left']="1060";
+                      player3['left']="54";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M33") {
                       player4['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player4['left']="1540";
+                      player4['left']="79";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M37") {
                       player5['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player5['left']="100";
+                      player5['left']="4";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M38") {
                       player6['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player6['left']="580";
+                      player6['left']="29";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M39") {
                       player7['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player7['left']="1060";
+                      player7['left']="54";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "M40") {
                       player8['name']=obj['feed']['entry'][i]['content']['$t'];
-                      player8['left']="1540";
+                      player8['left']="79";
                     }else if (obj['feed']['entry'][i]['title']['$t'] == "H6") {
                       matchupTeam1.set(obj['feed']['entry'][i]['content']['$t']);
                       var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();

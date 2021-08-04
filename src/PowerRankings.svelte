@@ -36,6 +36,7 @@
 
 </script>
 <div class='back'  transition:fade="{{ duration:1000, ease:'circ' }}">
+    <img src='assets\Background.png' alt='left bar'/>
     <div class='contain' id='image'>
         <h1 transition:fade={{duration: 3000}}>{league} Power Rankings</h1>
         {#each powerRankings as team (team.id)}
@@ -90,7 +91,6 @@
         left: 0%;
         height: 1080px;
         width: 1920px;
-        background-color: #1c1c1c;
         overflow: hidden;
     }
 
