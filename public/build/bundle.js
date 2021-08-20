@@ -12304,10 +12304,10 @@ var app = (function () {
     const pbpImage = writable('');
     const colorImage = writable('');
     const tickerInfo = writable('');
-    const cameraOption = writable('off');
+    const cameraOption = writable('on');
     const vidOption = writable('off');
-    const numb = writable('3');
-    const currentScene = writable('');
+    const numb = writable('2');
+    const currentScene = writable('desk');
     const casterDisplay = tweened(0, {
       duration: 1000
     });const deskDisplay = tweened(0, {
@@ -12890,6 +12890,49 @@ var app = (function () {
       });
 
     function updateCasters() {
+        var temp = [
+          'Spartans,3,2,Pirates',
+          'Bulls,0,3,Lions',
+          'Sharks,3,1,Panthers',
+          'Ascension,2,3,Flames',
+          'Whitecaps,3,2,Storm',
+          'Piranhas,3,2,Raptors',
+          'Terriers,3,0,Macaws',
+          'Jackrabbits,3,0,Mages',
+          'Zebras,3,2,Camels',
+          'Captains,3,2,Samurai',
+          'Yetis,0,3,Hornets',
+          'Otters,3,0,Solar',
+          'Dukes,3,2,Voyagers',
+          'Warriors,3,0,Bandits',
+          'Pythons,3,1,Herons',
+          'Vultures,3,2,Falcons',
+          'Mustangs,3,2,Lynx',
+          'Pulsars,3,0,Inferno',
+          'Avalanche,3,2,Lightning'
+        ];
+
+        var tickerInfoLocal = '';
+        temp.forEach(async function(tempN) {
+          var tempAr = tempN.split(",");
+          tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+        });
+        var powerRankingsLocal = [];
+        var games1 = {top:185,time:'8 PM', team1:'Hawks', team2:'Eagles', league:'MAJ'};
+        var games2 = {top:395,time:'9 PM', team1:'Tides', team2:'Pandas', league:'MAV'};
+        var games3 = {top:610,time:'10 PM', team1:'Barracuda', team2:'Jaguars', league:'AA'};
+        var games4 = {top:815};
+        var games = [];
+        var player1 = {};
+        var player2 = {};
+        var player3 = {};
+        var player4 = {};
+        var player5 = {};
+        var player6 = {};
+        var player7 = {};
+        var player8 = {};
+        var team1 = [];
+        var team2 = [];
         if (!stop) {
             var url = "https://spreadsheets.google.com/feeds/cells/1mDV2D9MRoYX-7f4eBDlllvBq-kewCFQ6kRbCf3ML6uk/od6/public/basic?alt=json";
             var xhttp = new XMLHttpRequest();
@@ -12897,24 +12940,8 @@ var app = (function () {
                 if (this.readyState == 4 && this.status == 200) {
                     var obj = JSON.parse(this.response);
                     var i;
-                    var tickerInfoLocal = '';
-                    var powerRankingsLocal = [];
                     var entry = obj['feed']['entry'];
-                    var games1 = {top:185};
-                    var games2 = {top:395};
-                    var games3 = {top:610};
-                    var games4 = {top:815};
-                    var games = [];
-                    var player1 = {};
-                    var player2 = {};
-                    var player3 = {};
-                    var player4 = {};
-                    var player5 = {};
-                    var player6 = {};
-                    var player7 = {};
-                    var player8 = {};
-                    var team1 = [];
-                    var team2 = [];
+                    
                     for (i = 0; i < entry.length; i++) {
                         obj['feed']['entry'][i]['title']['$t'].slice(-2);
                         if (obj['feed']['entry'][i]['title']['$t'] == "H12") {
@@ -13393,24 +13420,24 @@ var app = (function () {
                         }
 
                     }
-                    games.push(games1);
-                    games.push(games2);
-                    games.push(games3);
-                    games.push(games4);
-                    team1.push(player1);
-                    team1.push(player2);
-                    team1.push(player3);
-                    team1.push(player4);
-                    team2.push(player5);
-                    team2.push(player6);
-                    team2.push(player7);
-                    team2.push(player8);
-                    teamPlayers1.set(team1);
-                    teamPlayers2.set(team2);
-                    tickerInfo.set(tickerInfoLocal);
-                    powerRankings.set(powerRankingsLocal);
-                    tonightGames.set(games);
                 }
+                games.push(games1);
+                games.push(games2);
+                games.push(games3);
+                games.push(games4);
+                team1.push(player1);
+                team1.push(player2);
+                team1.push(player3);
+                team1.push(player4);
+                team2.push(player5);
+                team2.push(player6);
+                team2.push(player7);
+                team2.push(player8);
+                teamPlayers1.set(team1);
+                teamPlayers2.set(team2);
+                tickerInfo.set(tickerInfoLocal);
+                powerRankings.set(powerRankingsLocal);
+                tonightGames.set(games);
             };
             xhttp.open("GET", url, true);
             xhttp.send();

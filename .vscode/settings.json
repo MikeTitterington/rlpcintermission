@@ -11,5 +11,36 @@
         "svelte": {
             "parser": "code"
         }
-    }
+    },
+    "yaml.customTags": [
+        "!fn",
+        "!And",
+        "!If",
+        "!Not sequence",
+        "!Equals sequence",
+        "!Or",
+        "!FindInMap sequence",
+        "!Base64",
+        "!Cidr",
+        "!Ref",
+        "!Sub",
+        "!GetAtt scalar",
+        "!GetAZs",
+        "!ImportValue",
+        "!Select",
+        "!Split",
+        "!Join sequence",
+        "!Select sequence",
+        "!And sequence",
+        "!If sequence",
+        "!Not",
+        "!Equals",
+        "!Or sequence",
+        "!FindInMap",
+        "!Join",
+        "!Sub sequence",
+        "!GetAtt",
+        "!ImportValue sequence",
+        "!Split sequence"
+    ]
 }
