@@ -11,7 +11,7 @@ export const colorName = writable('');
 export const pbpImage = writable('');
 export const colorImage = writable('');
 export const tickerInfo = writable('');
-export const cameraOption = writable('on');
+export const cameraOption = writable('off');
 export const vidOption = writable('off');
 export const numb = writable('2');
 export const currentScene = writable('desk');
@@ -592,11 +592,15 @@ WsSubscribers.init(49322, false, [
 ]);
 
 WsSubscribers.subscribe("sos", "casters_update", (d) => {
-    pbpVideo.set(d['casters']['left']['obs']);
-    colorVideo.set(d['casters']['right']['obs']);
-    stop = true;
-    currentScene.set('caster');
-    casterDisplay.set(1);
+    if (d['casters']['left']['obs'] == '') {
+      stop = true;
+      cameraOption.set('off');
+    }else {
+      pbpVideo.set(d['casters']['left']['obs']);
+      colorVideo.set(d['casters']['right']['obs']);
+      stop = true;
+      cameraOption.set('on');
+    }
   });
 
 function updateCasters() {
