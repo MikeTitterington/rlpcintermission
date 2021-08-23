@@ -601,7 +601,70 @@ WsSubscribers.subscribe("sos", "casters_update", (d) => {
       stop = true;
       cameraOption.set('on');
     }
-  });
+});
+
+
+let game1 = {};
+let game2 = {};
+let game3 = {};
+
+WsSubscribers.subscribe("sos", "intermission_update", (d) => {
+  stop = true;
+  var tempAr = '';
+  if (d['intermission']['scene'] == '') {
+    currentScene.set('default');
+  }else {
+    currentScene.set(d['intermission']['scene']);
+  }
+  if (d['intermission']['game1'] != '') {
+    tempAr = d['intermission']['game1'].split(",");
+    game1 = {top:185,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+  }
+  if (d['intermission']['game2'] != '') {
+    tempAr = d['intermission']['game2'].split(",");
+    game2 = {top:395,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+  }
+  if (d['intermission']['game3'] != '') {
+    tempAr = d['intermission']['game3'].split(",");
+    game3 = {top:610,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+  }
+  if (d['intermission']['ticker'] != '') {
+    var tempAr2 = d['intermission']['ticker'].split(",");
+    var tickerInfoLocal = '';
+    tempAr2.forEach(async function(tempN) {
+      var tempAr = tempN.split(",");
+      tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+    })
+    tickerInfo.set(tickerInfoLocal);
+  }
+  if (d['intermission']['power'] != '') {
+    var i = 1;
+    var tempAr2 = d['intermission']['ticker'].split(",");
+    tempAr2.forEach(async function(tempN) {
+      var powerRankingsLocalTemp = {id:i}
+      powerRankingsLocalTemp['top'] = (i-8) * 100;
+      if (i > 8){
+        powerRankingsLocalTemp['left'] = 500;
+      }else {
+        powerRankingsLocalTemp['left'] = 0;
+      }
+      powerRankingsLocalTemp['team'] = tempN;
+      var lower = tempN.toLowerCase();
+      if (teamMap.hasOwnProperty(lower.toLowerCase())) {
+          powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
+      }
+      powerRankingsLocal.push(powerRankingsLocalTemp);
+    })
+  }
+  var games = [];
+  
+  games.push(game1);
+  games.push(game2);
+  games.push(game3);
+
+  tonightGames.set(games);
+
+});
 
 function updateCasters() {
     var temp = [
