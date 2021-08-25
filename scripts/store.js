@@ -668,25 +668,26 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
 
 function updateCasters() {
     var temp = [
-      'Spartans,3,2,Pirates',
-      'Bulls,0,3,Lions',
-      'Sharks,3,1,Panthers',
-      'Ascension,2,3,Flames',
-      'Whitecaps,3,2,Storm',
-      'Piranhas,3,2,Raptors',
-      'Terriers,3,0,Macaws',
-      'Jackrabbits,3,0,Mages',
-      'Zebras,3,2,Camels',
-      'Captains,3,2,Samurai',
-      'Yetis,0,3,Hornets',
-      'Otters,3,0,Solar',
-      'Dukes,3,2,Voyagers',
-      'Warriors,3,0,Bandits',
-      'Pythons,3,1,Herons',
-      'Vultures,3,2,Falcons',
-      'Mustangs,3,2,Lynx',
-      'Pulsars,3,0,Inferno',
-      'Avalanche,3,2,Lightning'
+      'Miners,3,0,Stallions',
+      'Wranglers,1,3,Cougars',
+      'Titans,1,3,Leopards',
+      'Rattlers,2,3,Eskimos',
+      'Pelicans,3,0,Genesis',
+      'Ravens,0,3,Embers',
+      'Cardinals,0,3,Tempest',
+      'Kings,1,3,Sharks',
+      'Lumberjacks,2,3,Bulls',
+      'Pirates,3,0,Lions',
+      'Cobras,1,3,Whitecaps',
+      'Eagles,3,0,Flames',
+      'Hawks,0,3,Storm',
+      'Dukes,3,1,Barracuda',
+      'Voyagers,2,3,Mustangs',
+      'Bandits,0,3,Lynx',
+      'Warriors,1,3,Jaguars',
+      'Pythons,3,2,Avalanche',
+      'Falcons,0,3,Inferno',
+      'Vultures,0,3,Lightning',
     ]
 
     var tickerInfoLocal = '';
@@ -695,9 +696,9 @@ function updateCasters() {
       tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
     })
     var powerRankingsLocal = [];
-    var games1 = {top:185,time:'8 PM', team1:'Hawks', team2:'Eagles', league:'MAJ'};
-    var games2 = {top:395,time:'9 PM', team1:'Tides', team2:'Pandas', league:'MAV'};
-    var games3 = {top:610,time:'10 PM', team1:'Barracuda', team2:'Jaguars', league:'AA'};
+    var games1 = {top:185,time:'8 PM', team1:'Jesters', team2:'Jesters', league:'A'};
+    var games2 = {top:395,time:'9 PM', team1:'Spartans', team2:'Panthers', league:'MAJ'};
+    var games3 = {top:610,time:'10 PM', team1:'Herons', team2:'Pulsars', league:'AA'};
     var games4 = {top:815};
     var games = [];
     var player1 = {};
