@@ -696,7 +696,7 @@ function updateCasters() {
       tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
     })
     var powerRankingsLocal = [];
-    var games1 = {top:185,time:'8 PM', team1:'Jesters', team2:'Jesters', league:'A'};
+    var games1 = {top:185,time:'8 PM', team1:'Jesters', team2:'Gulls', league:'A'};
     var games2 = {top:395,time:'9 PM', team1:'Spartans', team2:'Panthers', league:'MAJ'};
     var games3 = {top:610,time:'10 PM', team1:'Herons', team2:'Pulsars', league:'AA'};
     var games4 = {top:815};
