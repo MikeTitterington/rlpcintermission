@@ -12,15 +12,24 @@
     <p class='time'>{time} ET</p>
     <p class='league'>{league}</p>
     <p class='vs'>VS</p>
-    <p class='team1' use:textfit={
-        {
-          mode:"single", max:45,
-          forceSingleModeWidth:false
-        }
-      }>{team1}</p>
+    {#if team1=='Yellow Jackets'}
+        <p class='team1' style='top:7%' use:textfit={
+            {
+            mode:"single", max:30,
+            forceSingleModeWidth:false
+            }
+        }>{team1}</p>
+    {:else}
+        <p class='team1' use:textfit={
+            {
+                mode:"single",
+                forceSingleModeWidth:false
+            }
+        }>{team1}</p>
+    {/if}
     <p class='team2' use:textfit={
         {
-          mode:"single", max:45,
+          mode:"single",
           forceSingleModeWidth:false
         }
       }>{team2}</p>
@@ -75,7 +84,7 @@
     .team1 {
         position: absolute;
         top: 1%;
-        width: 100%;
+        width: 320px;
         text-align: center;
         height: 50px;
         line-height: 50px;
@@ -92,7 +101,7 @@
     .team2 {
         position: absolute;
         bottom: -19%;
-        width: 100%;
+        width: 320px;
         text-align: center;
         height: 50px;
         line-height: 50px;

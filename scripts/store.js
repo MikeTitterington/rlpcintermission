@@ -1216,6 +1216,7 @@ function updateCasters() {
             tickerInfo.set(tickerInfoLocal);
             powerRankings.set(powerRankingsLocal);
             tonightGames.set(games);
+            stop = true;
         };
         xhttp.open("GET", url, true);
         xhttp.send();

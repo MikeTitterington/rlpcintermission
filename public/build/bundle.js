@@ -12882,34 +12882,102 @@ var app = (function () {
     ]);
 
     WsSubscribers.subscribe("sos", "casters_update", (d) => {
-        pbpVideo.set(d['casters']['left']['obs']);
-        colorVideo.set(d['casters']['right']['obs']);
-        stop = true;
-        currentScene.set('caster');
-        casterDisplay.set(1);
-      });
+        if (d['casters']['left']['obs'] == '') {
+          stop = true;
+          cameraOption.set('off');
+        }else {
+          pbpVideo.set(d['casters']['left']['obs']);
+          colorVideo.set(d['casters']['right']['obs']);
+          stop = true;
+          cameraOption.set('on');
+        }
+    });
+
+
+    let game1 = {};
+    let game2 = {};
+    let game3 = {};
+
+    WsSubscribers.subscribe("sos", "intermission_update", (d) => {
+      stop = true;
+      var tempAr = '';
+      if (d['intermission']['scene'] == '') {
+        currentScene.set('default');
+      }else {
+        currentScene.set(d['intermission']['scene']);
+      }
+      if (d['intermission']['game1'] != '') {
+        tempAr = d['intermission']['game1'].split(",");
+        game1 = {top:185,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+      }
+      if (d['intermission']['game2'] != '') {
+        tempAr = d['intermission']['game2'].split(",");
+        game2 = {top:395,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+      }
+      if (d['intermission']['game3'] != '') {
+        tempAr = d['intermission']['game3'].split(",");
+        game3 = {top:610,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+      }
+      if (d['intermission']['ticker'] != '') {
+        var tempAr2 = d['intermission']['ticker'].split(",");
+        var tickerInfoLocal = '';
+        tempAr2.forEach(async function(tempN) {
+          var tempAr = tempN.split(",");
+          tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
+        });
+        tickerInfo.set(tickerInfoLocal);
+      }
+      if (d['intermission']['power'] != '') {
+        var i = 1;
+        var tempAr2 = d['intermission']['ticker'].split(",");
+        tempAr2.forEach(async function(tempN) {
+          var powerRankingsLocalTemp = {id:i};
+          powerRankingsLocalTemp['top'] = (i-8) * 100;
+          if (i > 8){
+            powerRankingsLocalTemp['left'] = 500;
+          }else {
+            powerRankingsLocalTemp['left'] = 0;
+          }
+          powerRankingsLocalTemp['team'] = tempN;
+          var lower = tempN.toLowerCase();
+          if (teamMap.hasOwnProperty(lower.toLowerCase())) {
+              powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
+          }
+          powerRankingsLocal.push(powerRankingsLocalTemp);
+        });
+      }
+      var games = [];
+      
+      games.push(game1);
+      games.push(game2);
+      games.push(game3);
+
+      tonightGames.set(games);
+
+    });
 
     function updateCasters() {
         var temp = [
-          'Spartans,3,2,Pirates',
-          'Bulls,0,3,Lions',
-          'Sharks,3,1,Panthers',
-          'Ascension,2,3,Flames',
-          'Whitecaps,3,2,Storm',
-          'Piranhas,3,2,Raptors',
-          'Terriers,3,0,Macaws',
-          'Jackrabbits,3,0,Mages',
-          'Zebras,3,2,Camels',
-          'Captains,3,2,Samurai',
-          'Yetis,0,3,Hornets',
-          'Otters,3,0,Solar',
-          'Dukes,3,2,Voyagers',
-          'Warriors,3,0,Bandits',
-          'Pythons,3,1,Herons',
-          'Vultures,3,2,Falcons',
-          'Mustangs,3,2,Lynx',
-          'Pulsars,3,0,Inferno',
-          'Avalanche,3,2,Lightning'
+          'Jesters,3,1,Tempest',
+          'Miners,1,3,Eskimos',
+          'Wranglers,3,2,Genesis',
+          'Titans,3,2,Embers',
+          'Pelicans,3,2,Gulls',
+          'Ravens,3,0,Stallions',
+          'Cardinals,3,2,Cougars',
+          'Dukes,3,2,Lightning',
+          'Voyagers,3,1,Avalanche',
+          'Bandits,2,3,Pulsars',
+          'Warriors,0,3,Inferno',
+          'Herons,3,2,Barracuda',
+          'Falcons,0,3,Mustangs',
+          'Vultures,3,1,Lynx',
+          'Sockeyes,3,0,Dragons',
+          'Wolves,0,3,Beavers',
+          'Wildcats,3,1,Cyclones',
+          'Grizzlies,3,0,Thrashers',
+          'Centurions,3,1,Toucans',
+          'Galaxy,3,0,Scorpions'
         ];
 
         var tickerInfoLocal = '';
@@ -12918,10 +12986,9 @@ var app = (function () {
           tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
         });
         var powerRankingsLocal = [];
-        var games1 = {top:185,time:'8 PM', team1:'Hawks', team2:'Eagles', league:'MAJ'};
-        var games2 = {top:395,time:'9 PM', team1:'Tides', team2:'Pandas', league:'MAV'};
-        var games3 = {top:610,time:'10 PM', team1:'Barracuda', team2:'Jaguars', league:'AA'};
-        var games4 = {top:815};
+        var games1 = {top:185,time:'8 PM', team1:'Yellow Jackets', team2:'Wizards', league:'INDY'};
+        var games2 = {top:395,time:'9 PM', team1:'Pythons', team2:'Jaguars', league:'AA'};
+        var games3 = {top:610,time:'10 PM', team1:'Leopards', team2:'Rattlers', league:'A'};
         var games = [];
         var player1 = {};
         var player2 = {};
@@ -13178,13 +13245,13 @@ var app = (function () {
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "O16") {
                             games3['team2']=[obj['feed']['entry'][i]['content']['$t']];
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "N17") {
-                            games4['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
+                            [obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "O17") {
-                            games4['league']=[obj['feed']['entry'][i]['content']['$t']];
+                            [obj['feed']['entry'][i]['content']['$t']];
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "O18") {
-                            games4['team1']=[obj['feed']['entry'][i]['content']['$t']];
+                            [obj['feed']['entry'][i]['content']['$t']];
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "O19") {
-                            games4['team2']=[obj['feed']['entry'][i]['content']['$t']];
+                            [obj['feed']['entry'][i]['content']['$t']];
                         }else if (obj['feed']['entry'][i]['title']['$t'] == "M30") {
                           player1['name']=obj['feed']['entry'][i]['content']['$t'];
                           player1['left']="4";
@@ -13424,7 +13491,7 @@ var app = (function () {
                 games.push(games1);
                 games.push(games2);
                 games.push(games3);
-                games.push(games4);
+                // games.push(games4);
                 team1.push(player1);
                 team1.push(player2);
                 team1.push(player3);
@@ -13438,6 +13505,7 @@ var app = (function () {
                 tickerInfo.set(tickerInfoLocal);
                 powerRankings.set(powerRankingsLocal);
                 tonightGames.set(games);
+                stop = true;
             };
             xhttp.open("GET", url, true);
             xhttp.send();
@@ -13486,7 +13554,7 @@ var app = (function () {
     const file$c = "src\\Caster.svelte";
 
     // (47:4) {#if pbpVideo != 'null'}
-    function create_if_block_1$3(ctx) {
+    function create_if_block_1$4(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -13560,7 +13628,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$3.name,
+    		id: create_if_block_1$4.name,
     		type: "if",
     		source: "(47:4) {#if pbpVideo != 'null'}",
     		ctx
@@ -13901,7 +13969,7 @@ var app = (function () {
     	let t3;
     	let promise_1;
     	let current;
-    	let if_block0 = /*pbpVideo*/ ctx[0] != "null" && create_if_block_1$3(ctx);
+    	let if_block0 = /*pbpVideo*/ ctx[0] != "null" && create_if_block_1$4(ctx);
     	let if_block1 = /*colorVideo*/ ctx[1] != "null" && create_if_block$6(ctx);
 
     	let info = {
@@ -13985,7 +14053,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_1$3(ctx);
+    					if_block0 = create_if_block_1$4(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(div1, t1);
@@ -15031,13 +15099,19 @@ var app = (function () {
     	let t4;
     	let p2;
     	let t6;
-    	let p3;
     	let t7;
+    	let p3;
     	let t8;
-    	let p4;
-    	let t9;
     	let mounted;
     	let dispose;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*team1*/ ctx[2] == "Yellow Jackets") return create_if_block_1$3;
+    		return create_else_block$2;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
 
     	const block = {
     		c: function create() {
@@ -15052,22 +15126,19 @@ var app = (function () {
     			p2 = element("p");
     			p2.textContent = "VS";
     			t6 = space();
+    			if_block.c();
+    			t7 = space();
     			p3 = element("p");
-    			t7 = text(/*team1*/ ctx[2]);
-    			t8 = space();
-    			p4 = element("p");
-    			t9 = text(/*team2*/ ctx[3]);
-    			attr_dev(p0, "class", "time svelte-99ys1a");
+    			t8 = text(/*team2*/ ctx[3]);
+    			attr_dev(p0, "class", "time svelte-1eu3sbw");
     			add_location(p0, file$a, 11, 4, 311);
-    			attr_dev(p1, "class", "league svelte-99ys1a");
+    			attr_dev(p1, "class", "league svelte-1eu3sbw");
     			add_location(p1, file$a, 12, 4, 345);
-    			attr_dev(p2, "class", "vs svelte-99ys1a");
+    			attr_dev(p2, "class", "vs svelte-1eu3sbw");
     			add_location(p2, file$a, 13, 4, 380);
-    			attr_dev(p3, "class", "team1 svelte-99ys1a");
-    			add_location(p3, file$a, 14, 4, 405);
-    			attr_dev(p4, "class", "team2 svelte-99ys1a");
-    			add_location(p4, file$a, 20, 4, 550);
-    			attr_dev(div, "class", "container svelte-99ys1a");
+    			attr_dev(p3, "class", "team2 svelte-1eu3sbw");
+    			add_location(p3, file$a, 29, 4, 802);
+    			attr_dev(div, "class", "container svelte-1eu3sbw");
     			set_style(div, "top", /*top*/ ctx[4] + "px");
     			add_location(div, file$a, 10, 0, 263);
     		},
@@ -15082,25 +15153,16 @@ var app = (function () {
     			append_dev(div, t4);
     			append_dev(div, p2);
     			append_dev(div, t6);
+    			if_block.m(div, null);
+    			append_dev(div, t7);
     			append_dev(div, p3);
-    			append_dev(p3, t7);
-    			append_dev(div, t8);
-    			append_dev(div, p4);
-    			append_dev(p4, t9);
+    			append_dev(p3, t8);
 
     			if (!mounted) {
-    				dispose = [
-    					action_destroyer(textfit.call(null, p3, {
-    						mode: "single",
-    						max: 45,
-    						forceSingleModeWidth: false
-    					})),
-    					action_destroyer(textfit.call(null, p4, {
-    						mode: "single",
-    						max: 45,
-    						forceSingleModeWidth: false
-    					}))
-    				];
+    				dispose = action_destroyer(textfit.call(null, p3, {
+    					mode: "single",
+    					forceSingleModeWidth: false
+    				}));
 
     				mounted = true;
     			}
@@ -15108,8 +15170,20 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			if (dirty & /*time*/ 1) set_data_dev(t0, /*time*/ ctx[0]);
     			if (dirty & /*league*/ 2) set_data_dev(t3, /*league*/ ctx[1]);
-    			if (dirty & /*team1*/ 4) set_data_dev(t7, /*team1*/ ctx[2]);
-    			if (dirty & /*team2*/ 8) set_data_dev(t9, /*team2*/ ctx[3]);
+
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(div, t7);
+    				}
+    			}
+
+    			if (dirty & /*team2*/ 8) set_data_dev(t8, /*team2*/ ctx[3]);
 
     			if (dirty & /*top*/ 16) {
     				set_style(div, "top", /*top*/ ctx[4] + "px");
@@ -15117,8 +15191,9 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			if_block.d();
     			mounted = false;
-    			run_all(dispose);
+    			dispose();
     		}
     	};
 
@@ -15127,6 +15202,104 @@ var app = (function () {
     		id: create_if_block$5.name,
     		type: "if",
     		source: "(10:0) {#if time != ''}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (22:4) {:else}
+    function create_else_block$2(ctx) {
+    	let p;
+    	let t;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			t = text(/*team1*/ ctx[2]);
+    			attr_dev(p, "class", "team1 svelte-1eu3sbw");
+    			add_location(p, file$a, 22, 8, 633);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t);
+
+    			if (!mounted) {
+    				dispose = action_destroyer(textfit.call(null, p, {
+    					mode: "single",
+    					forceSingleModeWidth: false
+    				}));
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*team1*/ 4) set_data_dev(t, /*team1*/ ctx[2]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$2.name,
+    		type: "else",
+    		source: "(22:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (15:4) {#if team1=='Yellow Jackets'}
+    function create_if_block_1$3(ctx) {
+    	let p;
+    	let t;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			t = text(/*team1*/ ctx[2]);
+    			attr_dev(p, "class", "team1 svelte-1eu3sbw");
+    			set_style(p, "top", "7%");
+    			add_location(p, file$a, 15, 8, 443);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t);
+
+    			if (!mounted) {
+    				dispose = action_destroyer(textfit.call(null, p, {
+    					mode: "single",
+    					max: 30,
+    					forceSingleModeWidth: false
+    				}));
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*team1*/ 4) set_data_dev(t, /*team1*/ ctx[2]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$3.name,
+    		type: "if",
+    		source: "(15:4) {#if team1=='Yellow Jackets'}",
     		ctx
     	});
 
