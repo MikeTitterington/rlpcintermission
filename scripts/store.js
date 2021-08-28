@@ -656,6 +656,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
           powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
       }
       powerRankingsLocal.push(powerRankingsLocalTemp);
+      i += 1
     })
   }
   var games = [];
