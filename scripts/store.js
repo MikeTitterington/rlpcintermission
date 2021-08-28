@@ -599,6 +599,7 @@ WsSubscribers.subscribe("sos", "casters_update", (d) => {
       colorVideo.set(d['casters']['right']['obs']);
       stop = true;
     }
+    console.log(d['casters']['cams']);
     cameraOption.set(d['casters']['cams']);
 
 });
