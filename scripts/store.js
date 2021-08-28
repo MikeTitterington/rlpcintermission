@@ -646,10 +646,10 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
       var powerRankingsLocalTemp = {id:i}
       if (i > 8){
         powerRankingsLocalTemp['left'] = 500;
-        powerRankingsLocalTemp['top'] = (i-9) * 100;
+        powerRankingsLocalTemp['top'] = (i-8) * 100;
       }else {
         powerRankingsLocalTemp['left'] = 0;
-        powerRankingsLocalTemp['top'] = (i-1) * 100;
+        powerRankingsLocalTemp['top'] = (i) * 100;
       }
       powerRankingsLocalTemp['team'] = tempN;
       var lower = tempN.toLowerCase();
@@ -657,7 +657,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
           powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
       }
       powerRankingsLocal.push(powerRankingsLocalTemp);
-      i += 1
+      i = i + 1;
     })
   }
   var games = [];
