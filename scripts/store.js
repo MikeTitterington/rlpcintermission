@@ -594,13 +594,13 @@ WsSubscribers.init(49322, false, [
 WsSubscribers.subscribe("sos", "casters_update", (d) => {
     if (d['casters']['left']['obs'] == '') {
       stop = true;
-      cameraOption.set('off');
     }else {
       pbpVideo.set(d['casters']['left']['obs']);
       colorVideo.set(d['casters']['right']['obs']);
       stop = true;
-      cameraOption.set('on');
     }
+    cameraOption.set(d['casters']['cams']);
+
 });
 
 
