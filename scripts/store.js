@@ -652,8 +652,8 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
         powerRankingsLocalTemp['left'] = 0;
         powerRankingsLocalTemp['top'] = (i) * 100;
       }
-      powerRankingsLocalTemp['team'] = tempN;
-      var lower = tempN.toLowerCase();
+      powerRankingsLocalTemp['team'] = tempN.trim();
+      var lower = tempN.trim().toLowerCase();
       if (teamMap.hasOwnProperty(lower.toLowerCase())) {
           powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
       }
