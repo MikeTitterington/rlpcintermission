@@ -667,6 +667,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
     var lower = d['intermission']['teamLeft'].toLowerCase();
     if (teamMap.hasOwnProperty(lower)) {
       matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
+      matchupTeam1logo.set(teamMap[lower]['logo']);
     }
   }
   if (d['intermission']['teamRight'] != '') {
@@ -674,6 +675,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
     var lower = d['intermission']['teamRight'].toLowerCase();
     if (teamMap.hasOwnProperty(lower)) {
       matchupTeam2Color.set(teamMap[lower.toLowerCase()]['1']);
+      matchupTeam2logo.set(teamMap[lower]['logo']);
     }
   }
   var games = [];
