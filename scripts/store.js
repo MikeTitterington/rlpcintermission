@@ -642,7 +642,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
     var i = 1;
     var powerRankingsLocal = [];
     var tempAr2 = d['intermission']['power'].split(",");
-    tempAr2.forEach(async function(tempN) {
+    tempAr2.forEach( function(tempN) {
       var powerRankingsLocalTemp = {id:i}
       if (i > 8){
         powerRankingsLocalTemp['left'] = 500;
