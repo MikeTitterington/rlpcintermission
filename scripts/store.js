@@ -670,10 +670,10 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
     }
   }
   if (d['intermission']['teamRight'] != '') {
-    matchupTeam1.set(d['intermission']['teamRight']);
+    matchupTeam2.set(d['intermission']['teamRight']);
     var lower = d['intermission']['teamRight'].toLowerCase();
     if (teamMap.hasOwnProperty(lower)) {
-      matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
+      matchupTeam2Color.set(teamMap[lower.toLowerCase()]['1']);
     }
   }
   var games = [];
