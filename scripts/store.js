@@ -646,10 +646,10 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
       var powerRankingsLocalTemp = {id:i}
       if (i > 8){
         powerRankingsLocalTemp['left'] = 500;
-        powerRankingsLocalTemp['top'] = (8+8-i-9) * 100;
+        powerRankingsLocalTemp['top'] = i-1 * 100;
       }else {
         powerRankingsLocalTemp['left'] = 0;
-        powerRankingsLocalTemp['top'] = (8-8-i-1) * 100;
+        powerRankingsLocalTemp['top'] = i-9 * 100;
       }
       powerRankingsLocalTemp['team'] = tempN;
       var lower = tempN.toLowerCase();
