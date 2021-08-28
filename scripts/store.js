@@ -629,7 +629,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
     game3 = {top:610,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
   }
   if (d['intermission']['ticker'] != '') {
-    var tempAr2 = d['intermission']['ticker'].split(",");
+    var tempAr2 = d['intermission']['ticker'].split(";");
     var tickerInfoLocal = '';
     tempAr2.forEach(async function(tempN) {
       var tempAr = tempN.split(",");
