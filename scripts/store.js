@@ -661,6 +661,21 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
       i = i + 1;
     })
   }
+  
+  if (d['intermission']['teamLeft'] != '') {
+    matchupTeam1.set(d['intermission']['teamLeft']);
+    var lower = d['intermission']['teamLeft'].toLowerCase();
+    if (teamMap.hasOwnProperty(lower)) {
+      matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
+    }
+  }
+  if (d['intermission']['teamRight'] != '') {
+    matchupTeam1.set(d['intermission']['teamRight']);
+    var lower = d['intermission']['teamRight'].toLowerCase();
+    if (teamMap.hasOwnProperty(lower)) {
+      matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
+    }
+  }
   var games = [];
   
   games.push(game1);
