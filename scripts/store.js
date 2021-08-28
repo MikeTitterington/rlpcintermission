@@ -640,6 +640,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
   }
   if (d['intermission']['power'] != '') {
     var i = 1;
+    var powerRankingsLocal = [];
     var tempAr2 = d['intermission']['power'].split(",");
     tempAr2.forEach(async function(tempN) {
       var powerRankingsLocalTemp = {id:i}
@@ -662,6 +663,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
   games.push(game1);
   games.push(game2);
   games.push(game3);
+  powerRankings.set(powerRankingsLocal);
 
   tonightGames.set(games);
 
