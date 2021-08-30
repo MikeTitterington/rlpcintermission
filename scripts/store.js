@@ -690,28 +690,7 @@ WsSubscribers.subscribe("sos", "intermission_update", (d) => {
 });
 
 function updateCasters() {
-    var temp = [
-      'Jesters,3,1,Tempest',
-      'Miners,1,3,Eskimos',
-      'Wranglers,3,2,Genesis',
-      'Titans,3,2,Embers',
-      'Pelicans,3,2,Gulls',
-      'Ravens,3,0,Stallions',
-      'Cardinals,3,2,Cougars',
-      'Dukes,3,2,Lightning',
-      'Voyagers,3,1,Avalanche',
-      'Bandits,2,3,Pulsars',
-      'Warriors,0,3,Inferno',
-      'Herons,3,2,Barracuda',
-      'Falcons,0,3,Mustangs',
-      'Vultures,3,1,Lynx',
-      'Sockeyes,3,0,Dragons',
-      'Wolves,0,3,Beavers',
-      'Wildcats,3,1,Cyclones',
-      'Grizzlies,3,0,Thrashers',
-      'Centurions,3,1,Toucans',
-      'Galaxy,3,0,Scorpions'
-    ]
+    var temp = []
 
     var tickerInfoLocal = '';
     temp.forEach(async function(tempN) {
@@ -719,9 +698,9 @@ function updateCasters() {
       tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
     })
     var powerRankingsLocal = [];
-    var games1 = {top:185,time:'8 PM', team1:'Yellow Jackets', team2:'Wizards', league:'INDY'};
-    var games2 = {top:395,time:'9 PM', team1:'Pythons', team2:'Jaguars', league:'AA'};
-    var games3 = {top:610,time:'10 PM', team1:'Leopards', team2:'Rattlers', league:'A'};
+    var games1 = {top:185};
+    var games2 = {top:395};
+    var games3 = {top:610};
     var games4 = {top:815};
     var games = [];
     var player1 = {};
