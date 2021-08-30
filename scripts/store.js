@@ -698,10 +698,10 @@ function updateCasters() {
       tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
     })
     var powerRankingsLocal = [];
-    var games1 = {top:185};
-    var games2 = {top:395};
-    var games3 = {top:610};
-    var games4 = {top:815};
+    var games1 = {};
+    var games2 = {};
+    var games3 = {};
+    var games4 = {};
     var games = [];
     var player1 = {};
     var player2 = {};
@@ -1201,9 +1201,9 @@ function updateCasters() {
 
                 }
             }
-            games.push(games1);
-            games.push(games2);
-            games.push(games3);
+            // games.push(games1);
+            // games.push(games2);
+            // games.push(games3);
             // games.push(games4);
             team1.push(player1);
             team1.push(player2);
@@ -1217,7 +1217,7 @@ function updateCasters() {
             teamPlayers2.set(team2);
             tickerInfo.set(tickerInfoLocal);
             powerRankings.set(powerRankingsLocal);
-            tonightGames.set(games);
+            // tonightGames.set(games);
             stop = true;
         };
         xhttp.open("GET", url, true);
