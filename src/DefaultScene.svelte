@@ -3,7 +3,7 @@
 </script>
 
 <div class='contain'  transition:fade="{{ duration:1000, ease:'circ' }}">
-    <img src='https://media.discordapp.net/attachments/854484965080039444/866892026549501992/rlpcbackgroundfinal.png?width=1920&height=1080'>
+    <img src='https://media.discordapp.net/attachments/829498943309086782/930167400807141386/RLPC_S16_BG.png?width=1920&height=1080'>
 </div>
 
 <style>

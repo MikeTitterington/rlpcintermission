@@ -44,6 +44,8 @@
 		<PlayerCard />
 	{:else if currentScene == 'matchup'}
 		<Matchup />
+	{:else if currentScene == 'matchup'}
+		<Interview />
 	{/if}
 </main>
 
