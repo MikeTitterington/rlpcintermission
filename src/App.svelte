@@ -9,6 +9,7 @@
 	import DefaultScene from "./DefaultScene.svelte";
 	import PlayerCard from "./PlayerCard.svelte";
 	import Matchup from "./Matchup.svelte";
+	import Interview from "./Interview.svelte";
 	let casterDisplay = 0;
 	let deskDisplay = 0;
 	onMount(() => {
@@ -44,7 +45,7 @@
 		<PlayerCard />
 	{:else if currentScene == 'matchup'}
 		<Matchup />
-	{:else if currentScene == 'matchup'}
+	{:else if currentScene == 'interview'}
 		<Interview />
 	{/if}
 </main>
