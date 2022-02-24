@@ -3,11 +3,10 @@
 	import Ticker from './Ticker.svelte';
 	import GameDesk from './GameDesk.svelte';
 	import store from '../scripts/store.js';
+	import { tickerInfo } from '../scripts/store.js';
 	import { onMount } from 'svelte';
 	import DefaultScene from "./DefaultScene.svelte";
 	import DeskTicker from "./DeskTicker.svelte";
-
-    export let tickerInfo = '';
     export let tonightGames = [];
     let deskVideo = '';
     let anal1Video = '';
@@ -20,9 +19,6 @@
     let colorVideo = '';
     
     onMount(() => {
-		store.tickerInfo(currentMessage => {
-			tickerInfo = currentMessage;
-		})
 		store.tonightGames(currentMessage => {
 			tonightGames = currentMessage;
 		})

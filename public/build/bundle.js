@@ -1215,6 +1215,173 @@ var app = (function () {
         return { set, update, subscribe };
     }
 
+    var browserCookies = {};
+
+    (function (exports) {
+    exports.defaults = {};
+
+    exports.set = function(name, value, options) {
+      // Retrieve options and defaults
+      var opts = options || {};
+      var defaults = exports.defaults;
+
+      // Apply default value for unspecified options
+      var expires  = opts.expires  || defaults.expires;
+      var domain   = opts.domain   || defaults.domain;
+      var path     = opts.path     !== undefined ? opts.path     : (defaults.path !== undefined ? defaults.path : '/');
+      var secure   = opts.secure   !== undefined ? opts.secure   : defaults.secure;
+      var httponly = opts.httponly !== undefined ? opts.httponly : defaults.httponly;
+      var samesite = opts.samesite !== undefined ? opts.samesite : defaults.samesite;
+
+      // Determine cookie expiration date
+      // If succesful the result will be a valid Date, otherwise it will be an invalid Date or false(ish)
+      var expDate = expires ? new Date(
+          // in case expires is an integer, it should specify the number of days till the cookie expires
+          typeof expires === 'number' ? new Date().getTime() + (expires * 864e5) :
+          // else expires should be either a Date object or in a format recognized by Date.parse()
+          expires
+      ) : 0;
+
+      // Set cookie
+      document.cookie = name.replace(/[^+#$&^`|]/g, encodeURIComponent)                // Encode cookie name
+      .replace('(', '%28')
+      .replace(')', '%29') +
+      '=' + value.replace(/[^+#$&/:<-\[\]-}]/g, encodeURIComponent) +                  // Encode cookie value (RFC6265)
+      (expDate && expDate.getTime() >= 0 ? ';expires=' + expDate.toUTCString() : '') + // Add expiration date
+      (domain   ? ';domain=' + domain     : '') +                                      // Add domain
+      (path     ? ';path='   + path       : '') +                                      // Add path
+      (secure   ? ';secure'               : '') +                                      // Add secure option
+      (httponly ? ';httponly'             : '') +                                      // Add httponly option
+      (samesite ? ';samesite=' + samesite : '');                                       // Add samesite option
+    };
+
+    exports.get = function(name) {
+      var cookies = document.cookie.split(';');
+      
+      // Iterate all cookies
+      while(cookies.length) {
+        var cookie = cookies.pop();
+
+        // Determine separator index ("name=value")
+        var separatorIndex = cookie.indexOf('=');
+
+        // IE<11 emits the equal sign when the cookie value is empty
+        separatorIndex = separatorIndex < 0 ? cookie.length : separatorIndex;
+
+        var cookie_name = decodeURIComponent(cookie.slice(0, separatorIndex).replace(/^\s+/, ''));
+
+        // Return cookie value if the name matches
+        if (cookie_name === name) {
+          return decodeURIComponent(cookie.slice(separatorIndex + 1));
+        }
+      }
+
+      // Return `null` as the cookie was not found
+      return null;
+    };
+
+    exports.erase = function(name, options) {
+      exports.set(name, '', {
+        expires:  -1,
+        domain:   options && options.domain,
+        path:     options && options.path,
+        secure:   0,
+        httponly: 0}
+      );
+    };
+
+    exports.all = function() {
+      var all = {};
+      var cookies = document.cookie.split(';');
+
+      // Iterate all cookies
+      while(cookies.length) {
+        var cookie = cookies.pop();
+
+        // Determine separator index ("name=value")
+        var separatorIndex = cookie.indexOf('=');
+
+        // IE<11 emits the equal sign when the cookie value is empty
+        separatorIndex = separatorIndex < 0 ? cookie.length : separatorIndex;
+
+        // add the cookie name and value to the `all` object
+        var cookie_name = decodeURIComponent(cookie.slice(0, separatorIndex).replace(/^\s+/, ''));
+        all[cookie_name] = decodeURIComponent(cookie.slice(separatorIndex + 1));
+      }
+
+      return all;
+    };
+    }(browserCookies));
+
+    /**
+     * Make a store persistent
+     * @param {Writable<*>} store The store to enhance
+     * @param {StorageInterface} storage The storage to use
+     * @param {string} key The name of the data key
+     */
+    function persist(store, storage, key) {
+        const initialValue = storage.getValue(key);
+        if (null !== initialValue) {
+            store.set(initialValue);
+        }
+        if (storage.addListener) {
+            storage.addListener(key, newValue => {
+                store.set(newValue);
+            });
+        }
+        store.subscribe(value => {
+            storage.setValue(key, value);
+        });
+        return Object.assign(Object.assign({}, store), { delete() {
+                storage.deleteValue(key);
+            } });
+    }
+    /**
+     * Storage implementation that use the browser cookies
+     */
+    function cookieStorage() {
+        if (typeof document === "undefined" || typeof (document === null || document === void 0 ? void 0 : document.cookie) !== "string") {
+            console.warn("Unable to find the cookies. No data will be persisted.");
+            return noopStorage();
+        }
+        return {
+            getValue(key) {
+                const value = browserCookies.get(key);
+                if (value === null) {
+                    return null;
+                }
+                try {
+                    return JSON.parse(value);
+                }
+                catch (e) {
+                    return value;
+                }
+            },
+            deleteValue(key) {
+                browserCookies.erase(key, { samesite: "Strict" });
+            },
+            setValue(key, value) {
+                browserCookies.set(key, JSON.stringify(value), { samesite: "Strict" });
+            }
+        };
+    }
+    /**
+     * Storage implementation that do nothing
+     */
+    function noopStorage() {
+        return {
+            getValue() {
+                return null;
+            },
+            deleteValue() {
+                // Do nothing
+            },
+            setValue() {
+                // Do nothing
+            }
+        };
+    }
+
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
     function createCommonjsModule(fn) {
@@ -12294,18 +12461,18 @@ var app = (function () {
         }
     };
 
-    const pbpVideo = writable('');
-    const colorVideo = writable('');
-    const deskVideo = writable('');
-    const anal1Video = writable('');
-    const anal2Video = writable('');
-    const pbpName = writable('');
-    const colorName = writable('');
-    const pbpImage = writable('');
-    const colorImage = writable('');
-    const tickerInfo = writable('');
-    const cameraOption = writable('on');
-    const vidOption = writable('off');
+    const pbpVideo = persist(writable(''), cookieStorage(), 'pbpVideo');
+    const colorVideo = persist(writable(''), cookieStorage(), 'colorVideo');
+    const deskVideo = persist(writable(''), cookieStorage(), 'deskVideo');
+    const anal1Video = persist(writable(''), cookieStorage(), 'anal1Video');
+    const anal2Video = persist(writable(''), cookieStorage(), 'anal2Video');
+    const pbpName = persist(writable(''), cookieStorage(), 'pbpName');
+    const colorName = persist(writable(''), cookieStorage(), 'colorName');
+    const pbpImage = persist(writable(''), cookieStorage(), 'pbpImage');
+    const colorImage = persist(writable(''), cookieStorage(), 'colorImage');
+    const tickerInfo = persist(writable(''), cookieStorage(), 'tickerInfo');
+    const cameraOption = persist(writable('on'), cookieStorage(), 'cameraOption');
+    const vidOption = persist(writable('off'), cookieStorage(), 'vidOption');
     const numb = writable('2');
     const currentScene = writable('desk');
     const casterDisplay = tweened(0, {
@@ -12313,7 +12480,7 @@ var app = (function () {
     });const deskDisplay = tweened(0, {
       duration: 1000
     });const powerRankings = writable([]);
-    const tonightGames = writable([]);
+    const tonightGames = persist(writable([]), cookieStorage(), 'tonightGames');
     const league = writable('');
     const teamPlayers1 = writable([]);
     const teamPlayers2 = writable([]);
@@ -12325,8 +12492,6 @@ var app = (function () {
     const matchupTeam2Record = writable('');
     const matchupTeam1Color = writable('');
     const matchupTeam2Color = writable('');
-
-    let stop = false;
 
     let teamMap = {
         "ascension": {
@@ -12882,15 +13047,13 @@ var app = (function () {
     ]);
 
     WsSubscribers.subscribe("sos", "casters_update", (d) => {
-        if (d['casters']['left']['obs'] == '') {
-          stop = true;
-          cameraOption.set('off');
-        }else {
+        if (d['casters']['left']['obs'] == '') ;else {
           pbpVideo.set(d['casters']['left']['obs']);
           colorVideo.set(d['casters']['right']['obs']);
-          stop = true;
-          cameraOption.set('on');
         }
+        console.log(d['casters']['cams']);
+        cameraOption.set(d['casters']['cams']);
+
     });
 
 
@@ -12899,7 +13062,6 @@ var app = (function () {
     let game3 = {};
 
     WsSubscribers.subscribe("sos", "intermission_update", (d) => {
-      stop = true;
       var tempAr = '';
       if (d['intermission']['scene'] == '') {
         currentScene.set('default');
@@ -12919,7 +13081,7 @@ var app = (function () {
         game3 = {top:610,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
       }
       if (d['intermission']['ticker'] != '') {
-        var tempAr2 = d['intermission']['ticker'].split(",");
+        var tempAr2 = d['intermission']['ticker'].split(";");
         var tickerInfoLocal = '';
         tempAr2.forEach(async function(tempN) {
           var tempAr = tempN.split(",");
@@ -12929,587 +13091,63 @@ var app = (function () {
       }
       if (d['intermission']['power'] != '') {
         var i = 1;
-        var tempAr2 = d['intermission']['ticker'].split(",");
-        tempAr2.forEach(async function(tempN) {
+        var powerRankingsLocal = [];
+        var tempAr2 = d['intermission']['power'].split(",");
+        console.log(tempAr2);
+        tempAr2.forEach(function(tempN) {
           var powerRankingsLocalTemp = {id:i};
-          powerRankingsLocalTemp['top'] = (i-8) * 100;
           if (i > 8){
             powerRankingsLocalTemp['left'] = 500;
+            powerRankingsLocalTemp['top'] = (i-8) * 100;
           }else {
             powerRankingsLocalTemp['left'] = 0;
+            powerRankingsLocalTemp['top'] = (i) * 100;
           }
-          powerRankingsLocalTemp['team'] = tempN;
-          var lower = tempN.toLowerCase();
+          powerRankingsLocalTemp['team'] = tempN.trim();
+          var lower = tempN.trim().toLowerCase();
           if (teamMap.hasOwnProperty(lower.toLowerCase())) {
               powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
           }
           powerRankingsLocal.push(powerRankingsLocalTemp);
+          i = i + 1;
         });
+      }
+      
+      if (d['intermission']['teamLeft'] != '') {
+        matchupTeam1.set(d['intermission']['teamLeft']);
+        var lower = d['intermission']['teamLeft'].toLowerCase();
+        if (teamMap.hasOwnProperty(lower)) {
+          matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
+          matchupTeam1logo.set(teamMap[lower]['logo']);
+        }
+      }
+      if (d['intermission']['teamRight'] != '') {
+        matchupTeam2.set(d['intermission']['teamRight']);
+        var lower = d['intermission']['teamRight'].toLowerCase();
+        if (teamMap.hasOwnProperty(lower)) {
+          matchupTeam2Color.set(teamMap[lower.toLowerCase()]['1']);
+          matchupTeam2logo.set(teamMap[lower]['logo']);
+        }
       }
       var games = [];
       
       games.push(game1);
       games.push(game2);
       games.push(game3);
+      powerRankings.set(powerRankingsLocal);
 
       tonightGames.set(games);
 
     });
 
     function updateCasters() {
-        var temp = [
-          'Jesters,3,1,Tempest',
-          'Miners,1,3,Eskimos',
-          'Wranglers,3,2,Genesis',
-          'Titans,3,2,Embers',
-          'Pelicans,3,2,Gulls',
-          'Ravens,3,0,Stallions',
-          'Cardinals,3,2,Cougars',
-          'Dukes,3,2,Lightning',
-          'Voyagers,3,1,Avalanche',
-          'Bandits,2,3,Pulsars',
-          'Warriors,0,3,Inferno',
-          'Herons,3,2,Barracuda',
-          'Falcons,0,3,Mustangs',
-          'Vultures,3,1,Lynx',
-          'Sockeyes,3,0,Dragons',
-          'Wolves,0,3,Beavers',
-          'Wildcats,3,1,Cyclones',
-          'Grizzlies,3,0,Thrashers',
-          'Centurions,3,1,Toucans',
-          'Galaxy,3,0,Scorpions'
-        ];
+        var temp = [];
 
         var tickerInfoLocal = '';
         temp.forEach(async function(tempN) {
           var tempAr = tempN.split(",");
           tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
         });
-        var powerRankingsLocal = [];
-        var games1 = {top:185,time:'8 PM', team1:'Yellow Jackets', team2:'Wizards', league:'INDY'};
-        var games2 = {top:395,time:'9 PM', team1:'Pythons', team2:'Jaguars', league:'AA'};
-        var games3 = {top:610,time:'10 PM', team1:'Leopards', team2:'Rattlers', league:'A'};
-        var games = [];
-        var player1 = {};
-        var player2 = {};
-        var player3 = {};
-        var player4 = {};
-        var player5 = {};
-        var player6 = {};
-        var player7 = {};
-        var player8 = {};
-        var team1 = [];
-        var team2 = [];
-        if (!stop) {
-            var url = "https://spreadsheets.google.com/feeds/cells/1mDV2D9MRoYX-7f4eBDlllvBq-kewCFQ6kRbCf3ML6uk/od6/public/basic?alt=json";
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    var obj = JSON.parse(this.response);
-                    var i;
-                    var entry = obj['feed']['entry'];
-                    
-                    for (i = 0; i < entry.length; i++) {
-                        obj['feed']['entry'][i]['title']['$t'].slice(-2);
-                        if (obj['feed']['entry'][i]['title']['$t'] == "H12") {
-                            pbpVideo.set(obj['feed']['entry'][i]['content']['$t']);
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "H13") {
-                            colorVideo.set(obj['feed']['entry'][i]['content']['$t']);
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "I23") {
-                            pbpName.set(obj['feed']['entry'][i]['content']['$t']);
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "J23") {
-                            pbpImage.set(obj['feed']['entry'][i]['content']['$t']);
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "I24") {
-                            colorName.set(obj['feed']['entry'][i]['content']['$t']);
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "J24") {
-                            colorImage.set(obj['feed']['entry'][i]['content']['$t']);
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B5") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B5") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B6") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B7") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B8") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B9") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        } else if (obj['feed']['entry'][i]['title']['$t'] == "B10") {
-                            var tempAr = obj['feed']['entry'][i]['content']['$t'].split(",");
-                            tickerInfoLocal = tickerInfoLocal + "<p style='padding-left: 25px;'>" + tempAr[0] + " " + tempAr[1] + "-" + tempAr[2] + " " + tempAr[3] + "</p><p style='padding-left: 25px;'>|</p>";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I47") {
-                            var powerRankingsLocalTemp = {id:1};
-                            powerRankingsLocalTemp['top'] = 1 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I48") {
-                            var powerRankingsLocalTemp = {id:2};
-                            powerRankingsLocalTemp['top'] = 2 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I49") {
-                            var powerRankingsLocalTemp = {id:3};
-                            powerRankingsLocalTemp['top'] = 3 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I50") {
-                            var powerRankingsLocalTemp = {id:4};
-                            powerRankingsLocalTemp['top'] = 4 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I51") {
-                            var powerRankingsLocalTemp = {id:5};
-                            powerRankingsLocalTemp['top'] = 5 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I52") {
-                            var powerRankingsLocalTemp = {id:6};
-                            powerRankingsLocalTemp['top'] = 6 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I53") {
-                            var powerRankingsLocalTemp = {id:7};
-                            powerRankingsLocalTemp['top'] = 7 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I54") {
-                            var powerRankingsLocalTemp = {id:8};
-                            powerRankingsLocalTemp['top'] = 8 * 100;
-                            powerRankingsLocalTemp['left'] = 0;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I55") {
-                            var powerRankingsLocalTemp = {id:9};
-                            powerRankingsLocalTemp['top'] =(9-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I56") {
-                            var powerRankingsLocalTemp = {id:10};
-                            powerRankingsLocalTemp['top'] = (10-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I57") {
-                            var powerRankingsLocalTemp = {id:11};
-                            powerRankingsLocalTemp['top'] = (11-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I58") {
-                            var powerRankingsLocalTemp = {id:12};
-                            powerRankingsLocalTemp['top'] = (12-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I59") {
-                            var powerRankingsLocalTemp = {id:13};
-                            powerRankingsLocalTemp['top'] = (13-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I60") {
-                            var powerRankingsLocalTemp = {id:14};
-                            powerRankingsLocalTemp['top'] = (14-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I61") {
-                            var powerRankingsLocalTemp = {id:15};
-                            powerRankingsLocalTemp['top'] = (15-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I62") {
-                            var powerRankingsLocalTemp = {id:16};
-                            powerRankingsLocalTemp['top'] = (16-8) * 100;
-                            powerRankingsLocalTemp['left'] = 500;
-                            powerRankingsLocalTemp['team'] = obj['feed']['entry'][i]['content']['$t'];
-                            var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                            if (teamMap.hasOwnProperty(lower.toLowerCase())) {
-                                powerRankingsLocalTemp['logo'] = teamMap[lower]['logo'];
-                            }
-                            powerRankingsLocal.push(powerRankingsLocalTemp);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "F6") {
-                            league.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "F7") {
-                            currentScene.set(obj['feed']['entry'][i]['content']['$t']);
-                            if (obj['feed']['entry'][i]['content']['$t'] == 'caster') {
-                              casterDisplay.set(1);
-                            } else {
-                              casterDisplay.set(0);
-
-                            }
-                            if (obj['feed']['entry'][i]['content']['$t'] == 'desk') {
-                              deskDisplay.set(1);
-                            } else {
-                              deskDisplay.set(0);
-
-                            }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N8") {
-                            games1['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O8") {
-                            games1['league']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O9") {
-                            games1['team1']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O10") {
-                            games1['team2']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N11") {
-                            games2['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O11") {
-                            games2['league']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O12") {
-                            games2['team1']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O13") {
-                            games2['team2']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N14") {
-                            games3['time']=[obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O14") {
-                            games3['league']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O15") {
-                            games3['team1']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O16") {
-                            games3['team2']=[obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N17") {
-                            [obj['feed']['entry'][i]['content']['$t'].replace("EST", '')];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O17") {
-                            [obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O18") {
-                            [obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O19") {
-                            [obj['feed']['entry'][i]['content']['$t']];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M30") {
-                          player1['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player1['left']="4";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N30") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player1['goals']=0.00;
-                          } else {
-                            player1['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O30") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player1['assists']=0.00;
-                          } else {
-                            player1['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P30") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player1['saves']=0.00;
-                          } else {
-                            player1['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q30") {
-                          player1['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R30") {
-                          player1['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N3") {
-                          numb.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "H14") {
-                          deskVideo.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "H15") {
-                          anal1Video.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "H16") {
-                          anal2Video.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I12") {
-                          cameraOption.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I13") {
-                          vidOption.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N31") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player2['goals']=0.00;
-                          } else {
-                            player2['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O31") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player2['assists']=0.00;
-                          } else {
-                            player2['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P31") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player2['saves']=0.00;
-                          } else {
-                            player2['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q31") {
-                          player2['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R31") {
-                          player2['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N32") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player3['goals']=0.00;
-                          } else {
-                            player3['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O32") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player3['assists']=0.00;
-                          } else {
-                            player3['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P32") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player3['saves']=0.00;
-                          } else {
-                            player3['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q32") {
-                          player3['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R32") {
-                          player3['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N33") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player4['goals']=0.00;
-                          } else {
-                            player4['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O33") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player4['assists']=0.00;
-                          } else {
-                            player4['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P33") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player4['saves']=0.00;
-                          } else {
-                            player4['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q33") {
-                          player4['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R33") {
-                          player4['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N37") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player5['goals']=0.00;
-                          } else {
-                            player5['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O37") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player5['assists']=0.00;
-                          } else {
-                            player5['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P37") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player5['saves']=0.00;
-                          } else {
-                            player5['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q37") {
-                          player5['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R37") {
-                          player5['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N38") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player6['goals']=0.00;
-                          } else {
-                            player6['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O38") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player6['assists']=0.00;
-                          } else {
-                            player6['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P38") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player6['saves']=0.00;
-                          } else {
-                            player6['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q38") {
-                          player6['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R38") {
-                          player6['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N39") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player7['goals']=0.00;
-                          } else {
-                            player7['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O39") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player7['assists']=0.00;
-                          } else {
-                            player7['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P39") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player7['saves']=0.00;
-                          } else {
-                            player7['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q39") {
-                          player7['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R39") {
-                          player7['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "N40") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player8['goals']=0.00;
-                          } else {
-                            player8['goals']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "O40") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player8['assists']=0.00;
-                          } else {
-                            player8['assists']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "P40") {
-                          if (obj['feed']['entry'][i]['content']['$t'] == ""){
-                            player8['saves']=0.00;
-                          } else {
-                            player8['saves']=obj['feed']['entry'][i]['content']['$t'];
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "Q40") {
-                          player8['games']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "R40") {
-                          player8['mmr']=obj['feed']['entry'][i]['content']['$t'];
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M31") {
-                          player2['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player2['left']="29";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M32") {
-                          player3['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player3['left']="54";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M33") {
-                          player4['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player4['left']="79";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M37") {
-                          player5['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player5['left']="4";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M38") {
-                          player6['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player6['left']="29";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M39") {
-                          player7['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player7['left']="54";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "M40") {
-                          player8['name']=obj['feed']['entry'][i]['content']['$t'];
-                          player8['left']="79";
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "H6") {
-                          matchupTeam1.set(obj['feed']['entry'][i]['content']['$t']);
-                          var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                          if (teamMap.hasOwnProperty(lower)) {
-                            matchupTeam1Color.set(teamMap[lower.toLowerCase()]['1']);
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "H7") {
-                          matchupTeam2.set(obj['feed']['entry'][i]['content']['$t']);
-                          var lower = obj['feed']['entry'][i]['content']['$t'].toLowerCase();
-                          if (teamMap.hasOwnProperty(lower)) {
-                            matchupTeam2Color.set(teamMap[lower.toLowerCase()]['1']);
-                          }
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I6") {
-                          matchupTeam1logo.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "I7") {
-                          matchupTeam2logo.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "J6") {
-                          matchupTeam1Record.set(obj['feed']['entry'][i]['content']['$t']);
-                        }else if (obj['feed']['entry'][i]['title']['$t'] == "J7") {
-                          matchupTeam2Record.set(obj['feed']['entry'][i]['content']['$t']);
-                        }
-
-                    }
-                }
-                games.push(games1);
-                games.push(games2);
-                games.push(games3);
-                // games.push(games4);
-                team1.push(player1);
-                team1.push(player2);
-                team1.push(player3);
-                team1.push(player4);
-                team2.push(player5);
-                team2.push(player6);
-                team2.push(player7);
-                team2.push(player8);
-                teamPlayers1.set(team1);
-                teamPlayers2.set(team2);
-                tickerInfo.set(tickerInfoLocal);
-                powerRankings.set(powerRankingsLocal);
-                tonightGames.set(games);
-                stop = true;
-            };
-            xhttp.open("GET", url, true);
-            xhttp.send();
-        }
         
     }
     setInterval(updateCasters, 1200);
@@ -13551,10 +13189,10 @@ var app = (function () {
     /* src\Caster.svelte generated by Svelte v3.38.3 */
 
     const { console: console_1 } = globals;
-    const file$c = "src\\Caster.svelte";
+    const file$d = "src\\Caster.svelte";
 
     // (47:4) {#if pbpVideo != 'null'}
-    function create_if_block_1$4(ctx) {
+    function create_if_block_1$5(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -13571,9 +13209,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$c, 48, 12, 1344);
+    			add_location(iframe, file$d, 48, 12, 1344);
     			attr_dev(div, "class", "pbp svelte-1owfbto");
-    			add_location(div, file$c, 47, 8, 1313);
+    			add_location(div, file$d, 47, 8, 1313);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -13628,7 +13266,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$4.name,
+    		id: create_if_block_1$5.name,
     		type: "if",
     		source: "(47:4) {#if pbpVideo != 'null'}",
     		ctx
@@ -13638,7 +13276,7 @@ var app = (function () {
     }
 
     // (53:4) {#if colorVideo != 'null'}
-    function create_if_block$6(ctx) {
+    function create_if_block$7(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -13655,9 +13293,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-1owfbto");
-    			add_location(iframe, file$c, 54, 12, 1644);
+    			add_location(iframe, file$d, 54, 12, 1644);
     			attr_dev(div, "class", "color svelte-1owfbto");
-    			add_location(div, file$c, 53, 8, 1611);
+    			add_location(div, file$d, 53, 8, 1611);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -13712,7 +13350,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$6.name,
+    		id: create_if_block$7.name,
     		type: "if",
     		source: "(53:4) {#if colorVideo != 'null'}",
     		ctx
@@ -13764,11 +13402,11 @@ var app = (function () {
     			if (img.src !== (img_src_value = /*pbpImage*/ ctx[4])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "pbp");
     			attr_dev(img, "class", "svelte-1owfbto");
-    			add_location(img, file$c, 59, 12, 1984);
+    			add_location(img, file$d, 59, 12, 1984);
     			attr_dev(div0, "class", "pName svelte-1owfbto");
-    			add_location(div0, file$c, 60, 12, 2030);
+    			add_location(div0, file$d, 60, 12, 2030);
     			attr_dev(div1, "class", "pbp2 svelte-1owfbto");
-    			add_location(div1, file$c, 58, 8, 1914);
+    			add_location(div1, file$d, 58, 8, 1914);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -13882,11 +13520,11 @@ var app = (function () {
     			if (img.src !== (img_src_value = /*colorImage*/ ctx[5])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "color");
     			attr_dev(img, "class", "svelte-1owfbto");
-    			add_location(img, file$c, 65, 12, 2217);
+    			add_location(img, file$d, 65, 12, 2217);
     			attr_dev(div0, "class", "pName svelte-1owfbto");
-    			add_location(div0, file$c, 66, 12, 2267);
+    			add_location(div0, file$d, 66, 12, 2267);
     			attr_dev(div1, "class", "color2 svelte-1owfbto");
-    			add_location(div1, file$c, 64, 8, 2145);
+    			add_location(div1, file$d, 64, 8, 2145);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -13957,7 +13595,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$c(ctx) {
+    function create_fragment$d(ctx) {
     	let div1;
     	let div0;
     	let img;
@@ -13969,8 +13607,8 @@ var app = (function () {
     	let t3;
     	let promise_1;
     	let current;
-    	let if_block0 = /*pbpVideo*/ ctx[0] != "null" && create_if_block_1$4(ctx);
-    	let if_block1 = /*colorVideo*/ ctx[1] != "null" && create_if_block$6(ctx);
+    	let if_block0 = /*pbpVideo*/ ctx[0] != "null" && create_if_block_1$5(ctx);
+    	let if_block1 = /*colorVideo*/ ctx[1] != "null" && create_if_block$7(ctx);
 
     	let info = {
     		ctx,
@@ -14015,11 +13653,11 @@ var app = (function () {
     			info_1.block.c();
     			if (img.src !== (img_src_value = "https://media.discordapp.net/attachments/804171789101432832/845380799498944532/playoff2split.png?width=1920&height=1080")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "background");
-    			add_location(img, file$c, 43, 8, 1107);
+    			add_location(img, file$d, 43, 8, 1107);
     			attr_dev(div0, "class", "background svelte-1owfbto");
-    			add_location(div0, file$c, 42, 4, 1073);
+    			add_location(div0, file$d, 42, 4, 1073);
     			attr_dev(div1, "class", "container svelte-1owfbto");
-    			add_location(div1, file$c, 41, 0, 1044);
+    			add_location(div1, file$d, 41, 0, 1044);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -14053,7 +13691,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_1$4(ctx);
+    					if_block0 = create_if_block_1$5(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(div1, t1);
@@ -14076,7 +13714,7 @@ var app = (function () {
     						transition_in(if_block1, 1);
     					}
     				} else {
-    					if_block1 = create_if_block$6(ctx);
+    					if_block1 = create_if_block$7(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
     					if_block1.m(div1, t2);
@@ -14142,7 +13780,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$c.name,
+    		id: create_fragment$d.name,
     		type: "component",
     		source: "",
     		ctx
@@ -14159,7 +13797,7 @@ var app = (function () {
     		});
     }
 
-    function instance$c($$self, $$props, $$invalidate) {
+    function instance$d($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Caster", slots, []);
     	let pbpVideo;
@@ -14235,19 +13873,19 @@ var app = (function () {
     class Caster extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$c, create_fragment$c, safe_not_equal, {});
+    		init(this, options, instance$d, create_fragment$d, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Caster",
     			options,
-    			id: create_fragment$c.name
+    			id: create_fragment$d.name
     		});
     	}
     }
 
     /* src\Ticker.svelte generated by Svelte v3.38.3 */
-    const file$b = "src\\Ticker.svelte";
+    const file$c = "src\\Ticker.svelte";
 
     function get_each_context$3(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -14332,7 +13970,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$b(ctx) {
+    function create_fragment$c(ctx) {
     	let div;
     	let current;
     	let mounted;
@@ -14366,7 +14004,7 @@ var app = (function () {
     			toggle_class(div, "horizontal", /*horizontal*/ ctx[4]);
     			toggle_class(div, "vertical", /*vertical*/ ctx[6]);
     			toggle_class(div, "pausing", /*pausing*/ ctx[0]);
-    			add_location(div, file$b, 2, 0, 40);
+    			add_location(div, file$c, 2, 0, 40);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -14476,7 +14114,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$b.name,
+    		id: create_fragment$c.name,
     		type: "component",
     		source: "",
     		ctx
@@ -14485,7 +14123,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$b($$self, $$props, $$invalidate) {
+    function instance$c($$self, $$props, $$invalidate) {
     	let reverse;
     	let horizontal;
     	let vertical;
@@ -14662,7 +14300,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$b, create_fragment$b, safe_not_equal, {
+    		init(this, options, instance$c, create_fragment$c, safe_not_equal, {
     			direction: 11,
     			alternate: 12,
     			behavior: 13,
@@ -14676,7 +14314,7 @@ var app = (function () {
     			component: this,
     			tagName: "Ticker",
     			options,
-    			id: create_fragment$b.name
+    			id: create_fragment$c.name
     		});
     	}
 
@@ -15085,10 +14723,10 @@ var app = (function () {
     };
 
     /* src\GameDesk.svelte generated by Svelte v3.38.3 */
-    const file$a = "src\\GameDesk.svelte";
+    const file$b = "src\\GameDesk.svelte";
 
     // (10:0) {#if time != ''}
-    function create_if_block$5(ctx) {
+    function create_if_block$6(ctx) {
     	let div;
     	let p0;
     	let t0;
@@ -15106,8 +14744,8 @@ var app = (function () {
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*team1*/ ctx[2] == "Yellow Jackets") return create_if_block_1$3;
-    		return create_else_block$2;
+    		if (/*team1*/ ctx[2] == "Yellow Jackets") return create_if_block_1$4;
+    		return create_else_block$3;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -15131,16 +14769,16 @@ var app = (function () {
     			p3 = element("p");
     			t8 = text(/*team2*/ ctx[3]);
     			attr_dev(p0, "class", "time svelte-1eu3sbw");
-    			add_location(p0, file$a, 11, 4, 311);
+    			add_location(p0, file$b, 11, 4, 311);
     			attr_dev(p1, "class", "league svelte-1eu3sbw");
-    			add_location(p1, file$a, 12, 4, 345);
+    			add_location(p1, file$b, 12, 4, 345);
     			attr_dev(p2, "class", "vs svelte-1eu3sbw");
-    			add_location(p2, file$a, 13, 4, 380);
+    			add_location(p2, file$b, 13, 4, 380);
     			attr_dev(p3, "class", "team2 svelte-1eu3sbw");
-    			add_location(p3, file$a, 29, 4, 802);
+    			add_location(p3, file$b, 29, 4, 802);
     			attr_dev(div, "class", "container svelte-1eu3sbw");
     			set_style(div, "top", /*top*/ ctx[4] + "px");
-    			add_location(div, file$a, 10, 0, 263);
+    			add_location(div, file$b, 10, 0, 263);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -15199,7 +14837,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$5.name,
+    		id: create_if_block$6.name,
     		type: "if",
     		source: "(10:0) {#if time != ''}",
     		ctx
@@ -15209,7 +14847,7 @@ var app = (function () {
     }
 
     // (22:4) {:else}
-    function create_else_block$2(ctx) {
+    function create_else_block$3(ctx) {
     	let p;
     	let t;
     	let mounted;
@@ -15220,7 +14858,7 @@ var app = (function () {
     			p = element("p");
     			t = text(/*team1*/ ctx[2]);
     			attr_dev(p, "class", "team1 svelte-1eu3sbw");
-    			add_location(p, file$a, 22, 8, 633);
+    			add_location(p, file$b, 22, 8, 633);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -15247,7 +14885,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$2.name,
+    		id: create_else_block$3.name,
     		type: "else",
     		source: "(22:4) {:else}",
     		ctx
@@ -15257,7 +14895,7 @@ var app = (function () {
     }
 
     // (15:4) {#if team1=='Yellow Jackets'}
-    function create_if_block_1$3(ctx) {
+    function create_if_block_1$4(ctx) {
     	let p;
     	let t;
     	let mounted;
@@ -15269,7 +14907,7 @@ var app = (function () {
     			t = text(/*team1*/ ctx[2]);
     			attr_dev(p, "class", "team1 svelte-1eu3sbw");
     			set_style(p, "top", "7%");
-    			add_location(p, file$a, 15, 8, 443);
+    			add_location(p, file$b, 15, 8, 443);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -15297,7 +14935,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$3.name,
+    		id: create_if_block_1$4.name,
     		type: "if",
     		source: "(15:4) {#if team1=='Yellow Jackets'}",
     		ctx
@@ -15306,9 +14944,9 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$a(ctx) {
+    function create_fragment$b(ctx) {
     	let if_block_anchor;
-    	let if_block = /*time*/ ctx[0] != "" && create_if_block$5(ctx);
+    	let if_block = /*time*/ ctx[0] != "" && create_if_block$6(ctx);
 
     	const block = {
     		c: function create() {
@@ -15327,7 +14965,7 @@ var app = (function () {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
-    					if_block = create_if_block$5(ctx);
+    					if_block = create_if_block$6(ctx);
     					if_block.c();
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
     				}
@@ -15346,7 +14984,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$a.name,
+    		id: create_fragment$b.name,
     		type: "component",
     		source: "",
     		ctx
@@ -15355,7 +14993,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$a($$self, $$props, $$invalidate) {
+    function instance$b($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("GameDesk", slots, []);
     	let { time = "" } = $$props;
@@ -15407,7 +15045,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$a, create_fragment$a, safe_not_equal, {
+    		init(this, options, instance$b, create_fragment$b, safe_not_equal, {
     			time: 0,
     			league: 1,
     			team1: 2,
@@ -15419,7 +15057,7 @@ var app = (function () {
     			component: this,
     			tagName: "GameDesk",
     			options,
-    			id: create_fragment$a.name
+    			id: create_fragment$b.name
     		});
     	}
 
@@ -15465,9 +15103,9 @@ var app = (function () {
     }
 
     /* src\DefaultScene.svelte generated by Svelte v3.38.3 */
-    const file$9 = "src\\DefaultScene.svelte";
+    const file$a = "src\\DefaultScene.svelte";
 
-    function create_fragment$9(ctx) {
+    function create_fragment$a(ctx) {
     	let div;
     	let img;
     	let img_src_value;
@@ -15478,11 +15116,11 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			img = element("img");
-    			if (img.src !== (img_src_value = "https://media.discordapp.net/attachments/854484965080039444/866892026549501992/rlpcbackgroundfinal.png?width=1920&height=1080")) attr_dev(img, "src", img_src_value);
+    			if (img.src !== (img_src_value = "https://media.discordapp.net/attachments/829498943309086782/930167400807141386/RLPC_S16_BG.png?width=1920&height=1080")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "class", "svelte-1b4nkp6");
-    			add_location(img, file$9, 5, 4, 148);
+    			add_location(img, file$a, 5, 4, 148);
     			attr_dev(div, "class", "contain svelte-1b4nkp6");
-    			add_location(div, file$9, 4, 0, 69);
+    			add_location(div, file$a, 4, 0, 69);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -15516,7 +15154,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$9.name,
+    		id: create_fragment$a.name,
     		type: "component",
     		source: "",
     		ctx
@@ -15525,7 +15163,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$9($$self, $$props, $$invalidate) {
+    function instance$a($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("DefaultScene", slots, []);
     	const writable_props = [];
@@ -15541,22 +15179,22 @@ var app = (function () {
     class DefaultScene extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$9, create_fragment$9, safe_not_equal, {});
+    		init(this, options, instance$a, create_fragment$a, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "DefaultScene",
     			options,
-    			id: create_fragment$9.name
+    			id: create_fragment$a.name
     		});
     	}
     }
 
     /* src\DeskTicker.svelte generated by Svelte v3.38.3 */
-    const file$8 = "src\\DeskTicker.svelte";
+    const file$9 = "src\\DeskTicker.svelte";
 
     // (33:8) {#if tickerInfo != ''}
-    function create_if_block$4(ctx) {
+    function create_if_block$5(ctx) {
     	let ticker;
     	let current;
 
@@ -15603,7 +15241,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$4.name,
+    		id: create_if_block$5.name,
     		type: "if",
     		source: "(33:8) {#if tickerInfo != ''}",
     		ctx
@@ -15647,12 +15285,12 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$8(ctx) {
+    function create_fragment$9(ctx) {
     	let div1;
     	let div0;
     	let div1_transition;
     	let current;
-    	let if_block = /*tickerInfo*/ ctx[0] != "" && create_if_block$4(ctx);
+    	let if_block = /*tickerInfo*/ ctx[0] != "" && create_if_block$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -15660,9 +15298,9 @@ var app = (function () {
     			div0 = element("div");
     			if (if_block) if_block.c();
     			attr_dev(div0, "class", "ticker svelte-glkpp5");
-    			add_location(div0, file$8, 31, 4, 783);
+    			add_location(div0, file$9, 31, 4, 783);
     			attr_dev(div1, "class", "container svelte-glkpp5");
-    			add_location(div1, file$8, 30, 0, 692);
+    			add_location(div1, file$9, 30, 0, 692);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -15682,7 +15320,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block$4(ctx);
+    					if_block = create_if_block$5(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(div0, null);
@@ -15744,7 +15382,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$8.name,
+    		id: create_fragment$9.name,
     		type: "component",
     		source: "",
     		ctx
@@ -15753,7 +15391,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$8($$self, $$props, $$invalidate) {
+    function instance$9($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("DeskTicker", slots, []);
     	let { tickerInfo = "" } = $$props;
@@ -15817,13 +15455,13 @@ var app = (function () {
     class DeskTicker extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$8, create_fragment$8, safe_not_equal, { tickerInfo: 0, tonightGames: 1 });
+    		init(this, options, instance$9, create_fragment$9, safe_not_equal, { tickerInfo: 0, tonightGames: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "DeskTicker",
     			options,
-    			id: create_fragment$8.name
+    			id: create_fragment$9.name
     		});
     	}
 
@@ -15845,15 +15483,15 @@ var app = (function () {
     }
 
     /* src\Desk.svelte generated by Svelte v3.38.3 */
-    const file$7 = "src\\Desk.svelte";
+    const file$8 = "src\\Desk.svelte";
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i];
+    	child_ctx[10] = list[i];
     	return child_ctx;
     }
 
-    // (70:8) {#each tonightGames as game (game.time)}
+    // (66:8) {#each tonightGames as game (game.time)}
     function create_each_block$2(key_1, ctx) {
     	let first;
     	let gamedesk;
@@ -15861,11 +15499,11 @@ var app = (function () {
 
     	gamedesk = new GameDesk({
     			props: {
-    				time: /*game*/ ctx[11].time,
-    				league: /*game*/ ctx[11].league,
-    				team1: /*game*/ ctx[11].team1,
-    				team2: /*game*/ ctx[11].team2,
-    				top: /*game*/ ctx[11].top
+    				time: /*game*/ ctx[10].time,
+    				league: /*game*/ ctx[10].league,
+    				team1: /*game*/ ctx[10].team1,
+    				team2: /*game*/ ctx[10].team2,
+    				top: /*game*/ ctx[10].top
     			},
     			$$inline: true
     		});
@@ -15886,11 +15524,11 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const gamedesk_changes = {};
-    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.time = /*game*/ ctx[11].time;
-    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.league = /*game*/ ctx[11].league;
-    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.team1 = /*game*/ ctx[11].team1;
-    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.team2 = /*game*/ ctx[11].team2;
-    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.top = /*game*/ ctx[11].top;
+    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.time = /*game*/ ctx[10].time;
+    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.league = /*game*/ ctx[10].league;
+    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.team1 = /*game*/ ctx[10].team1;
+    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.team2 = /*game*/ ctx[10].team2;
+    			if (dirty & /*tonightGames*/ 1) gamedesk_changes.top = /*game*/ ctx[10].top;
     			gamedesk.$set(gamedesk_changes);
     		},
     		i: function intro(local) {
@@ -15912,15 +15550,15 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(70:8) {#each tonightGames as game (game.time)}",
+    		source: "(66:8) {#each tonightGames as game (game.time)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (114:8) {#if vidOption == 'on'}
-    function create_if_block_7(ctx) {
+    // (110:8) {#if vidOption == 'on'}
+    function create_if_block_7$1(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -15940,9 +15578,9 @@ var app = (function () {
     			attr_dev(iframe, "muted", "");
     			attr_dev(iframe, "autoplay", "");
     			attr_dev(iframe, "class", "svelte-177km69");
-    			add_location(iframe, file$7, 115, 16, 4904);
+    			add_location(iframe, file$8, 111, 16, 4846);
     			attr_dev(div, "class", "vid svelte-177km69");
-    			add_location(div, file$7, 114, 12, 4807);
+    			add_location(div, file$8, 110, 12, 4749);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -15993,22 +15631,22 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_7.name,
+    		id: create_if_block_7$1.name,
     		type: "if",
-    		source: "(114:8) {#if vidOption == 'on'}",
+    		source: "(110:8) {#if vidOption == 'on'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (79:4) {#if cameraOption == 'on'}
-    function create_if_block$3(ctx) {
+    // (75:4) {#if cameraOption == 'on'}
+    function create_if_block$4(ctx) {
     	let current_block_type_index;
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_1$2, create_else_block$1];
+    	const if_block_creators = [create_if_block_1$3, create_else_block$2];
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
@@ -16073,17 +15711,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$3.name,
+    		id: create_if_block$4.name,
     		type: "if",
-    		source: "(79:4) {#if cameraOption == 'on'}",
+    		source: "(75:4) {#if cameraOption == 'on'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (99:8) {:else}
-    function create_else_block$1(ctx) {
+    // (95:8) {:else}
+    function create_else_block$2(ctx) {
     	let img;
     	let img_src_value;
     	let img_transition;
@@ -16091,8 +15729,8 @@ var app = (function () {
     	let t1;
     	let if_block1_anchor;
     	let current;
-    	let if_block0 = /*pbpVideo*/ ctx[7] != "null" && create_if_block_6(ctx);
-    	let if_block1 = /*colorVideo*/ ctx[8] != "null" && create_if_block_5$1(ctx);
+    	let if_block0 = /*pbpVideo*/ ctx[7] != "null" && create_if_block_6$2(ctx);
+    	let if_block1 = /*colorVideo*/ ctx[8] != "null" && create_if_block_5$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -16105,7 +15743,7 @@ var app = (function () {
     			if (img.src !== (img_src_value = "assets\\2_Boxes.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
     			attr_dev(img, "class", "svelte-177km69");
-    			add_location(img, file$7, 99, 12, 3955);
+    			add_location(img, file$8, 95, 12, 3897);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -16125,7 +15763,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_6(ctx);
+    					if_block0 = create_if_block_6$2(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t1.parentNode, t1);
@@ -16148,7 +15786,7 @@ var app = (function () {
     						transition_in(if_block1, 1);
     					}
     				} else {
-    					if_block1 = create_if_block_5$1(ctx);
+    					if_block1 = create_if_block_5$2(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
     					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
@@ -16215,17 +15853,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$1.name,
+    		id: create_else_block$2.name,
     		type: "else",
-    		source: "(99:8) {:else}",
+    		source: "(95:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (80:8) {#if numb == '3'}
-    function create_if_block_1$2(ctx) {
+    // (76:8) {#if numb == '3'}
+    function create_if_block_1$3(ctx) {
     	let img;
     	let img_src_value;
     	let img_transition;
@@ -16234,9 +15872,9 @@ var app = (function () {
     	let t2;
     	let if_block2_anchor;
     	let current;
-    	let if_block0 = /*deskVideo*/ ctx[1] != "null" && create_if_block_4$1(ctx);
-    	let if_block1 = /*anal1Video*/ ctx[2] != "null" && create_if_block_3$1(ctx);
-    	let if_block2 = /*anal2Video*/ ctx[3] != "null" && create_if_block_2$1(ctx);
+    	let if_block0 = /*deskVideo*/ ctx[1] != "null" && create_if_block_4$2(ctx);
+    	let if_block1 = /*anal1Video*/ ctx[2] != "null" && create_if_block_3$2(ctx);
+    	let if_block2 = /*anal2Video*/ ctx[3] != "null" && create_if_block_2$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -16251,7 +15889,7 @@ var app = (function () {
     			if (img.src !== (img_src_value = "assets\\3_Boxes.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
     			attr_dev(img, "class", "svelte-177km69");
-    			add_location(img, file$7, 80, 12, 2813);
+    			add_location(img, file$8, 76, 12, 2755);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -16273,7 +15911,7 @@ var app = (function () {
     						transition_in(if_block0, 1);
     					}
     				} else {
-    					if_block0 = create_if_block_4$1(ctx);
+    					if_block0 = create_if_block_4$2(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
     					if_block0.m(t1.parentNode, t1);
@@ -16296,7 +15934,7 @@ var app = (function () {
     						transition_in(if_block1, 1);
     					}
     				} else {
-    					if_block1 = create_if_block_3$1(ctx);
+    					if_block1 = create_if_block_3$2(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
     					if_block1.m(t2.parentNode, t2);
@@ -16319,7 +15957,7 @@ var app = (function () {
     						transition_in(if_block2, 1);
     					}
     				} else {
-    					if_block2 = create_if_block_2$1(ctx);
+    					if_block2 = create_if_block_2$2(ctx);
     					if_block2.c();
     					transition_in(if_block2, 1);
     					if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
@@ -16390,17 +16028,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$2.name,
+    		id: create_if_block_1$3.name,
     		type: "if",
-    		source: "(80:8) {#if numb == '3'}",
+    		source: "(76:8) {#if numb == '3'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (101:12) {#if pbpVideo != 'null'}
-    function create_if_block_6(ctx) {
+    // (97:12) {#if pbpVideo != 'null'}
+    function create_if_block_6$2(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -16417,9 +16055,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-177km69");
-    			add_location(iframe, file$7, 102, 20, 4158);
+    			add_location(iframe, file$8, 98, 20, 4100);
     			attr_dev(div, "class", "desk2 svelte-177km69");
-    			add_location(div, file$7, 101, 16, 4118);
+    			add_location(div, file$8, 97, 16, 4060);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16474,17 +16112,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_6.name,
+    		id: create_if_block_6$2.name,
     		type: "if",
-    		source: "(101:12) {#if pbpVideo != 'null'}",
+    		source: "(97:12) {#if pbpVideo != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (107:12) {#if colorVideo != 'null'}
-    function create_if_block_5$1(ctx) {
+    // (103:12) {#if colorVideo != 'null'}
+    function create_if_block_5$2(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -16501,9 +16139,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-177km69");
-    			add_location(iframe, file$7, 108, 20, 4501);
+    			add_location(iframe, file$8, 104, 20, 4443);
     			attr_dev(div, "class", "anal12 svelte-177km69");
-    			add_location(div, file$7, 107, 16, 4460);
+    			add_location(div, file$8, 103, 16, 4402);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16558,17 +16196,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_5$1.name,
+    		id: create_if_block_5$2.name,
     		type: "if",
-    		source: "(107:12) {#if colorVideo != 'null'}",
+    		source: "(103:12) {#if colorVideo != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (82:12) {#if deskVideo != 'null'}
-    function create_if_block_4$1(ctx) {
+    // (78:12) {#if deskVideo != 'null'}
+    function create_if_block_4$2(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -16585,9 +16223,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-177km69");
-    			add_location(iframe, file$7, 83, 20, 3016);
+    			add_location(iframe, file$8, 79, 20, 2958);
     			attr_dev(div, "class", "desk svelte-177km69");
-    			add_location(div, file$7, 82, 16, 2977);
+    			add_location(div, file$8, 78, 16, 2919);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16642,17 +16280,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$1.name,
+    		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(82:12) {#if deskVideo != 'null'}",
+    		source: "(78:12) {#if deskVideo != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (88:12) {#if anal1Video != 'null'}
-    function create_if_block_3$1(ctx) {
+    // (84:12) {#if anal1Video != 'null'}
+    function create_if_block_3$2(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -16669,9 +16307,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-177km69");
-    			add_location(iframe, file$7, 89, 20, 3359);
+    			add_location(iframe, file$8, 85, 20, 3301);
     			attr_dev(div, "class", "anal1 svelte-177km69");
-    			add_location(div, file$7, 88, 16, 3319);
+    			add_location(div, file$8, 84, 16, 3261);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16726,17 +16364,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$1.name,
+    		id: create_if_block_3$2.name,
     		type: "if",
-    		source: "(88:12) {#if anal1Video != 'null'}",
+    		source: "(84:12) {#if anal1Video != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (94:12) {#if anal2Video != 'null'}
-    function create_if_block_2$1(ctx) {
+    // (90:12) {#if anal2Video != 'null'}
+    function create_if_block_2$2(ctx) {
     	let div;
     	let iframe;
     	let iframe_src_value;
@@ -16753,9 +16391,9 @@ var app = (function () {
     			attr_dev(iframe, "allow", "autoplay; encrypted-media");
     			attr_dev(iframe, "frameborder", "0");
     			attr_dev(iframe, "class", "svelte-177km69");
-    			add_location(iframe, file$7, 95, 20, 3691);
+    			add_location(iframe, file$8, 91, 20, 3633);
     			attr_dev(div, "class", "anal2 svelte-177km69");
-    			add_location(div, file$7, 94, 16, 3651);
+    			add_location(div, file$8, 90, 16, 3593);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -16810,16 +16448,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$1.name,
+    		id: create_if_block_2$2.name,
     		type: "if",
-    		source: "(94:12) {#if anal2Video != 'null'}",
+    		source: "(90:12) {#if anal2Video != 'null'}",
     		ctx
     	});
 
     	return block;
     }
 
-    function create_fragment$7(ctx) {
+    function create_fragment$8(ctx) {
     	let div4;
     	let img0;
     	let img0_src_value;
@@ -16862,7 +16500,7 @@ var app = (function () {
     	let current;
     	let each_value = /*tonightGames*/ ctx[0];
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*game*/ ctx[11].time;
+    	const get_key = ctx => /*game*/ ctx[10].time;
     	validate_each_keys(ctx, each_value, get_each_context$2, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -16872,7 +16510,7 @@ var app = (function () {
     	}
 
     	deskticker = new DeskTicker({ $$inline: true });
-    	const if_block_creators = [create_if_block$3, create_if_block_7];
+    	const if_block_creators = [create_if_block$4, create_if_block_7$1];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -16920,38 +16558,38 @@ var app = (function () {
     			if (img0.src !== (img0_src_value = "assets\\Background.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "left bar");
     			attr_dev(img0, "class", "svelte-177km69");
-    			add_location(img0, file$7, 58, 4, 1605);
+    			add_location(img0, file$8, 54, 4, 1547);
     			if (img1.src !== (img1_src_value = "assets/RLPC_Desk_Bar.png")) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "RLPC bar");
     			attr_dev(img1, "class", "svelte-177km69");
-    			add_location(img1, file$7, 60, 8, 1826);
+    			add_location(img1, file$8, 56, 8, 1768);
     			if (img2.src !== (img2_src_value = "assets/Left_Red_Bar.png")) attr_dev(img2, "src", img2_src_value);
     			attr_dev(img2, "alt", "left bar");
     			attr_dev(img2, "class", "svelte-177km69");
-    			add_location(img2, file$7, 61, 8, 1887);
+    			add_location(img2, file$8, 57, 8, 1829);
     			attr_dev(p0, "class", "rlpcDesk svelte-177km69");
-    			add_location(p0, file$7, 63, 12, 1981);
+    			add_location(p0, file$8, 59, 12, 1923);
     			attr_dev(p1, "class", "tonightDesk svelte-177km69");
-    			add_location(p1, file$7, 64, 12, 2027);
+    			add_location(p1, file$8, 60, 12, 1969);
     			attr_dev(div0, "class", "topLeft svelte-177km69");
-    			add_location(div0, file$7, 62, 8, 1947);
+    			add_location(div0, file$8, 58, 8, 1889);
     			if (img3.src !== (img3_src_value = "assets/Todays_Matches_Bar.png")) attr_dev(img3, "src", img3_src_value);
     			attr_dev(img3, "alt", "left bar");
     			attr_dev(img3, "class", "svelte-177km69");
-    			add_location(img3, file$7, 66, 8, 2093);
+    			add_location(img3, file$8, 62, 8, 2035);
     			set_style(div1, "position", "absolute");
     			set_style(div1, "z-index", "2");
-    			add_location(div1, file$7, 59, 4, 1659);
+    			add_location(div1, file$8, 55, 4, 1601);
     			set_style(div2, "position", "absolute");
     			set_style(div2, "z-index", "2");
-    			add_location(div2, file$7, 68, 4, 2166);
+    			add_location(div2, file$8, 64, 4, 2108);
     			if (img4.src !== (img4_src_value = "assets/Bottom_Ticker_Tape.png")) attr_dev(img4, "src", img4_src_value);
     			attr_dev(img4, "alt", "ticker");
     			attr_dev(img4, "class", "svelte-177km69");
-    			add_location(img4, file$7, 74, 8, 2649);
-    			add_location(div3, file$7, 73, 4, 2524);
+    			add_location(img4, file$8, 70, 8, 2591);
+    			add_location(div3, file$8, 69, 4, 2466);
     			attr_dev(div4, "class", "container svelte-177km69");
-    			add_location(div4, file$7, 57, 0, 1477);
+    			add_location(div4, file$8, 53, 0, 1419);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -17140,7 +16778,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$7.name,
+    		id: create_fragment$8.name,
     		type: "component",
     		source: "",
     		ctx
@@ -17149,10 +16787,9 @@ var app = (function () {
     	return block;
     }
 
-    function instance$7($$self, $$props, $$invalidate) {
+    function instance$8($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Desk", slots, []);
-    	let { tickerInfo = "" } = $$props;
     	let { tonightGames = [] } = $$props;
     	let deskVideo = "";
     	let anal1Video = "";
@@ -17165,10 +16802,6 @@ var app = (function () {
     	let colorVideo = "";
 
     	onMount(() => {
-    		store.tickerInfo(currentMessage => {
-    			$$invalidate(9, tickerInfo = currentMessage);
-    		});
-
     		store.tonightGames(currentMessage => {
     			$$invalidate(0, tonightGames = currentMessage);
     		});
@@ -17210,14 +16843,13 @@ var app = (function () {
     		});
     	});
 
-    	const writable_props = ["tickerInfo", "tonightGames"];
+    	const writable_props = ["tonightGames"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Desk> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
-    		if ("tickerInfo" in $$props) $$invalidate(9, tickerInfo = $$props.tickerInfo);
     		if ("tonightGames" in $$props) $$invalidate(0, tonightGames = $$props.tonightGames);
     	};
 
@@ -17227,10 +16859,10 @@ var app = (function () {
     		Ticker,
     		GameDesk,
     		store,
+    		tickerInfo,
     		onMount,
     		DefaultScene,
     		DeskTicker,
-    		tickerInfo,
     		tonightGames,
     		deskVideo,
     		anal1Video,
@@ -17244,7 +16876,6 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("tickerInfo" in $$props) $$invalidate(9, tickerInfo = $$props.tickerInfo);
     		if ("tonightGames" in $$props) $$invalidate(0, tonightGames = $$props.tonightGames);
     		if ("deskVideo" in $$props) $$invalidate(1, deskVideo = $$props.deskVideo);
     		if ("anal1Video" in $$props) $$invalidate(2, anal1Video = $$props.anal1Video);
@@ -17270,30 +16901,21 @@ var app = (function () {
     		cameraOption,
     		vidOption,
     		pbpVideo,
-    		colorVideo,
-    		tickerInfo
+    		colorVideo
     	];
     }
 
     class Desk extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$7, create_fragment$7, safe_not_equal, { tickerInfo: 9, tonightGames: 0 });
+    		init(this, options, instance$8, create_fragment$8, safe_not_equal, { tonightGames: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Desk",
     			options,
-    			id: create_fragment$7.name
+    			id: create_fragment$8.name
     		});
-    	}
-
-    	get tickerInfo() {
-    		throw new Error("<Desk>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set tickerInfo(value) {
-    		throw new Error("<Desk>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get tonightGames() {
@@ -17306,7 +16928,7 @@ var app = (function () {
     }
 
     /* src\TeamPR.svelte generated by Svelte v3.38.3 */
-    const file$6 = "src\\TeamPR.svelte";
+    const file$7 = "src\\TeamPR.svelte";
 
     // (1:0) <script>      import { fade }
     function create_catch_block$2(ctx) {
@@ -17355,18 +16977,18 @@ var app = (function () {
     			p1 = element("p");
     			t3 = text(/*standing*/ ctx[2]);
     			attr_dev(p0, "class", "name svelte-102m72e");
-    			add_location(p0, file$6, 24, 8, 703);
+    			add_location(p0, file$7, 24, 8, 703);
     			if (img.src !== (img_src_value = /*logo*/ ctx[1])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "team");
     			attr_dev(img, "class", "svelte-102m72e");
-    			add_location(img, file$6, 25, 8, 739);
+    			add_location(img, file$7, 25, 8, 739);
     			attr_dev(p1, "class", "place svelte-102m72e");
-    			add_location(p1, file$6, 26, 8, 776);
+    			add_location(p1, file$7, 26, 8, 776);
     			attr_dev(div, "class", "team svelte-102m72e");
     			set_style(div, "top", /*top*/ ctx[3] + "px");
     			set_style(div, "background-color", /*color*/ ctx[5]);
     			set_style(div, "left", /*left*/ ctx[4] + "px");
-    			add_location(div, file$6, 23, 4, 560);
+    			add_location(div, file$7, 23, 4, 560);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -17454,7 +17076,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$6(ctx) {
+    function create_fragment$7(ctx) {
     	let await_block_anchor;
     	let promise;
     	let current;
@@ -17519,7 +17141,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$6.name,
+    		id: create_fragment$7.name,
     		type: "component",
     		source: "",
     		ctx
@@ -17536,7 +17158,7 @@ var app = (function () {
     		});
     }
 
-    function instance$6($$self, $$props, $$invalidate) {
+    function instance$7($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("TeamPR", slots, []);
     	let { team = "" } = $$props;
@@ -17597,7 +17219,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$6, create_fragment$6, safe_not_equal, {
+    		init(this, options, instance$7, create_fragment$7, safe_not_equal, {
     			team: 0,
     			logo: 1,
     			standing: 2,
@@ -17609,7 +17231,7 @@ var app = (function () {
     			component: this,
     			tagName: "TeamPR",
     			options,
-    			id: create_fragment$6.name
+    			id: create_fragment$7.name
     		});
     	}
 
@@ -25023,7 +24645,7 @@ var app = (function () {
     });
 
     /* src\PowerRankings.svelte generated by Svelte v3.38.3 */
-    const file$5 = "src\\PowerRankings.svelte";
+    const file$6 = "src\\PowerRankings.svelte";
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -25097,7 +24719,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$5(ctx) {
+    function create_fragment$6(ctx) {
     	let div1;
     	let img;
     	let img_src_value;
@@ -25147,16 +24769,16 @@ var app = (function () {
     			button.textContent = "Download Image";
     			if (img.src !== (img_src_value = "assets\\Background.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
-    			add_location(img, file$5, 38, 4, 1141);
+    			add_location(img, file$6, 38, 4, 1141);
     			attr_dev(h1, "class", "svelte-1b3rkj5");
-    			add_location(h1, file$5, 40, 8, 1238);
+    			add_location(h1, file$6, 40, 8, 1238);
     			attr_dev(div0, "class", "contain svelte-1b3rkj5");
     			attr_dev(div0, "id", "image");
-    			add_location(div0, file$5, 39, 4, 1196);
+    			add_location(div0, file$6, 39, 4, 1196);
     			attr_dev(button, "class", "svelte-1b3rkj5");
-    			add_location(button, file$5, 45, 4, 1497);
+    			add_location(button, file$6, 45, 4, 1497);
     			attr_dev(div1, "class", "back svelte-1b3rkj5");
-    			add_location(div1, file$5, 37, 0, 1065);
+    			add_location(div1, file$6, 37, 0, 1065);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -25243,7 +24865,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$5.name,
+    		id: create_fragment$6.name,
     		type: "component",
     		source: "",
     		ctx
@@ -25260,7 +24882,7 @@ var app = (function () {
     	link.click();
     }
 
-    function instance$5($$self, $$props, $$invalidate) {
+    function instance$6($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("PowerRankings", slots, []);
     	let { powerRankings = [] } = $$props;
@@ -25327,13 +24949,13 @@ var app = (function () {
     class PowerRankings extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { powerRankings: 0, league: 1 });
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { powerRankings: 0, league: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "PowerRankings",
     			options,
-    			id: create_fragment$5.name
+    			id: create_fragment$6.name
     		});
     	}
 
@@ -25355,10 +24977,10 @@ var app = (function () {
     }
 
     /* src\SinglePlayer.svelte generated by Svelte v3.38.3 */
-    const file$4 = "src\\SinglePlayer.svelte";
+    const file$5 = "src\\SinglePlayer.svelte";
 
     // (31:0) {#if name}
-    function create_if_block$2(ctx) {
+    function create_if_block$3(ctx) {
     	let div7;
     	let div0;
     	let t0;
@@ -25414,25 +25036,25 @@ var app = (function () {
     			t13 = text("Games: ");
     			t14 = text(/*games*/ ctx[5]);
     			attr_dev(div0, "class", "name svelte-1lcxtrp");
-    			add_location(div0, file$4, 32, 8, 910);
+    			add_location(div0, file$5, 32, 8, 910);
     			attr_dev(div1, "class", "mmr svelte-1lcxtrp");
-    			add_location(div1, file$4, 38, 8, 1081);
+    			add_location(div1, file$5, 38, 8, 1081);
     			attr_dev(div2, "class", "goals svelte-1lcxtrp");
-    			add_location(div2, file$4, 40, 12, 1290);
+    			add_location(div2, file$5, 40, 12, 1290);
     			attr_dev(div3, "class", "assists svelte-1lcxtrp");
-    			add_location(div3, file$4, 41, 12, 1343);
+    			add_location(div3, file$5, 41, 12, 1343);
     			attr_dev(div4, "class", "saves svelte-1lcxtrp");
-    			add_location(div4, file$4, 42, 12, 1402);
+    			add_location(div4, file$5, 42, 12, 1402);
     			attr_dev(div5, "class", "games svelte-1lcxtrp");
-    			add_location(div5, file$4, 43, 12, 1455);
+    			add_location(div5, file$5, 43, 12, 1455);
     			attr_dev(div6, "class", "delayReveal svelte-1lcxtrp");
     			set_style(div6, "background", "linear-gradient(90deg, " + /*back*/ ctx[8] + " 0%, " + /*back*/ ctx[8] + " 100%)");
-    			add_location(div6, file$4, 39, 8, 1119);
+    			add_location(div6, file$5, 39, 8, 1119);
     			attr_dev(div7, "class", "player svelte-1lcxtrp");
     			set_style(div7, "left", /*left*/ ctx[6] + "%");
     			set_style(div7, "top", /*top*/ ctx[7]);
     			set_style(div7, "background", "linear-gradient(90deg, " + /*back*/ ctx[8] + " 0%, " + /*back*/ ctx[8] + " 100%)");
-    			add_location(div7, file$4, 31, 4, 734);
+    			add_location(div7, file$5, 31, 4, 734);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div7, anchor);
@@ -25547,7 +25169,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$2.name,
+    		id: create_if_block$3.name,
     		type: "if",
     		source: "(31:0) {#if name}",
     		ctx
@@ -25556,10 +25178,10 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$4(ctx) {
+    function create_fragment$5(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = /*name*/ ctx[3] && create_if_block$2(ctx);
+    	let if_block = /*name*/ ctx[3] && create_if_block$3(ctx);
 
     	const block = {
     		c: function create() {
@@ -25583,7 +25205,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block$2(ctx);
+    					if_block = create_if_block$3(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -25615,7 +25237,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$4.name,
+    		id: create_fragment$5.name,
     		type: "component",
     		source: "",
     		ctx
@@ -25632,7 +25254,7 @@ var app = (function () {
     		});
     }
 
-    function instance$4($$self, $$props, $$invalidate) {
+    function instance$5($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("SinglePlayer", slots, []);
     	let { name = "" } = $$props;
@@ -25714,7 +25336,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, {
     			name: 3,
     			goals: 0,
     			assists: 1,
@@ -25730,7 +25352,7 @@ var app = (function () {
     			component: this,
     			tagName: "SinglePlayer",
     			options,
-    			id: create_fragment$4.name
+    			id: create_fragment$5.name
     		});
 
     		const { ctx } = this.$$;
@@ -25843,7 +25465,7 @@ var app = (function () {
     }
 
     /* src\PlayerCard.svelte generated by Svelte v3.38.3 */
-    const file$3 = "src\\PlayerCard.svelte";
+    const file$4 = "src\\PlayerCard.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -26003,7 +25625,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$3(ctx) {
+    function create_fragment$4(ctx) {
     	let div3;
     	let img0;
     	let img0_src_value;
@@ -26094,32 +25716,32 @@ var app = (function () {
     			t9 = text(/*team2Name*/ ctx[7]);
     			if (img0.src !== (img0_src_value = "assets\\Background.png")) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "left bar");
-    			add_location(img0, file$3, 44, 4, 1365);
+    			add_location(img0, file$4, 44, 4, 1365);
     			attr_dev(img1, "class", "img1 svelte-k9eu48");
     			if (img1.src !== (img1_src_value = /*team1Logo*/ ctx[4])) attr_dev(img1, "src", img1_src_value);
-    			add_location(img1, file$3, 47, 12, 1559);
+    			add_location(img1, file$4, 47, 12, 1559);
     			attr_dev(img2, "class", "img2 svelte-k9eu48");
     			if (img2.src !== (img2_src_value = /*team1Logo*/ ctx[4])) attr_dev(img2, "src", img2_src_value);
-    			add_location(img2, file$3, 48, 12, 1609);
+    			add_location(img2, file$4, 48, 12, 1609);
     			attr_dev(h10, "class", "name1 svelte-k9eu48");
-    			add_location(h10, file$3, 49, 12, 1659);
+    			add_location(h10, file$4, 49, 12, 1659);
     			attr_dev(div0, "class", "team1 svelte-k9eu48");
-    			add_location(div0, file$3, 46, 8, 1526);
+    			add_location(div0, file$4, 46, 8, 1526);
     			attr_dev(img3, "class", "img1 svelte-k9eu48");
     			if (img3.src !== (img3_src_value = /*team2Logo*/ ctx[5])) attr_dev(img3, "src", img3_src_value);
-    			add_location(img3, file$3, 55, 12, 2035);
+    			add_location(img3, file$4, 55, 12, 2035);
     			attr_dev(img4, "class", "img2 svelte-k9eu48");
     			if (img4.src !== (img4_src_value = /*team2Logo*/ ctx[5])) attr_dev(img4, "src", img4_src_value);
-    			add_location(img4, file$3, 56, 12, 2085);
+    			add_location(img4, file$4, 56, 12, 2085);
     			attr_dev(h11, "class", "name2 svelte-k9eu48");
-    			add_location(h11, file$3, 60, 12, 2418);
+    			add_location(h11, file$4, 60, 12, 2418);
     			attr_dev(div1, "class", "team2 svelte-k9eu48");
-    			add_location(div1, file$3, 54, 8, 2002);
+    			add_location(div1, file$4, 54, 8, 2002);
     			attr_dev(div2, "class", "contain");
     			attr_dev(div2, "id", "image");
-    			add_location(div2, file$3, 45, 4, 1420);
+    			add_location(div2, file$4, 45, 4, 1420);
     			attr_dev(div3, "class", "back svelte-k9eu48");
-    			add_location(div3, file$3, 43, 0, 1290);
+    			add_location(div3, file$4, 43, 0, 1290);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -26273,7 +25895,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$4.name,
     		type: "component",
     		source: "",
     		ctx
@@ -26282,7 +25904,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("PlayerCard", slots, []);
     	let { teamPlayers1 = [] } = $$props;
@@ -26400,7 +26022,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {
     			teamPlayers1: 0,
     			teamPlayers2: 1,
     			team1Color: 2,
@@ -26415,7 +26037,7 @@ var app = (function () {
     			component: this,
     			tagName: "PlayerCard",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$4.name
     		});
     	}
 
@@ -26485,7 +26107,7 @@ var app = (function () {
     }
 
     /* src\MatchupTeam.svelte generated by Svelte v3.38.3 */
-    const file$2 = "src\\MatchupTeam.svelte";
+    const file$3 = "src\\MatchupTeam.svelte";
 
     // (1:0) <script>      import { fly, fade }
     function create_catch_block$1(ctx) {
@@ -26514,8 +26136,8 @@ var app = (function () {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*dir*/ ctx[4] == "left") return create_if_block$1;
-    		if (/*dir*/ ctx[4] == "right") return create_if_block_1$1;
+    		if (/*dir*/ ctx[4] == "left") return create_if_block$2;
+    		if (/*dir*/ ctx[4] == "right") return create_if_block_1$2;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -26569,7 +26191,7 @@ var app = (function () {
     }
 
     // (26:29) 
-    function create_if_block_1$1(ctx) {
+    function create_if_block_1$2(ctx) {
     	let div2;
     	let div0;
     	let t0;
@@ -26592,16 +26214,16 @@ var app = (function () {
     			t3 = space();
     			img = element("img");
     			attr_dev(div0, "class", "name2 svelte-vz74x0");
-    			add_location(div0, file$2, 27, 12, 912);
+    			add_location(div0, file$3, 27, 12, 912);
     			attr_dev(div1, "class", "record2 svelte-vz74x0");
-    			add_location(div1, file$2, 28, 12, 957);
+    			add_location(div1, file$3, 28, 12, 957);
     			attr_dev(img, "class", "logo2 svelte-vz74x0");
     			if (img.src !== (img_src_value = /*logo*/ ctx[1])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "logo");
-    			add_location(img, file$2, 29, 12, 1003);
+    			add_location(img, file$3, 29, 12, 1003);
     			attr_dev(div2, "class", "container2 svelte-vz74x0");
     			set_style(div2, "background-color", /*color*/ ctx[3]);
-    			add_location(div2, file$2, 26, 8, 789);
+    			add_location(div2, file$3, 26, 8, 789);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -26641,7 +26263,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$1.name,
+    		id: create_if_block_1$2.name,
     		type: "if",
     		source: "(26:29) ",
     		ctx
@@ -26651,7 +26273,7 @@ var app = (function () {
     }
 
     // (20:4) {#if dir == 'left'}
-    function create_if_block$1(ctx) {
+    function create_if_block$2(ctx) {
     	let div2;
     	let div0;
     	let t0;
@@ -26674,16 +26296,16 @@ var app = (function () {
     			t3 = space();
     			img = element("img");
     			attr_dev(div0, "class", "name svelte-vz74x0");
-    			add_location(div0, file$2, 21, 12, 600);
+    			add_location(div0, file$3, 21, 12, 600);
     			attr_dev(div1, "class", "record svelte-vz74x0");
-    			add_location(div1, file$2, 22, 12, 644);
+    			add_location(div1, file$3, 22, 12, 644);
     			attr_dev(img, "class", "logo svelte-vz74x0");
     			if (img.src !== (img_src_value = /*logo*/ ctx[1])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "logo");
-    			add_location(img, file$2, 23, 12, 689);
+    			add_location(img, file$3, 23, 12, 689);
     			attr_dev(div2, "class", "container svelte-vz74x0");
     			set_style(div2, "background-color", /*color*/ ctx[3]);
-    			add_location(div2, file$2, 20, 8, 477);
+    			add_location(div2, file$3, 20, 8, 477);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -26723,7 +26345,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block$2.name,
     		type: "if",
     		source: "(20:4) {#if dir == 'left'}",
     		ctx
@@ -26754,7 +26376,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$2(ctx) {
+    function create_fragment$3(ctx) {
     	let await_block_anchor;
     	let promise;
 
@@ -26807,7 +26429,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -26824,7 +26446,7 @@ var app = (function () {
     		});
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("MatchupTeam", slots, []);
     	let { name = "" } = $$props;
@@ -26876,7 +26498,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {
     			name: 0,
     			logo: 1,
     			rec: 2,
@@ -26888,7 +26510,7 @@ var app = (function () {
     			component: this,
     			tagName: "MatchupTeam",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$3.name
     		});
     	}
 
@@ -26934,7 +26556,7 @@ var app = (function () {
     }
 
     /* src\Matchup.svelte generated by Svelte v3.38.3 */
-    const file$1 = "src\\Matchup.svelte";
+    const file$2 = "src\\Matchup.svelte";
 
     // (1:0) <script>   import MatchupTeam from "./MatchupTeam.svelte";   import { onMount }
     function create_catch_block(ctx) {
@@ -27000,7 +26622,7 @@ var app = (function () {
     			if (img.src !== (img_src_value = "https://cdn.discordapp.com/attachments/402228472744902656/410550548748697610/RLPC_Logo.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "logo");
     			attr_dev(img, "class", "svelte-j38k5k");
-    			add_location(img, file$1, 57, 4, 1705);
+    			add_location(img, file$2, 57, 4, 1705);
     		},
     		m: function mount(target, anchor) {
     			mount_component(matchupteam0, target, anchor);
@@ -27107,7 +26729,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$1(ctx) {
+    function create_fragment$2(ctx) {
     	let await_block_anchor;
     	let current;
 
@@ -27167,7 +26789,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$1.name,
+    		id: create_fragment$2.name,
     		type: "component",
     		source: "",
     		ctx
@@ -27184,7 +26806,7 @@ var app = (function () {
     		});
     }
 
-    function instance$1($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Matchup", slots, []);
     	let team1Name = "";
@@ -27282,21 +26904,1256 @@ var app = (function () {
     class Matchup extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Matchup",
     			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+    }
+
+    /* src\Interview.svelte generated by Svelte v3.38.3 */
+    const file$1 = "src\\Interview.svelte";
+
+    // (100:8) {#if vidOption == 'on'}
+    function create_if_block_7(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let div_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "height", "1015px");
+    			attr_dev(iframe, "width", "1598px");
+    			if (iframe.src !== (iframe_src_value = "https://www.youtube.com/embed/rTQOqJhWoL0?controls=0&autoplay=1&vq=hd720&showinfo=0&loop=1&rel=0")) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "YouTube video player");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+    			attr_dev(iframe, "muted", "");
+    			attr_dev(iframe, "autoplay", "");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$1, 101, 16, 4241);
+    			attr_dev(div, "class", "vid svelte-177km69");
+    			add_location(div, file$1, 100, 12, 4143);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: noop$2,
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div_transition) div_transition = create_bidirectional_transition(
+    					div,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				div_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div_transition) div_transition = create_bidirectional_transition(
+    				div,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			div_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && div_transition) div_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_7.name,
+    		type: "if",
+    		source: "(100:8) {#if vidOption == 'on'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (65:4) {#if cameraOption == 'on'}
+    function create_if_block$1(ctx) {
+    	let current_block_type_index;
+    	let if_block;
+    	let if_block_anchor;
+    	let current;
+    	const if_block_creators = [create_if_block_1$1, create_else_block$1];
+    	const if_blocks = [];
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*numb*/ ctx[3] == "3") return 0;
+    		return 1;
+    	}
+
+    	current_block_type_index = select_block_type_1(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if_blocks[current_block_type_index].m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type_1(ctx);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				} else {
+    					if_block.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if_blocks[current_block_type_index].d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(65:4) {#if cameraOption == 'on'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (85:8) {:else}
+    function create_else_block$1(ctx) {
+    	let img;
+    	let img_src_value;
+    	let img_transition;
+    	let t0;
+    	let t1;
+    	let if_block1_anchor;
+    	let current;
+    	let if_block0 = /*pbpVideo*/ ctx[6] != "null" && create_if_block_6$1(ctx);
+    	let if_block1 = /*colorVideo*/ ctx[7] != "null" && create_if_block_5$1(ctx);
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			t0 = space();
+    			if (if_block0) if_block0.c();
+    			t1 = space();
+    			if (if_block1) if_block1.c();
+    			if_block1_anchor = empty();
+    			if (img.src !== (img_src_value = "assets\\2_Boxes.png")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "left bar");
+    			attr_dev(img, "class", "svelte-177km69");
+    			add_location(img, file$1, 85, 12, 3276);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    			insert_dev(target, t0, anchor);
+    			if (if_block0) if_block0.m(target, anchor);
+    			insert_dev(target, t1, anchor);
+    			if (if_block1) if_block1.m(target, anchor);
+    			insert_dev(target, if_block1_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*pbpVideo*/ ctx[6] != "null") {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+
+    					if (dirty & /*pbpVideo*/ 64) {
+    						transition_in(if_block0, 1);
+    					}
+    				} else {
+    					if_block0 = create_if_block_6$1(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(t1.parentNode, t1);
+    				}
+    			} else if (if_block0) {
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (/*colorVideo*/ ctx[7] != "null") {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+
+    					if (dirty & /*colorVideo*/ 128) {
+    						transition_in(if_block1, 1);
+    					}
+    				} else {
+    					if_block1 = create_if_block_5$1(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!img_transition) img_transition = create_bidirectional_transition(
+    					img,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				img_transition.run(1);
+    			});
+
+    			transition_in(if_block0);
+    			transition_in(if_block1);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!img_transition) img_transition = create_bidirectional_transition(
+    				img,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			img_transition.run(0);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    			if (detaching && img_transition) img_transition.end();
+    			if (detaching) detach_dev(t0);
+    			if (if_block0) if_block0.d(detaching);
+    			if (detaching) detach_dev(t1);
+    			if (if_block1) if_block1.d(detaching);
+    			if (detaching) detach_dev(if_block1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$1.name,
+    		type: "else",
+    		source: "(85:8) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (66:8) {#if numb == '3'}
+    function create_if_block_1$1(ctx) {
+    	let img;
+    	let img_src_value;
+    	let img_transition;
+    	let t0;
+    	let t1;
+    	let t2;
+    	let if_block2_anchor;
+    	let current;
+    	let if_block0 = /*deskVideo*/ ctx[0] != "null" && create_if_block_4$1(ctx);
+    	let if_block1 = /*anal1Video*/ ctx[1] != "null" && create_if_block_3$1(ctx);
+    	let if_block2 = /*anal2Video*/ ctx[2] != "null" && create_if_block_2$1(ctx);
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			t0 = space();
+    			if (if_block0) if_block0.c();
+    			t1 = space();
+    			if (if_block1) if_block1.c();
+    			t2 = space();
+    			if (if_block2) if_block2.c();
+    			if_block2_anchor = empty();
+    			if (img.src !== (img_src_value = "assets\\3_Boxes.png")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "left bar");
+    			attr_dev(img, "class", "svelte-177km69");
+    			add_location(img, file$1, 66, 12, 2115);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    			insert_dev(target, t0, anchor);
+    			if (if_block0) if_block0.m(target, anchor);
+    			insert_dev(target, t1, anchor);
+    			if (if_block1) if_block1.m(target, anchor);
+    			insert_dev(target, t2, anchor);
+    			if (if_block2) if_block2.m(target, anchor);
+    			insert_dev(target, if_block2_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*deskVideo*/ ctx[0] != "null") {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+
+    					if (dirty & /*deskVideo*/ 1) {
+    						transition_in(if_block0, 1);
+    					}
+    				} else {
+    					if_block0 = create_if_block_4$1(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(t1.parentNode, t1);
+    				}
+    			} else if (if_block0) {
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (/*anal1Video*/ ctx[1] != "null") {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+
+    					if (dirty & /*anal1Video*/ 2) {
+    						transition_in(if_block1, 1);
+    					}
+    				} else {
+    					if_block1 = create_if_block_3$1(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(t2.parentNode, t2);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (/*anal2Video*/ ctx[2] != "null") {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+
+    					if (dirty & /*anal2Video*/ 4) {
+    						transition_in(if_block2, 1);
+    					}
+    				} else {
+    					if_block2 = create_if_block_2$1(ctx);
+    					if_block2.c();
+    					transition_in(if_block2, 1);
+    					if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
+    				}
+    			} else if (if_block2) {
+    				group_outros();
+
+    				transition_out(if_block2, 1, 1, () => {
+    					if_block2 = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!img_transition) img_transition = create_bidirectional_transition(
+    					img,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				img_transition.run(1);
+    			});
+
+    			transition_in(if_block0);
+    			transition_in(if_block1);
+    			transition_in(if_block2);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!img_transition) img_transition = create_bidirectional_transition(
+    				img,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			img_transition.run(0);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+    			transition_out(if_block2);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    			if (detaching && img_transition) img_transition.end();
+    			if (detaching) detach_dev(t0);
+    			if (if_block0) if_block0.d(detaching);
+    			if (detaching) detach_dev(t1);
+    			if (if_block1) if_block1.d(detaching);
+    			if (detaching) detach_dev(t2);
+    			if (if_block2) if_block2.d(detaching);
+    			if (detaching) detach_dev(if_block2_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(66:8) {#if numb == '3'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (87:12) {#if pbpVideo != 'null'}
+    function create_if_block_6$1(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "allowtransparency", "true");
+    			if (iframe.src !== (iframe_src_value = /*pbpVideo*/ ctx[6])) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "description");
+    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$1, 88, 20, 3482);
+    			attr_dev(div, "class", "desk2 svelte-177km69");
+    			add_location(div, file$1, 87, 16, 3441);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*pbpVideo*/ 64 && iframe.src !== (iframe_src_value = /*pbpVideo*/ ctx[6])) {
+    				attr_dev(iframe, "src", iframe_src_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_6$1.name,
+    		type: "if",
+    		source: "(87:12) {#if pbpVideo != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (93:12) {#if colorVideo != 'null'}
+    function create_if_block_5$1(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "allowtransparency", "true");
+    			if (iframe.src !== (iframe_src_value = /*colorVideo*/ ctx[7])) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "description");
+    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$1, 94, 20, 3831);
+    			attr_dev(div, "class", "anal12 svelte-177km69");
+    			add_location(div, file$1, 93, 16, 3789);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*colorVideo*/ 128 && iframe.src !== (iframe_src_value = /*colorVideo*/ ctx[7])) {
+    				attr_dev(iframe, "src", iframe_src_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_5$1.name,
+    		type: "if",
+    		source: "(93:12) {#if colorVideo != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (68:12) {#if deskVideo != 'null'}
+    function create_if_block_4$1(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "allowtransparency", "true");
+    			if (iframe.src !== (iframe_src_value = /*deskVideo*/ ctx[0])) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "description");
+    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$1, 69, 20, 2321);
+    			attr_dev(div, "class", "desk svelte-177km69");
+    			add_location(div, file$1, 68, 16, 2281);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*deskVideo*/ 1 && iframe.src !== (iframe_src_value = /*deskVideo*/ ctx[0])) {
+    				attr_dev(iframe, "src", iframe_src_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_4$1.name,
+    		type: "if",
+    		source: "(68:12) {#if deskVideo != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (74:12) {#if anal1Video != 'null'}
+    function create_if_block_3$1(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "allowtransparency", "true");
+    			if (iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[1])) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "description");
+    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$1, 75, 20, 2670);
+    			attr_dev(div, "class", "anal1 svelte-177km69");
+    			add_location(div, file$1, 74, 16, 2629);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*anal1Video*/ 2 && iframe.src !== (iframe_src_value = /*anal1Video*/ ctx[1])) {
+    				attr_dev(iframe, "src", iframe_src_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3$1.name,
+    		type: "if",
+    		source: "(74:12) {#if anal1Video != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (80:12) {#if anal2Video != 'null'}
+    function create_if_block_2$1(ctx) {
+    	let div;
+    	let iframe;
+    	let iframe_src_value;
+    	let iframe_transition;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			iframe = element("iframe");
+    			attr_dev(iframe, "allowtransparency", "true");
+    			if (iframe.src !== (iframe_src_value = /*anal2Video*/ ctx[2])) attr_dev(iframe, "src", iframe_src_value);
+    			attr_dev(iframe, "title", "description");
+    			attr_dev(iframe, "allow", "autoplay; encrypted-media");
+    			attr_dev(iframe, "frameborder", "0");
+    			attr_dev(iframe, "class", "svelte-177km69");
+    			add_location(iframe, file$1, 81, 20, 3008);
+    			attr_dev(div, "class", "anal2 svelte-177km69");
+    			add_location(div, file$1, 80, 16, 2967);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, iframe);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty & /*anal2Video*/ 4 && iframe.src !== (iframe_src_value = /*anal2Video*/ ctx[2])) {
+    				attr_dev(iframe, "src", iframe_src_value);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    					iframe,
+    					fade,
+    					{
+    						duration: 1000,
+    						delay: 2000,
+    						ease: "circ"
+    					},
+    					true
+    				);
+
+    				iframe_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!iframe_transition) iframe_transition = create_bidirectional_transition(
+    				iframe,
+    				fade,
+    				{
+    					duration: 1000,
+    					delay: 2000,
+    					ease: "circ"
+    				},
+    				false
+    			);
+
+    			iframe_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if (detaching && iframe_transition) iframe_transition.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2$1.name,
+    		type: "if",
+    		source: "(80:12) {#if anal2Video != 'null'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let div1;
+    	let img0;
+    	let img0_src_value;
+    	let t0;
+    	let div0;
+    	let img1;
+    	let img1_src_value;
+    	let t1;
+    	let deskticker;
+    	let div0_intro;
+    	let div0_outro;
+    	let t2;
+    	let current_block_type_index;
+    	let if_block;
+    	let div1_intro;
+    	let div1_outro;
+    	let current;
+    	deskticker = new DeskTicker({ $$inline: true });
+    	const if_block_creators = [create_if_block$1, create_if_block_7];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*cameraOption*/ ctx[4] == "on") return 0;
+    		if (/*vidOption*/ ctx[5] == "on") return 1;
+    		return -1;
+    	}
+
+    	if (~(current_block_type_index = select_block_type(ctx))) {
+    		if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			img0 = element("img");
+    			t0 = space();
+    			div0 = element("div");
+    			img1 = element("img");
+    			t1 = space();
+    			create_component(deskticker.$$.fragment);
+    			t2 = space();
+    			if (if_block) if_block.c();
+    			if (img0.src !== (img0_src_value = "https://media.discordapp.net/attachments/829498943309086782/930167077493440542/Interview_Cutout.png?width=1920&height=1080")) attr_dev(img0, "src", img0_src_value);
+    			attr_dev(img0, "alt", "left bar");
+    			attr_dev(img0, "class", "svelte-177km69");
+    			add_location(img0, file$1, 58, 4, 1663);
+    			if (img1.src !== (img1_src_value = "assets/Bottom_Ticker_Tape.png")) attr_dev(img1, "src", img1_src_value);
+    			attr_dev(img1, "alt", "ticker");
+    			attr_dev(img1, "class", "svelte-177km69");
+    			add_location(img1, file$1, 60, 8, 1945);
+    			add_location(div0, file$1, 59, 4, 1819);
+    			attr_dev(div1, "class", "container svelte-177km69");
+    			add_location(div1, file$1, 57, 0, 1534);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, img0);
+    			append_dev(div1, t0);
+    			append_dev(div1, div0);
+    			append_dev(div0, img1);
+    			append_dev(div0, t1);
+    			mount_component(deskticker, div0, null);
+    			append_dev(div1, t2);
+
+    			if (~current_block_type_index) {
+    				if_blocks[current_block_type_index].m(div1, null);
+    			}
+
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if (~current_block_type_index) {
+    					if_blocks[current_block_type_index].p(ctx, dirty);
+    				}
+    			} else {
+    				if (if_block) {
+    					group_outros();
+
+    					transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    						if_blocks[previous_block_index] = null;
+    					});
+
+    					check_outros();
+    				}
+
+    				if (~current_block_type_index) {
+    					if_block = if_blocks[current_block_type_index];
+
+    					if (!if_block) {
+    						if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    						if_block.c();
+    					} else {
+    						if_block.p(ctx, dirty);
+    					}
+
+    					transition_in(if_block, 1);
+    					if_block.m(div1, null);
+    				} else {
+    					if_block = null;
+    				}
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(deskticker.$$.fragment, local);
+
+    			add_render_callback(() => {
+    				if (div0_outro) div0_outro.end(1);
+
+    				if (!div0_intro) div0_intro = create_in_transition(div0, fly, {
+    					duration: 2000,
+    					delay: 500,
+    					ease: "circ",
+    					y: 1000
+    				});
+
+    				div0_intro.start();
+    			});
+
+    			transition_in(if_block);
+
+    			add_render_callback(() => {
+    				if (div1_outro) div1_outro.end(1);
+    				if (!div1_intro) div1_intro = create_in_transition(div1, fade, { duration: 1000, ease: "circ" });
+    				div1_intro.start();
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(deskticker.$$.fragment, local);
+    			if (div0_intro) div0_intro.invalidate();
+    			div0_outro = create_out_transition(div0, fly, { duration: 2000, ease: "circ", y: 1000 });
+    			transition_out(if_block);
+    			if (div1_intro) div1_intro.invalidate();
+
+    			div1_outro = create_out_transition(div1, fade, {
+    				delay: 1000,
+    				duration: 1000,
+    				ease: "circ"
+    			});
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			destroy_component(deskticker);
+    			if (detaching && div0_outro) div0_outro.end();
+
+    			if (~current_block_type_index) {
+    				if_blocks[current_block_type_index].d();
+    			}
+
+    			if (detaching && div1_outro) div1_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("Interview", slots, []);
+    	let { tickerInfo = "" } = $$props;
+    	let { tonightGames = [] } = $$props;
+    	let deskVideo = "";
+    	let anal1Video = "";
+    	let anal2Video = "";
+    	let numb = "";
+    	let currentScene = "";
+    	let cameraOption = "off";
+    	let vidOption = "off";
+    	let pbpVideo = "";
+    	let colorVideo = "";
+
+    	onMount(() => {
+    		store.tickerInfo(currentMessage => {
+    			$$invalidate(8, tickerInfo = currentMessage);
+    		});
+
+    		store.tonightGames(currentMessage => {
+    			$$invalidate(9, tonightGames = currentMessage);
+    		});
+
+    		store.deskVideo(currentMessage => {
+    			$$invalidate(0, deskVideo = currentMessage);
+    		});
+
+    		store.anal1Video(currentMessage => {
+    			$$invalidate(1, anal1Video = currentMessage);
+    		});
+
+    		store.anal2Video(currentMessage => {
+    			$$invalidate(2, anal2Video = currentMessage);
+    		});
+
+    		store.pbpVideo(currentMessage => {
+    			$$invalidate(6, pbpVideo = currentMessage);
+    		});
+
+    		store.colorVideo(currentMessage => {
+    			$$invalidate(7, colorVideo = currentMessage);
+    		});
+
+    		store.numb(currentMessage => {
+    			$$invalidate(3, numb = currentMessage);
+    		});
+
+    		store.currentScene(currentMessage => {
+    			currentScene = currentMessage;
+    		});
+
+    		store.cameraOption(currentMessage => {
+    			$$invalidate(4, cameraOption = currentMessage);
+    		});
+
+    		store.vidOption(currentMessage => {
+    			$$invalidate(5, vidOption = currentMessage);
+    		});
+    	});
+
+    	const writable_props = ["tickerInfo", "tonightGames"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Interview> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ("tickerInfo" in $$props) $$invalidate(8, tickerInfo = $$props.tickerInfo);
+    		if ("tonightGames" in $$props) $$invalidate(9, tonightGames = $$props.tonightGames);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		fade,
+    		fly,
+    		Ticker,
+    		GameDesk,
+    		store,
+    		onMount,
+    		DefaultScene,
+    		DeskTicker,
+    		tickerInfo,
+    		tonightGames,
+    		deskVideo,
+    		anal1Video,
+    		anal2Video,
+    		numb,
+    		currentScene,
+    		cameraOption,
+    		vidOption,
+    		pbpVideo,
+    		colorVideo
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ("tickerInfo" in $$props) $$invalidate(8, tickerInfo = $$props.tickerInfo);
+    		if ("tonightGames" in $$props) $$invalidate(9, tonightGames = $$props.tonightGames);
+    		if ("deskVideo" in $$props) $$invalidate(0, deskVideo = $$props.deskVideo);
+    		if ("anal1Video" in $$props) $$invalidate(1, anal1Video = $$props.anal1Video);
+    		if ("anal2Video" in $$props) $$invalidate(2, anal2Video = $$props.anal2Video);
+    		if ("numb" in $$props) $$invalidate(3, numb = $$props.numb);
+    		if ("currentScene" in $$props) currentScene = $$props.currentScene;
+    		if ("cameraOption" in $$props) $$invalidate(4, cameraOption = $$props.cameraOption);
+    		if ("vidOption" in $$props) $$invalidate(5, vidOption = $$props.vidOption);
+    		if ("pbpVideo" in $$props) $$invalidate(6, pbpVideo = $$props.pbpVideo);
+    		if ("colorVideo" in $$props) $$invalidate(7, colorVideo = $$props.colorVideo);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		deskVideo,
+    		anal1Video,
+    		anal2Video,
+    		numb,
+    		cameraOption,
+    		vidOption,
+    		pbpVideo,
+    		colorVideo,
+    		tickerInfo,
+    		tonightGames
+    	];
+    }
+
+    class Interview extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { tickerInfo: 8, tonightGames: 9 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Interview",
+    			options,
     			id: create_fragment$1.name
     		});
+    	}
+
+    	get tickerInfo() {
+    		throw new Error("<Interview>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set tickerInfo(value) {
+    		throw new Error("<Interview>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get tonightGames() {
+    		throw new Error("<Interview>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set tonightGames(value) {
+    		throw new Error("<Interview>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
     /* src\App.svelte generated by Svelte v3.38.3 */
     const file = "src\\App.svelte";
 
-    // (34:1) {:else}
+    // (35:1) {:else}
     function create_else_block(ctx) {
     	let img;
     	let img_src_value;
@@ -27306,7 +28163,7 @@ var app = (function () {
     			img = element("img");
     			if (img.src !== (img_src_value = "assets\\Background.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "left bar");
-    			add_location(img, file, 34, 5, 902);
+    			add_location(img, file, 35, 5, 947);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -27322,15 +28179,15 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(34:1) {:else}",
+    		source: "(35:1) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (32:1) {#if currentScene != 'matchup'}
-    function create_if_block_5(ctx) {
+    // (33:1) {#if currentScene != 'matchup'}
+    function create_if_block_6(ctx) {
     	let defaultscene;
     	let current;
     	defaultscene = new DefaultScene({ $$inline: true });
@@ -27359,16 +28216,55 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_5.name,
+    		id: create_if_block_6.name,
     		type: "if",
-    		source: "(32:1) {#if currentScene != 'matchup'}",
+    		source: "(33:1) {#if currentScene != 'matchup'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (45:37) 
+    // (48:39) 
+    function create_if_block_5(ctx) {
+    	let interview;
+    	let current;
+    	interview = new Interview({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			create_component(interview.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(interview, target, anchor);
+    			current = true;
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(interview.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(interview.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(interview, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_5.name,
+    		type: "if",
+    		source: "(48:39) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (46:37) 
     function create_if_block_4(ctx) {
     	let matchup;
     	let current;
@@ -27400,14 +28296,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(45:37) ",
+    		source: "(46:37) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (43:36) 
+    // (44:36) 
     function create_if_block_3(ctx) {
     	let playercard;
     	let current;
@@ -27439,14 +28335,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(43:36) ",
+    		source: "(44:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:35) 
+    // (42:35) 
     function create_if_block_2(ctx) {
     	let powerrankings;
     	let current;
@@ -27478,14 +28374,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(41:35) ",
+    		source: "(42:35) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (39:36) 
+    // (40:36) 
     function create_if_block_1(ctx) {
     	let caster;
     	let current;
@@ -27517,14 +28413,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(39:36) ",
+    		source: "(40:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (37:1) {#if currentScene == 'desk'}
+    // (38:1) {#if currentScene == 'desk'}
     function create_if_block(ctx) {
     	let desk;
     	let current;
@@ -27556,7 +28452,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(37:1) {#if currentScene == 'desk'}",
+    		source: "(38:1) {#if currentScene == 'desk'}",
     		ctx
     	});
 
@@ -27573,7 +28469,7 @@ var app = (function () {
     	let current_block_type_index_1;
     	let if_block1;
     	let current;
-    	const if_block_creators = [create_if_block_5, create_else_block];
+    	const if_block_creators = [create_if_block_6, create_else_block];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -27589,7 +28485,8 @@ var app = (function () {
     		create_if_block_1,
     		create_if_block_2,
     		create_if_block_3,
-    		create_if_block_4
+    		create_if_block_4,
+    		create_if_block_5
     	];
 
     	const if_blocks_1 = [];
@@ -27600,6 +28497,7 @@ var app = (function () {
     		if (/*currentScene*/ ctx[0] == "power") return 2;
     		if (/*currentScene*/ ctx[0] == "player") return 3;
     		if (/*currentScene*/ ctx[0] == "matchup") return 4;
+    		if (/*currentScene*/ ctx[0] == "interview") return 5;
     		return -1;
     	}
 
@@ -27617,9 +28515,9 @@ var app = (function () {
     			if (if_block1) if_block1.c();
     			document.title = "RLPC Media Team Site";
     			attr_dev(html, "lang", "en");
-    			add_location(html, file, 27, 1, 794);
+    			add_location(html, file, 28, 1, 839);
     			attr_dev(main, "class", "svelte-kciyl1");
-    			add_location(main, file, 30, 0, 829);
+    			add_location(main, file, 31, 0, 874);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -27765,6 +28663,7 @@ var app = (function () {
     		DefaultScene,
     		PlayerCard,
     		Matchup,
+    		Interview,
     		casterDisplay,
     		deskDisplay
     	});
