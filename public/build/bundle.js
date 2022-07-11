@@ -13060,6 +13060,7 @@ var app = (function () {
     let game1 = {};
     let game2 = {};
     let game3 = {};
+    let game4 = {};
 
     WsSubscribers.subscribe("sos", "intermission_update", (d) => {
       var tempAr = '';
@@ -13079,6 +13080,10 @@ var app = (function () {
       if (d['intermission']['game3'] != '') {
         tempAr = d['intermission']['game3'].split(",");
         game3 = {top:610,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
+      }
+      if (d['intermission']['game4'] != '') {
+        tempAr = d['intermission']['game4'].split(",");
+        game4 = {top:822,time:tempAr[3], team1:tempAr[0], team2:tempAr[1], league:tempAr[2]};
       }
       if (d['intermission']['ticker'] != '') {
         var tempAr2 = d['intermission']['ticker'].split(";");
@@ -13134,6 +13139,7 @@ var app = (function () {
       games.push(game1);
       games.push(game2);
       games.push(game3);
+      games.push(game4);
       powerRankings.set(powerRankingsLocal);
 
       tonightGames.set(games);
